@@ -667,7 +667,7 @@ function switchPayment(m) {
 }
 
 // ── Course price ──
-const priceLabels = { beginner:'$799', refresher:'$299', 'road-test':'$199', winter:'$349', highway:'$449' };
+const priceLabels = { beginner:'$790.99', refresher:'$881.40', 'road-test':'$621.50', winter:'$349', highway:'$449' };
 document.getElementById('course').addEventListener('change', function() {
   const [name] = this.value.split(':');
   document.getElementById('total-display').textContent = priceLabels[name] || '—';
