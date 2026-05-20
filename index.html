@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Driveready – Student Registration</title>
+<title>David's Academy of Defensive Driving – Student Registration</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://js.stripe.com/v3/"></script>
 <style>
@@ -115,7 +115,7 @@
   .form-section:nth-child(5) { animation-delay: 0.20s; }
 
   .section-label {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
     font-family: 'DM Mono', monospace;
@@ -129,7 +129,6 @@
     padding: 6px 12px;
     border-radius: 4px;
     border: 1.5px solid var(--black);
-    display: inline-flex;
     width: 100%;
   }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--black); opacity: 0.2; }
@@ -181,11 +180,57 @@
   @media (min-width: 1024px) { input, select { padding: 14px 18px; } }
 
   input::placeholder { color: #aaaaaa; font-weight: 400; }
+
+  input[type="date"] {
+    color: var(--black);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    background: #ffffff;
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    padding: 13px 15px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="date"]:focus {
+    border-color: var(--black);
+    background: var(--accent-bg);
+    box-shadow: 3px 3px 0px var(--black);
+    outline: none;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.8;
+    width: 18px;
+    height: 18px;
+  }
+
+  input[type="date"]::-webkit-datetime-edit {
+    color: var(--black);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    color: var(--black);
+  }
+
+  input[type="date"]::-webkit-datetime-edit-text { color: var(--muted); }
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-year-field {
+    color: var(--black);
+    font-weight: 600;
+  }
+
   input:focus, select:focus {
     border-color: var(--black);
     background: var(--accent-bg);
     box-shadow: 3px 3px 0px var(--black);
   }
+
   select { cursor: pointer; background-color: #ffffff; }
   select option { background: #ffffff; color: var(--black); }
 
@@ -198,9 +243,7 @@
   }
 
   /* PAYMENT TABS */
-  .payment-tabs {
-    display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;
-  }
+  .payment-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
 
   .pay-tab {
     display: flex; align-items: center; gap: 7px;
@@ -223,7 +266,7 @@
   }
   .pay-tab svg { width: 17px; height: 17px; flex-shrink: 0; }
 
-  /* STRIPE ELEMENTS */
+  /* STRIPE */
   .stripe-element-box {
     background: #ffffff;
     border: 2px solid var(--black);
@@ -242,8 +285,7 @@
     border: 2px solid var(--black);
     border-radius: 6px; padding: 4px 10px;
     font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
-    font-family: 'DM Mono', monospace; background: white;
-    color: var(--black);
+    font-family: 'DM Mono', monospace;
   }
   .card-badge.visa  { background: #1a1f71; color: white; }
   .card-badge.mc    { background: #eb6b2c; color: white; }
@@ -299,11 +341,7 @@
     box-shadow: 4px 4px 0px var(--yellow-dark);
   }
   @media (min-width: 1024px) { .submit-btn { font-size: 26px; padding: 20px; } }
-  .submit-btn:hover {
-    background: #222222;
-    transform: translateY(-2px);
-    box-shadow: 6px 6px 0px var(--yellow-dark);
-  }
+  .submit-btn:hover { background: #222222; transform: translateY(-2px); box-shadow: 6px 6px 0px var(--yellow-dark); }
   .submit-btn:active { transform: translateY(0); box-shadow: 2px 2px 0px var(--yellow-dark); }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
@@ -324,8 +362,7 @@
     width: 88px; height: 88px; background: var(--yellow);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
     margin-bottom: 24px; animation: popIn 0.4s 0.2s ease both; opacity: 0;
-    border: 3px solid var(--black);
-    box-shadow: 4px 4px 0px var(--black);
+    border: 3px solid var(--black); box-shadow: 4px 4px 0px var(--black);
   }
   .success-icon svg { width: 44px; height: 44px; color: var(--black); }
   .success-overlay h2 { font-family:'Bebas Neue',sans-serif; font-size:56px; color:var(--black); margin-bottom:10px; }
@@ -515,7 +552,7 @@
       <div id="panel-etransfer" style="display:none;">
         <div class="info-box">
           Send your e-Transfer to:<br>
-          <strong>payments@driverready.ca</strong><br><br>
+          <strong>payments@davidsacademy.ca</strong><br><br>
           Use your <strong>full name</strong> as the message/note.<br>
           Registration confirmed within 1 business day of payment received.
         </div>
@@ -525,8 +562,8 @@
       <div id="panel-cash" style="display:none;">
         <div class="info-box">
           Pay in person at our office:<br>
-          <strong>123 Driving Ave, Suite 10, Toronto, ON M1A 2B3</strong><br><br>
-          Hours: Mon–Fri 9am–6pm · Sat 10am–3pm<br>
+          <strong>David's Academy of Defensive Driving</strong><br><br>
+          Please call us to confirm office hours and location before visiting.<br>
           Cash, debit, and certified cheques accepted.
         </div>
       </div>
@@ -598,7 +635,7 @@ cardNumber.on('change', e => {
   else err.style.display = 'none';
 });
 
-// ── Phone formatting: auto-inserts dashes → 416-555-0000 ──
+// ── Phone auto-format: 416-555-0000 ──
 function formatPhone(el) {
   let v = el.value.replace(/\D/g, '').substring(0, 10);
   if (v.length >= 7) v = v.substring(0,3) + '-' + v.substring(3,6) + '-' + v.substring(6);
@@ -608,7 +645,7 @@ function formatPhone(el) {
 document.getElementById('cell').addEventListener('input', function(){ formatPhone(this); });
 document.getElementById('home').addEventListener('input', function(){ formatPhone(this); });
 
-// ── License formatting: A1234-12345-12345 ──
+// ── License auto-format: A1234-12345-12345 ──
 function formatLicense(el) {
   let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 15);
   if (v.length > 9) v = v.substring(0,5) + '-' + v.substring(5,10) + '-' + v.substring(10);
@@ -635,7 +672,7 @@ document.getElementById('course').addEventListener('change', function() {
   document.getElementById('total-display').textContent = priceLabels[name] || '—';
 });
 
-// ── Validation helpers ──
+// ── Validation ──
 function showErr(id,msg){ const e=document.getElementById(id); if(e){if(msg)e.textContent=msg; e.classList.add('show');} }
 function hideErr(id){ document.getElementById(id)?.classList.remove('show'); }
 function markErr(id){ document.getElementById(id)?.classList.add('error'); }
@@ -648,8 +685,6 @@ document.querySelectorAll('input,select').forEach(el => {
 
 function validateForm() {
   let ok = true;
-
-  // Required text fields
   [
     {id:'fullname', msg:'Please enter your full name'},
     {id:'email',    msg:'Please enter a valid email'},
@@ -663,33 +698,28 @@ function validateForm() {
     else { clearErr(id); hideErr(`err-${id}`); }
   });
 
-  // Email format
   const email = document.getElementById('email').value;
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     markErr('email'); showErr('err-email','Enter a valid email address'); ok=false;
   }
 
-  // Cell phone — must be 12 chars with dashes: 416-555-0000
   const cell = document.getElementById('cell').value;
   if (!cell || cell.replace(/\D/g,'').length !== 10) {
     markErr('cell'); showErr('err-cell','Please enter a valid 10-digit phone number'); ok=false;
   } else { clearErr('cell'); hideErr('err-cell'); }
 
-  // License format: A1234-12345-12345
   const lic = document.getElementById('license').value;
   if (!lic || lic.replace(/[^A-Z0-9]/gi,'').length !== 15) {
     markErr('license'); showErr('err-license','Format must be A1234-12345-12345'); ok=false;
   } else { clearErr('license'); hideErr('err-license'); }
 
-  // Card name
   if (currentMethod==='card' && !document.getElementById('cc-name').value.trim()) {
     markErr('cc-name'); showErr('err-cc-name','Enter the name on your card'); ok=false;
   }
-
   return ok;
 }
 
-// ── Stripe card payment ──
+// ── Stripe payment ──
 async function handleCardPayment() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -708,7 +738,7 @@ async function handleCardPayment() {
     return;
   }
 
-  // Send token to your backend when ready:
+  // Uncomment when backend is ready:
   // const [courseName, amountCents] = document.getElementById('course').value.split(':');
   // await fetch('https://YOUR-BACKEND.com/charge', {
   //   method: 'POST',
