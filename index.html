@@ -6,6 +6,16 @@
 <title>David's Academy of Defensive Driving – Student Registration</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://js.stripe.com/v3/"></script>
+<script>
+// ══════════════════════════════════════════════════════
+//  COURSE PRICES — change here and it updates everywhere
+// ══════════════════════════════════════════════════════
+const COURSES = {
+  gold:     { label: 'Gold Package',     price: 790.98 },
+  platinum: { label: 'Platinum Package', price: 779.40 },
+  silver:   { label: 'Silver Package',   price: 621.50 },
+};
+</script>
 <style>
   :root {
     --bg: #ffffff;
@@ -20,6 +30,9 @@
     --danger: #cc0000;
     --success: #1a7a4a;
     --accent-bg: #fffbe6;
+    --green: #1db954;
+    --green-dark: #158a3e;
+    --green-bg: #f0fff6;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -44,92 +57,50 @@
   @media (max-width: 374px) { .page-wrap { padding: 28px 10px 60px; } }
 
   /* HEADER */
-  header {
-    text-align: center;
-    margin-bottom: 40px;
-    animation: fadeDown 0.6s ease both;
-  }
+  header { text-align: center; margin-bottom: 40px; animation: fadeDown 0.6s ease both; }
 
   .logo-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--black);
-    color: #ffffff;
-    padding: 7px 18px 7px 12px;
-    border-radius: 999px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 18px;
-    border: 2px solid var(--black);
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--black); color: #ffffff;
+    padding: 7px 18px 7px 12px; border-radius: 999px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 18px; border: 2px solid var(--black);
   }
   .logo-badge svg { width: 16px; height: 16px; }
 
   h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(44px, 8vw, 80px);
-    letter-spacing: 0.03em;
-    line-height: 0.95;
-    color: var(--black);
-    margin-bottom: 10px;
+    letter-spacing: 0.03em; line-height: 0.95;
+    color: var(--black); margin-bottom: 10px;
   }
   h1 span { color: var(--yellow-dark); }
+  .subtitle { color: var(--muted); font-size: 15px; }
 
-  .subtitle {
-    color: var(--muted);
-    font-size: 15px;
-    font-weight: 400;
-  }
-
-  .progress {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-top: 20px;
-  }
+  .progress { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 20px; }
   .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #cccccc; border: 1.5px solid var(--black); }
   .progress-dot.active { background: var(--yellow); width: 24px; border-radius: 4px; border-color: var(--yellow-dark); }
 
   /* SECTIONS */
   .form-section {
-    background: var(--card);
-    border: 2px solid var(--black);
-    border-radius: 12px;
-    padding: 28px 24px;
-    margin-bottom: 16px;
-    box-shadow: 4px 4px 0px var(--black);
-    animation: fadeUp 0.5s ease both;
-    width: 100%;
+    background: var(--card); border: 2px solid var(--black);
+    border-radius: 12px; padding: 28px 24px; margin-bottom: 16px;
+    box-shadow: 4px 4px 0px var(--black); animation: fadeUp 0.5s ease both; width: 100%;
   }
-
   @media (min-width: 600px) { .form-section { padding: 32px 28px; } }
   @media (min-width: 1024px) { .form-section { padding: 36px 40px; border-radius: 14px; } }
-
   .form-section:nth-child(2) { animation-delay: 0.05s; }
   .form-section:nth-child(3) { animation-delay: 0.10s; }
   .form-section:nth-child(4) { animation-delay: 0.15s; }
   .form-section:nth-child(5) { animation-delay: 0.20s; }
 
   .section-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--black);
-    margin-bottom: 22px;
-    background: var(--yellow);
-    padding: 6px 12px;
-    border-radius: 4px;
-    border: 1.5px solid var(--black);
-    width: 100%;
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--black);
+    margin-bottom: 22px; background: var(--yellow); padding: 6px 12px;
+    border-radius: 4px; border: 1.5px solid var(--black); width: 100%;
   }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--black); opacity: 0.2; }
 
@@ -137,7 +108,6 @@
   .grid { display: grid; gap: 14px; }
   .grid-2 { grid-template-columns: 1fr; }
   .col-span-2 { grid-column: span 1; }
-
   @media (min-width: 480px) {
     .grid-2 { grid-template-columns: 1fr 1fr; gap: 16px; }
     .col-span-2 { grid-column: span 2; }
@@ -146,147 +116,168 @@
   /* FIELDS */
   .field { display: flex; flex-direction: column; gap: 6px; }
 
-  label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--black);
-  }
+  label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--black); }
 
-  .field-hint {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    margin-top: -2px;
-    margin-bottom: 2px;
-  }
+  .field-hint { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: -2px; margin-bottom: 2px; }
 
   input, select {
-    background: #ffffff;
-    border: 2px solid var(--black);
-    border-radius: 8px;
-    color: var(--black);
-    font-family: 'DM Mono', monospace;
-    font-size: 15px;
-    padding: 13px 15px;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    outline: none;
-    width: 100%;
-    -webkit-appearance: none;
-    font-weight: 500;
+    background: #ffffff; border: 2px solid var(--black); border-radius: 8px;
+    color: var(--black); font-family: 'DM Mono', monospace; font-size: 15px;
+    padding: 13px 15px; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    outline: none; width: 100%; -webkit-appearance: none; font-weight: 500;
+    height: 54px; box-sizing: border-box;
   }
-
   @media (min-width: 1024px) { input, select { padding: 14px 18px; } }
-
   input::placeholder { color: #aaaaaa; font-weight: 400; }
+  input:focus, select:focus {
+    border-color: var(--black); background: var(--accent-bg);
+    box-shadow: 3px 3px 0px var(--black);
+  }
+  select { cursor: pointer; background-color: #ffffff; line-height: 1.5; }
+  select option { background: #ffffff; color: var(--black); }
 
   input[type="date"] {
-  color: var(--black);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  background: #ffffff;
-  border: 2px solid var(--black);
-  border-radius: 8px;
-  padding: 14px 18px;
-  cursor: pointer;
-  height: 54px;
-  line-height: 1.5;
-  box-sizing: border-box;
-}
-  
+    color: var(--black); font-family: 'DM Sans', sans-serif;
+    font-size: 15px; background: #ffffff; border: 2px solid var(--black);
+    border-radius: 8px; padding: 14px 18px; cursor: pointer;
+    height: 54px; line-height: 1.5; box-sizing: border-box;
+  }
   input[type="date"]:focus {
-    border-color: var(--black);
-    background: var(--accent-bg);
-    box-shadow: 3px 3px 0px var(--black);
-    outline: none;
+    border-color: var(--black); background: var(--accent-bg);
+    box-shadow: 3px 3px 0px var(--black); outline: none;
   }
-
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    opacity: 0.8;
-    width: 18px;
-    height: 18px;
-  }
-
-  input[type="date"]::-webkit-datetime-edit {
-    color: var(--black);
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  input[type="date"]::-webkit-datetime-edit-fields-wrapper {
-    color: var(--black);
-  }
-
-  input[type="date"]::-webkit-datetime-edit-text { color: var(--muted); }
+  input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.8; width: 18px; height: 18px; }
+  input[type="date"]::-webkit-datetime-edit { color: var(--black); font-family: 'DM Sans', sans-serif; }
   input[type="date"]::-webkit-datetime-edit-month-field,
   input[type="date"]::-webkit-datetime-edit-day-field,
-  input[type="date"]::-webkit-datetime-edit-year-field {
-    color: var(--black);
-    font-weight: 600;
-  }
-
-  input:focus, select:focus {
-    border-color: var(--black);
-    background: var(--accent-bg);
-    box-shadow: 3px 3px 0px var(--black);
-  }
-
-  select { cursor: pointer; background-color: #ffffff; }
-  select option { background: #ffffff; color: var(--black); }
+  input[type="date"]::-webkit-datetime-edit-year-field { color: var(--black); font-weight: 600; }
 
   .select-wrap { position: relative; }
   .select-wrap::after {
-    content: '▾';
-    position: absolute; right: 14px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--black); pointer-events: none; font-size: 14px; font-weight: 700;
+    content: '▾'; position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%); color: var(--black); pointer-events: none; font-size: 14px; font-weight: 700;
   }
+
+  /* ── PACKAGE CARDS ─────────────────────────────────── */
+  .package-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  @media (min-width: 480px) { .package-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+  .package-card {
+    border: 2px solid var(--black);
+    border-radius: 10px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #ffffff;
+    position: relative;
+    user-select: none;
+  }
+
+  .package-card:hover { box-shadow: 3px 3px 0px var(--black); transform: translateY(-1px); }
+
+  .package-card.selected {
+    border-color: var(--black);
+    box-shadow: 4px 4px 0px var(--black);
+    background: var(--accent-bg);
+  }
+
+  /* GOLD — best value */
+  .package-card.gold {
+    border-color: var(--green-dark);
+    background: var(--green-bg);
+  }
+  .package-card.gold:hover { box-shadow: 3px 3px 0px var(--green-dark); }
+  .package-card.gold.selected {
+    background: #d4f7e4;
+    border-color: var(--green-dark);
+    box-shadow: 4px 4px 0px var(--green-dark);
+  }
+
+  .best-value-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--green); color: #ffffff;
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 999px;
+    border: 1.5px solid var(--green-dark);
+    margin-bottom: 8px;
+  }
+
+  .package-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 0.05em;
+    color: var(--black); line-height: 1;
+    margin-bottom: 6px;
+  }
+  .package-card.gold .package-name { color: var(--green-dark); }
+
+  .package-price {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px; font-weight: 700;
+    color: var(--black); margin-bottom: 4px;
+  }
+  .package-card.gold .package-price { color: var(--green-dark); }
+
+  .package-tax {
+    font-size: 11px; color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .package-check {
+    position: absolute; top: 12px; right: 12px;
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #cccccc;
+    background: #ffffff;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .package-card.selected .package-check {
+    background: var(--black); border-color: var(--black);
+  }
+  .package-card.gold.selected .package-check {
+    background: var(--green-dark); border-color: var(--green-dark);
+  }
+  .package-check svg { width: 12px; height: 12px; color: #ffffff; opacity: 0; transition: opacity 0.15s; }
+  .package-card.selected .package-check svg { opacity: 1; }
+
+  .error-msg-package {
+    font-size: 11px; color: var(--danger); margin-top: 4px;
+    display: none; font-weight: 600; font-family: 'DM Mono', monospace;
+  }
+  .error-msg-package.show { display: block; }
 
   /* PAYMENT TABS */
   .payment-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
-
   .pay-tab {
     display: flex; align-items: center; gap: 7px;
     padding: 10px 16px; border-radius: 8px;
-    border: 2px solid var(--black);
-    background: #ffffff;
-    color: var(--muted);
-    font-size: 13px; font-weight: 600;
+    border: 2px solid var(--black); background: #ffffff;
+    color: var(--muted); font-size: 13px; font-weight: 600;
     cursor: pointer; transition: all 0.15s; user-select: none;
     flex: 1 1 auto; justify-content: center;
   }
-
   @media (min-width: 600px) { .pay-tab { flex: 0 1 auto; justify-content: flex-start; } }
-
-  .pay-tab.active {
-    border-color: var(--black);
-    background: var(--yellow);
-    color: var(--black);
-    box-shadow: 3px 3px 0px var(--black);
-  }
+  .pay-tab.active { border-color: var(--black); background: var(--yellow); color: var(--black); box-shadow: 3px 3px 0px var(--black); }
   .pay-tab svg { width: 17px; height: 17px; flex-shrink: 0; }
 
   /* STRIPE */
   .stripe-element-box {
-    background: #ffffff;
-    border: 2px solid var(--black);
-    border-radius: 8px;
-    padding: 13px 15px;
-    transition: box-shadow 0.15s, background 0.15s;
+    background: #ffffff; border: 2px solid var(--black); border-radius: 8px;
+    padding: 13px 15px; transition: box-shadow 0.15s, background 0.15s;
+    height: 54px; box-sizing: border-box; display: flex; align-items: center;
   }
   @media (min-width: 1024px) { .stripe-element-box { padding: 14px 18px; } }
-  .stripe-element-box.focused {
-    background: var(--accent-bg);
-    box-shadow: 3px 3px 0px var(--black);
-  }
+  .stripe-element-box.focused { background: var(--accent-bg); box-shadow: 3px 3px 0px var(--black); }
 
   .card-icons { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
   .card-badge {
-    border: 2px solid var(--black);
-    border-radius: 6px; padding: 4px 10px;
-    font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
-    font-family: 'DM Mono', monospace;
+    border: 2px solid var(--black); border-radius: 6px; padding: 4px 10px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.08em; font-family: 'DM Mono', monospace;
   }
   .card-badge.visa  { background: #1a1f71; color: white; }
   .card-badge.mc    { background: #eb6b2c; color: white; }
@@ -295,10 +286,8 @@
   .secure-note {
     display: flex; align-items: flex-start; gap: 8px;
     font-size: 12px; color: var(--black); margin-top: 14px;
-    padding: 12px 14px;
-    background: #f0fff4;
-    border-radius: 8px;
-    border: 2px solid var(--black);
+    padding: 12px 14px; background: #f0fff4;
+    border-radius: 8px; border: 2px solid var(--black);
     line-height: 1.5; font-weight: 500;
   }
   .secure-note svg { width: 14px; height: 14px; color: var(--success); flex-shrink: 0; margin-top: 1px; }
@@ -310,8 +299,7 @@
   }
 
   .info-box {
-    background: var(--accent-bg);
-    border: 2px solid var(--black);
+    background: var(--accent-bg); border: 2px solid var(--black);
     border-radius: 10px; padding: 18px 20px;
     font-size: 14px; color: var(--body); line-height: 1.8;
     box-shadow: 3px 3px 0px var(--black);
@@ -321,22 +309,16 @@
   /* TOTAL */
   .price-row {
     display: flex; justify-content: space-between; align-items: center;
-    border-top: 2px solid var(--black);
-    padding-top: 20px; margin-top: 20px;
+    border-top: 2px solid var(--black); padding-top: 20px; margin-top: 20px;
   }
   .price-label { font-size: 13px; font-weight: 700; color: var(--black); text-transform: uppercase; letter-spacing: 0.06em; }
-  .price-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 44px; letter-spacing: 0.04em; color: var(--black);
-  }
+  .price-value { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 0.04em; color: var(--black); }
 
   /* SUBMIT */
   .submit-btn {
-    width: 100%; padding: 18px;
-    background: var(--black); color: #ffffff;
+    width: 100%; padding: 18px; background: var(--black); color: #ffffff;
     border: 2px solid var(--black); border-radius: 10px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px; letter-spacing: 0.1em;
+    font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.1em;
     cursor: pointer; margin-top: 8px;
     transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
     box-shadow: 4px 4px 0px var(--yellow-dark);
@@ -346,22 +328,20 @@
   .submit-btn:active { transform: translateY(0); box-shadow: 2px 2px 0px var(--yellow-dark); }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  /* VALIDATION */
   input.error, select.error { border-color: var(--danger) !important; background: #fff0f0 !important; }
   .error-msg { font-size: 11px; color: var(--danger); margin-top: 3px; display: none; font-weight: 600; font-family: 'DM Mono', monospace; }
   .error-msg.show { display: block; }
 
-  /* SUCCESS */
   .success-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(255,255,255,0.96);
-    z-index: 100; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.96); z-index: 100;
+    align-items: center; justify-content: center;
     flex-direction: column; text-align: center; padding: 40px;
   }
   .success-overlay.show { display: flex; animation: fadeIn 0.4s ease both; }
   .success-icon {
-    width: 88px; height: 88px; background: var(--yellow);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    width: 88px; height: 88px; background: var(--yellow); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
     margin-bottom: 24px; animation: popIn 0.4s 0.2s ease both; opacity: 0;
     border: 3px solid var(--black); box-shadow: 4px 4px 0px var(--black);
   }
@@ -480,20 +460,53 @@
           </div>
           <span class="error-msg" id="err-heard">Please select an option</span>
         </div>
+
+        <!-- SELECT YOUR COURSE replaced with package cards below -->
         <div class="field">
-          <label for="course">Select Your Course</label>
-          <div class="select-wrap">
-            <select id="course" required>
-              <option value="" disabled selected>Select a course</option>
-              <option value="beginner:790.98">BDE - Gold Package — $790.98 (Tax included)</option>
-              <option value="refresher:779.40">BDE - Platinum Package — $779.40 (Tax included)</option>
-              <option value="road-test:621.50">BDE - Silver Package — $621.50 (Tax included)199</option>
-              <option value="winter:34900">Winter Driving Safety — $349</option>
-              <option value="highway:44900">Highway &amp; Advanced Skills — $449</option>
-            </select>
-          </div>
-          <span class="error-msg" id="err-course">Please select a course</span>
+          <label for="heard">How Did You Hear About Us?</label>
         </div>
+      </div>
+
+      <!-- PACKAGE CARDS -->
+      <div style="margin-top:8px;">
+        <label style="display:block;margin-bottom:10px;">Select Your Package</label>
+        <div class="package-grid" id="packageGrid">
+
+          <!-- GOLD — Best Value -->
+          <div class="package-card gold" data-package="gold" onclick="selectPackage('gold')">
+            <div class="best-value-badge">
+              ★ Best Value
+            </div>
+            <div class="package-check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="package-name" id="label-gold">Gold Package</div>
+            <div class="package-price" id="price-gold">—</div>
+            <div class="package-tax">Tax included</div>
+          </div>
+
+          <!-- PLATINUM -->
+          <div class="package-card" data-package="platinum" onclick="selectPackage('platinum')">
+            <div class="package-check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="package-name" id="label-platinum">Platinum Package</div>
+            <div class="package-price" id="price-platinum">—</div>
+            <div class="package-tax">Tax included</div>
+          </div>
+
+          <!-- SILVER -->
+          <div class="package-card" data-package="silver" onclick="selectPackage('silver')">
+            <div class="package-check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="package-name" id="label-silver">Silver Package</div>
+            <div class="package-price" id="price-silver">—</div>
+            <div class="package-tax">Tax included</div>
+          </div>
+
+        </div>
+        <span class="error-msg-package" id="err-package">Please select a package</span>
       </div>
     </div>
 
@@ -516,7 +529,6 @@
         </div>
       </div>
 
-      <!-- STRIPE CARD PANEL -->
       <div id="panel-card">
         <div class="card-icons">
           <span class="card-badge visa">VISA</span>
@@ -549,7 +561,6 @@
         </div>
       </div>
 
-      <!-- E-TRANSFER PANEL -->
       <div id="panel-etransfer" style="display:none;">
         <div class="info-box">
           Send your e-Transfer to:<br>
@@ -559,7 +570,6 @@
         </div>
       </div>
 
-      <!-- CASH PANEL -->
       <div id="panel-cash" style="display:none;">
         <div class="info-box">
           Pay in person at our office:<br>
@@ -571,8 +581,8 @@
 
       <div class="price-row">
         <div>
-          <div class="price-label">Course Total</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace;">Select a course above to see price</div>
+          <div class="price-label">Total</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace;">Select a package above</div>
         </div>
         <div class="price-value" id="total-display">—</div>
       </div>
@@ -583,7 +593,6 @@
   </form>
 </div>
 
-<!-- SUCCESS OVERLAY -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-icon">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -593,11 +602,29 @@
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════
-//  Replace with your Stripe Publishable Key:
-//  https://dashboard.stripe.com/apikeys
-//  pk_test_... for testing / pk_live_... for production
-// ══════════════════════════════════════════════════════
+// ── Populate package cards from COURSES variable ──────────
+Object.keys(COURSES).forEach(key => {
+  const c = COURSES[key];
+  const el = document.getElementById(`price-${key}`);
+  if (el) el.textContent = '$' + c.price.toFixed(2);
+  const lbl = document.getElementById(`label-${key}`);
+  if (lbl) lbl.textContent = c.label;
+});
+
+// ── Package selection ─────────────────────────────────────
+let selectedPackage = null;
+
+function selectPackage(key) {
+  selectedPackage = key;
+  document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`[data-package="${key}"]`).classList.add('selected');
+  const price = COURSES[key].price;
+  document.getElementById('total-display').textContent = '$' + price.toFixed(2);
+  document.getElementById('err-package').classList.remove('show');
+}
+
+// ── Stripe setup ──────────────────────────────────────────
+// Replace with your key from https://dashboard.stripe.com/apikeys
 const STRIPE_KEY = 'pk_test_REPLACE_WITH_YOUR_KEY';
 
 const stripe   = Stripe(STRIPE_KEY);
@@ -607,10 +634,8 @@ const elements = stripe.elements({
 
 const stripeStyle = {
   base: {
-    color: '#111111',
-    fontFamily: '"DM Mono", monospace',
-    fontSize: '15px',
-    fontSmoothing: 'antialiased',
+    color: '#111111', fontFamily: '"DM Mono", monospace',
+    fontSize: '15px', fontSmoothing: 'antialiased',
     '::placeholder': { color: '#aaaaaa' }
   },
   invalid: { color: '#cc0000', iconColor: '#cc0000' }
@@ -636,26 +661,26 @@ cardNumber.on('change', e => {
   else err.style.display = 'none';
 });
 
-// ── Phone auto-format: 416-555-0000 ──
+// ── Phone format ──────────────────────────────────────────
 function formatPhone(el) {
-  let v = el.value.replace(/\D/g, '').substring(0, 10);
-  if (v.length >= 7) v = v.substring(0,3) + '-' + v.substring(3,6) + '-' + v.substring(6);
-  else if (v.length >= 4) v = v.substring(0,3) + '-' + v.substring(3);
+  let v = el.value.replace(/\D/g,'').substring(0,10);
+  if (v.length >= 7) v = v.substring(0,3)+'-'+v.substring(3,6)+'-'+v.substring(6);
+  else if (v.length >= 4) v = v.substring(0,3)+'-'+v.substring(3);
   el.value = v;
 }
 document.getElementById('cell').addEventListener('input', function(){ formatPhone(this); });
 document.getElementById('home').addEventListener('input', function(){ formatPhone(this); });
 
-// ── License auto-format: A1234-12345-12345 ──
+// ── License format ────────────────────────────────────────
 function formatLicense(el) {
-  let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 15);
-  if (v.length > 9) v = v.substring(0,5) + '-' + v.substring(5,10) + '-' + v.substring(10);
-  else if (v.length > 4) v = v.substring(0,5) + '-' + v.substring(5);
+  let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,15);
+  if (v.length > 9) v = v.substring(0,5)+'-'+v.substring(5,10)+'-'+v.substring(10);
+  else if (v.length > 4) v = v.substring(0,5)+'-'+v.substring(5);
   el.value = v;
 }
 document.getElementById('license').addEventListener('input', function(){ formatLicense(this); });
 
-// ── Payment tabs ──
+// ── Payment tabs ──────────────────────────────────────────
 let currentMethod = 'card';
 function switchPayment(m) {
   currentMethod = m;
@@ -666,14 +691,7 @@ function switchPayment(m) {
   });
 }
 
-// ── Course price ──
-const priceLabels = { beginner:'$790.99', refresher:'$881.40', 'road-test':'$621.50', winter:'$349', highway:'$449' };
-document.getElementById('course').addEventListener('change', function() {
-  const [name] = this.value.split(':');
-  document.getElementById('total-display').textContent = priceLabels[name] || '—';
-});
-
-// ── Validation ──
+// ── Validation ────────────────────────────────────────────
 function showErr(id,msg){ const e=document.getElementById(id); if(e){if(msg)e.textContent=msg; e.classList.add('show');} }
 function hideErr(id){ document.getElementById(id)?.classList.remove('show'); }
 function markErr(id){ document.getElementById(id)?.classList.add('error'); }
@@ -693,7 +711,6 @@ function validateForm() {
     {id:'postal',   msg:'Please enter your postal code'},
     {id:'expiry',   msg:'Please enter the expiry date'},
     {id:'heard',    msg:'Please select how you heard about us'},
-    {id:'course',   msg:'Please select a course'},
   ].forEach(({id,msg}) => {
     if (!document.getElementById(id).value.trim()) { markErr(id); showErr(`err-${id}`,msg); ok=false; }
     else { clearErr(id); hideErr(`err-${id}`); }
@@ -714,13 +731,17 @@ function validateForm() {
     markErr('license'); showErr('err-license','Format must be A1234-12345-12345'); ok=false;
   } else { clearErr('license'); hideErr('err-license'); }
 
+  if (!selectedPackage) {
+    document.getElementById('err-package').classList.add('show'); ok=false;
+  }
+
   if (currentMethod==='card' && !document.getElementById('cc-name').value.trim()) {
     markErr('cc-name'); showErr('err-cc-name','Enter the name on your card'); ok=false;
   }
   return ok;
 }
 
-// ── Stripe payment ──
+// ── Stripe payment ────────────────────────────────────────
 async function handleCardPayment() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -731,29 +752,28 @@ async function handleCardPayment() {
   });
 
   if (error) {
-    const errEl = document.getElementById('stripe-error');
-    errEl.textContent = error.message;
-    errEl.style.display = 'block';
+    document.getElementById('stripe-error').textContent = error.message;
+    document.getElementById('stripe-error').style.display = 'block';
     btn.disabled = false;
     btn.innerHTML = 'Complete Registration →';
     return;
   }
 
-  // Uncomment when backend is ready:
-  // const [courseName, amountCents] = document.getElementById('course').value.split(':');
+  // Uncomment when backend ready:
   // await fetch('https://YOUR-BACKEND.com/charge', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
   //   body: JSON.stringify({
   //     stripeToken: token.id,
-  //     amount: parseInt(amountCents),
+  //     amount: Math.round(COURSES[selectedPackage].price * 100),
   //     currency: 'cad',
   //     name:  document.getElementById('fullname').value,
   //     email: document.getElementById('email').value,
+  //     package: COURSES[selectedPackage].label,
   //   })
   // });
 
-  console.log('Stripe token:', token.id);
+  console.log('Stripe token:', token.id, '| Package:', COURSES[selectedPackage].label);
   showSuccess();
 }
 
