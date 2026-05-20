@@ -1,219 +1,348 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DriveReady – Student Registration</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Stripe.js — required for secure card processing -->
 <script src="https://js.stripe.com/v3/"></script>
 <style>
   :root {
-    --black: #0a0a0a;
-    --asphalt: #1a1c20;
-    --panel: #242730;
+    --bg: #ffffff;
+    --surface: #f8f9fa;
+    --card: #ffffff;
+    --border: #222222;
     --yellow: #f5c400;
-    --white: #f0efe9;
-    --muted: #7a7d85;
-    --danger: #e05c5c;
-    --success: #4caf88;
-    --card-bg: #16181d;
-    --border: rgba(245,196,0,0.15);
+    --yellow-dark: #b38a00;
+    --black: #111111;
+    --body: #111111;
+    --muted: #555555;
+    --danger: #cc0000;
+    --success: #1a7a4a;
+    --accent-bg: #fffbe6;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    background: var(--black);
-    color: var(--white);
+  html, body {
+    width: 100%;
+    background: var(--bg);
+    color: var(--body);
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 4px; height: 100vh;
-    background: repeating-linear-gradient(to bottom, var(--yellow) 0px, var(--yellow) 40px, transparent 40px, transparent 80px);
-    opacity: 0.05; z-index: 0; pointer-events: none;
   }
 
   .page-wrap {
-    position: relative; z-index: 1;
-    max-width: 780px; margin: 0 auto;
-    padding: 40px 20px 80px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 16px 80px;
   }
 
-  header { text-align: center; margin-bottom: 56px; animation: fadeDown 0.6s ease both; }
+  @media (min-width: 1024px) { .page-wrap { padding: 56px 48px 80px; } }
+  @media (min-width: 600px) and (max-width: 1023px) { .page-wrap { padding: 40px 28px 80px; } }
+  @media (max-width: 374px) { .page-wrap { padding: 28px 10px 60px; } }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeDown 0.6s ease both;
+  }
 
   .logo-badge {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: var(--yellow); color: var(--black);
-    padding: 6px 18px 6px 10px; border-radius: 999px;
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--black);
+    color: #ffffff;
+    padding: 7px 18px 7px 12px;
+    border-radius: 999px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    border: 2px solid var(--black);
   }
-  .logo-badge svg { width: 18px; height: 18px; }
+  .logo-badge svg { width: 16px; height: 16px; }
 
   h1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(52px, 10vw, 88px);
-    letter-spacing: 0.03em; line-height: 0.9;
-    color: var(--white); margin-bottom: 14px;
+    font-size: clamp(44px, 8vw, 80px);
+    letter-spacing: 0.03em;
+    line-height: 0.95;
+    color: var(--black);
+    margin-bottom: 10px;
   }
-  h1 span { color: var(--yellow); }
-  .subtitle { color: var(--muted); font-size: 15px; font-weight: 300; }
+  h1 span { color: var(--yellow-dark); }
 
-  .form-section {
-    background: var(--card-bg); border: 1px solid var(--border);
-    border-radius: 16px; padding: 32px; margin-bottom: 20px;
-    animation: fadeUp 0.5s ease both;
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 400;
   }
+
+  .progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #cccccc; border: 1.5px solid var(--black); }
+  .progress-dot.active { background: var(--yellow); width: 24px; border-radius: 4px; border-color: var(--yellow-dark); }
+
+  /* SECTIONS */
+  .form-section {
+    background: var(--card);
+    border: 2px solid var(--black);
+    border-radius: 12px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    box-shadow: 4px 4px 0px var(--black);
+    animation: fadeUp 0.5s ease both;
+    width: 100%;
+  }
+
+  @media (min-width: 600px) { .form-section { padding: 32px 28px; } }
+  @media (min-width: 1024px) { .form-section { padding: 36px 40px; border-radius: 14px; } }
+
   .form-section:nth-child(2) { animation-delay: 0.05s; }
   .form-section:nth-child(3) { animation-delay: 0.10s; }
   .form-section:nth-child(4) { animation-delay: 0.15s; }
   .form-section:nth-child(5) { animation-delay: 0.20s; }
 
   .section-label {
-    display: flex; align-items: center; gap: 10px;
-    font-family: 'DM Mono', monospace; font-size: 10px;
-    font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--yellow); margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 22px;
+    background: var(--yellow);
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1.5px solid var(--black);
+    display: inline-flex;
+    width: 100%;
   }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--black); opacity: 0.2; }
 
-  .grid { display: grid; gap: 16px; }
-  .grid-2 { grid-template-columns: 1fr 1fr; }
-  .col-span-2 { grid-column: span 2; }
+  /* GRID */
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .col-span-2 { grid-column: span 1; }
 
-  @media (max-width: 580px) {
-    .grid-2 { grid-template-columns: 1fr; }
-    .col-span-2 { grid-column: span 1; }
-    .form-section { padding: 24px 18px; }
+  @media (min-width: 480px) {
+    .grid-2 { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .col-span-2 { grid-column: span 2; }
   }
 
-  .field { display: flex; flex-direction: column; gap: 7px; }
+  /* FIELDS */
+  .field { display: flex; flex-direction: column; gap: 6px; }
 
   label {
-    font-size: 11px; font-weight: 500;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--black);
+  }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-top: -2px;
+    margin-bottom: 2px;
   }
 
   input, select {
-    background: var(--panel); border: 1.5px solid rgba(255,255,255,0.06);
-    border-radius: 9px; color: var(--white);
-    font-family: 'DM Sans', sans-serif; font-size: 15px;
-    padding: 13px 16px; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-    outline: none; width: 100%; -webkit-appearance: none;
+    background: #ffffff;
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    color: var(--black);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    padding: 13px 15px;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+    font-weight: 500;
   }
-  input::placeholder { color: var(--muted); opacity: 0.5; }
+
+  @media (min-width: 1024px) { input, select { padding: 14px 18px; } }
+
+  input::placeholder { color: #aaaaaa; font-weight: 400; }
   input:focus, select:focus {
-    border-color: var(--yellow); background: #1e2128;
-    box-shadow: 0 0 0 3px rgba(245,196,0,0.08);
+    border-color: var(--black);
+    background: var(--accent-bg);
+    box-shadow: 3px 3px 0px var(--black);
   }
-  select { cursor: pointer; }
-  select option { background: var(--asphalt); color: var(--white); }
+  select { cursor: pointer; background-color: #ffffff; }
+  select option { background: #ffffff; color: var(--black); }
 
   .select-wrap { position: relative; }
   .select-wrap::after {
-    content: '▾'; position: absolute; right: 14px; top: 50%;
-    transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 13px;
+    content: '▾';
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--black); pointer-events: none; font-size: 14px; font-weight: 700;
   }
 
-  .payment-tabs { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  /* PAYMENT TABS */
+  .payment-tabs {
+    display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;
+  }
+
   .pay-tab {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 18px; border-radius: 10px;
-    border: 1.5px solid rgba(255,255,255,0.08);
-    background: var(--panel); color: var(--muted);
-    font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; user-select: none;
+    display: flex; align-items: center; gap: 7px;
+    padding: 10px 16px; border-radius: 8px;
+    border: 2px solid var(--black);
+    background: #ffffff;
+    color: var(--muted);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; user-select: none;
+    flex: 1 1 auto; justify-content: center;
   }
-  .pay-tab.active { border-color: var(--yellow); background: rgba(245,196,0,0.08); color: var(--yellow); }
-  .pay-tab svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-  /* Stripe Element containers */
+  @media (min-width: 600px) { .pay-tab { flex: 0 1 auto; justify-content: flex-start; } }
+
+  .pay-tab.active {
+    border-color: var(--black);
+    background: var(--yellow);
+    color: var(--black);
+    box-shadow: 3px 3px 0px var(--black);
+  }
+  .pay-tab svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+  /* STRIPE ELEMENTS */
   .stripe-element-box {
-    background: var(--panel); border: 1.5px solid rgba(255,255,255,0.06);
-    border-radius: 9px; padding: 14px 16px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #ffffff;
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    padding: 13px 15px;
+    transition: box-shadow 0.15s, background 0.15s;
   }
+  @media (min-width: 1024px) { .stripe-element-box { padding: 14px 18px; } }
   .stripe-element-box.focused {
-    border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(245,196,0,0.08);
+    background: var(--accent-bg);
+    box-shadow: 3px 3px 0px var(--black);
   }
 
-  .card-icons { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+  .card-icons { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
   .card-badge {
-    background: var(--panel); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 6px; padding: 5px 10px;
-    font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
-    color: var(--muted); font-family: 'DM Mono', monospace;
+    border: 2px solid var(--black);
+    border-radius: 6px; padding: 4px 10px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+    font-family: 'DM Mono', monospace; background: white;
+    color: var(--black);
   }
-  .card-badge.visa { color: #4a90d9; }
-  .card-badge.mc   { color: #eb6b2c; }
-  .card-badge.amex { color: #6b9adf; }
+  .card-badge.visa  { background: #1a1f71; color: white; }
+  .card-badge.mc    { background: #eb6b2c; color: white; }
+  .card-badge.amex  { background: #2e77bc; color: white; }
 
   .secure-note {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 11px; color: var(--muted); margin-top: 16px;
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--black); margin-top: 14px;
+    padding: 12px 14px;
+    background: #f0fff4;
+    border-radius: 8px;
+    border: 2px solid var(--black);
+    line-height: 1.5; font-weight: 500;
   }
-  .secure-note svg { width: 13px; height: 13px; color: var(--success); flex-shrink: 0; }
+  .secure-note svg { width: 14px; height: 14px; color: var(--success); flex-shrink: 0; margin-top: 1px; }
 
   #stripe-error {
     display: none; color: var(--danger); font-size: 12px; margin-top: 10px;
+    padding: 10px 14px; background: #fff0f0;
+    border-radius: 8px; border: 2px solid var(--danger); font-weight: 600;
   }
 
+  .info-box {
+    background: var(--accent-bg);
+    border: 2px solid var(--black);
+    border-radius: 10px; padding: 18px 20px;
+    font-size: 14px; color: var(--body); line-height: 1.8;
+    box-shadow: 3px 3px 0px var(--black);
+  }
+  .info-box strong { color: var(--black); font-weight: 700; }
+
+  /* TOTAL */
   .price-row {
     display: flex; justify-content: space-between; align-items: center;
-    border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px;
+    border-top: 2px solid var(--black);
+    padding-top: 20px; margin-top: 20px;
   }
-  .price-label { font-size: 13px; color: var(--muted); }
-  .price-value { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.05em; color: var(--yellow); }
+  .price-label { font-size: 13px; font-weight: 700; color: var(--black); text-transform: uppercase; letter-spacing: 0.06em; }
+  .price-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px; letter-spacing: 0.04em; color: var(--black);
+  }
 
+  /* SUBMIT */
   .submit-btn {
-    width: 100%; padding: 18px; background: var(--yellow); color: var(--black);
-    border: none; border-radius: 12px; font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; letter-spacing: 0.08em; cursor: pointer; margin-top: 8px;
-    transition: transform 0.15s, box-shadow 0.15s;
+    width: 100%; padding: 18px;
+    background: var(--black); color: #ffffff;
+    border: 2px solid var(--black); border-radius: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px; letter-spacing: 0.1em;
+    cursor: pointer; margin-top: 8px;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    box-shadow: 4px 4px 0px var(--yellow-dark);
   }
-  .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(245,196,0,0.25); }
+  @media (min-width: 1024px) { .submit-btn { font-size: 26px; padding: 20px; } }
+  .submit-btn:hover {
+    background: #222222;
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0px var(--yellow-dark);
+  }
+  .submit-btn:active { transform: translateY(0); box-shadow: 2px 2px 0px var(--yellow-dark); }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  input.error, select.error { border-color: var(--danger) !important; }
-  .error-msg { font-size: 11px; color: var(--danger); margin-top: 2px; display: none; }
+  /* VALIDATION */
+  input.error, select.error { border-color: var(--danger) !important; background: #fff0f0 !important; }
+  .error-msg { font-size: 11px; color: var(--danger); margin-top: 3px; display: none; font-weight: 600; font-family: 'DM Mono', monospace; }
   .error-msg.show { display: block; }
 
+  /* SUCCESS */
   .success-overlay {
     display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.88); z-index: 100;
-    align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.96);
+    z-index: 100; align-items: center; justify-content: center;
     flex-direction: column; text-align: center; padding: 40px;
-    backdrop-filter: blur(8px);
   }
   .success-overlay.show { display: flex; animation: fadeIn 0.4s ease both; }
   .success-icon {
-    width: 80px; height: 80px; background: var(--yellow); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+    width: 88px; height: 88px; background: var(--yellow);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
     margin-bottom: 24px; animation: popIn 0.4s 0.2s ease both; opacity: 0;
+    border: 3px solid var(--black);
+    box-shadow: 4px 4px 0px var(--black);
   }
-  .success-icon svg { width: 40px; height: 40px; color: var(--black); }
-  .success-overlay h2 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--white); margin-bottom: 10px; }
-  .success-overlay p { color: var(--muted); font-size: 15px; max-width: 340px; }
+  .success-icon svg { width: 44px; height: 44px; color: var(--black); }
+  .success-overlay h2 { font-family:'Bebas Neue',sans-serif; font-size:56px; color:var(--black); margin-bottom:10px; }
+  .success-overlay p { color: var(--muted); font-size: 15px; max-width: 340px; line-height: 1.6; }
 
   .spinner {
     display: inline-block; width: 18px; height: 18px;
-    border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+    border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
     border-radius: 50%; animation: spin 0.6s linear infinite;
     vertical-align: middle; margin-right: 8px;
   }
 
-  @keyframes fadeDown { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeUp   { from { opacity: 0; transform: translateY(18px);  } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes popIn    { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
-  @keyframes spin     { to { transform: rotate(360deg); } }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+  @keyframes popIn    { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+  @keyframes spin     { to{transform:rotate(360deg)} }
 </style>
 </head>
 <body>
@@ -226,7 +355,13 @@
       DriveReady School
     </div>
     <h1>Student<br><span>Registration</span></h1>
-    <p class="subtitle">Complete the form below to enrol in your driving course</p>
+    <p class="subtitle">Fill out the form below to enrol in your driving course</p>
+    <div class="progress">
+      <div class="progress-dot active"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+    </div>
   </header>
 
   <form id="regForm" novalidate>
@@ -242,12 +377,14 @@
         </div>
         <div class="field">
           <label for="cell">Cell Phone</label>
-          <input type="tel" id="cell" placeholder="(555) 000-0000" required>
-          <span class="error-msg" id="err-cell">Please enter your cell phone</span>
+          <div class="field-hint">Format: 416-555-0000</div>
+          <input type="tel" id="cell" placeholder="416-555-0000" maxlength="12" required>
+          <span class="error-msg" id="err-cell">Please enter a valid 10-digit phone number</span>
         </div>
         <div class="field">
           <label for="home">Home Phone</label>
-          <input type="tel" id="home" placeholder="(555) 000-0000">
+          <div class="field-hint">Format: 416-555-0000</div>
+          <input type="tel" id="home" placeholder="416-555-0000" maxlength="12">
         </div>
         <div class="field col-span-2">
           <label for="email">Email Address</label>
@@ -268,7 +405,7 @@
         </div>
         <div class="field">
           <label for="postal">Postal Code</label>
-          <input type="text" id="postal" placeholder="A1B 2C3" required maxlength="10">
+          <input type="text" id="postal" placeholder="A1B 2C3" required maxlength="7">
           <span class="error-msg" id="err-postal">Please enter your postal code</span>
         </div>
       </div>
@@ -280,8 +417,9 @@
       <div class="grid grid-2">
         <div class="field">
           <label for="license">Driver License Number</label>
-          <input type="text" id="license" placeholder="A1234567" required>
-          <span class="error-msg" id="err-license">Please enter your license number</span>
+          <div class="field-hint">Format: A1234-12345-12345</div>
+          <input type="text" id="license" placeholder="A1234-12345-12345" maxlength="17" required>
+          <span class="error-msg" id="err-license">Format must be A1234-12345-12345</span>
         </div>
         <div class="field">
           <label for="expiry">License Expiry Date</label>
@@ -331,7 +469,7 @@
           Credit / Debit Card
         </div>
         <div class="pay-tab" data-method="etransfer" onclick="switchPayment('etransfer')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM9 9h6M9 12h6M9 15h4"/></svg>
           E-Transfer
         </div>
         <div class="pay-tab" data-method="cash" onclick="switchPayment('cash')">
@@ -344,15 +482,13 @@
       <div id="panel-card">
         <div class="card-icons">
           <span class="card-badge visa">VISA</span>
-          <span class="card-badge mc">MC</span>
+          <span class="card-badge mc">MASTERCARD</span>
           <span class="card-badge amex">AMEX</span>
         </div>
-
         <div class="field" style="margin-bottom:14px;">
           <label>Card Number</label>
           <div class="stripe-element-box" id="stripe-card-number"></div>
         </div>
-
         <div class="grid grid-2" style="margin-bottom:14px;">
           <div class="field">
             <label>Expiry Date</label>
@@ -363,49 +499,42 @@
             <div class="stripe-element-box" id="stripe-card-cvc"></div>
           </div>
         </div>
-
         <div class="field">
           <label for="cc-name">Name on Card</label>
           <input type="text" id="cc-name" placeholder="JANE SMITH">
           <span class="error-msg" id="err-cc-name">Enter the name on your card</span>
         </div>
-
         <div id="stripe-error"></div>
-
         <div class="secure-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Secured by Stripe. Card details are encrypted — never stored on our servers.
+          Secured by Stripe — your card details are encrypted and never stored on our servers.
         </div>
       </div>
 
       <!-- E-TRANSFER PANEL -->
       <div id="panel-etransfer" style="display:none;">
-        <div style="background:var(--panel);border-radius:10px;padding:20px;border:1px solid var(--border);">
-          <p style="font-size:14px;color:var(--muted);line-height:1.8;">
-            Send your e-Transfer to:<br>
-            <strong style="color:var(--yellow);font-family:'DM Mono',monospace;font-size:16px;">payments@driverready.ca</strong><br><br>
-            Use your <strong style="color:var(--white);">full name</strong> as the message/note.<br>
-            Registration confirmed within 1 business day of payment received.
-          </p>
+        <div class="info-box">
+          Send your e-Transfer to:<br>
+          <strong>payments@driverready.ca</strong><br><br>
+          Use your <strong>full name</strong> as the message/note.<br>
+          Registration confirmed within 1 business day of payment received.
         </div>
       </div>
 
       <!-- CASH PANEL -->
       <div id="panel-cash" style="display:none;">
-        <div style="background:var(--panel);border-radius:10px;padding:20px;border:1px solid var(--border);">
-          <p style="font-size:14px;color:var(--muted);line-height:1.8;">
-            Pay in person at our office:<br>
-            <strong style="color:var(--white);">123 Driving Ave, Suite 10<br>Toronto, ON M1A 2B3</strong><br><br>
-            Hours: Mon–Fri 9am–6pm · Sat 10am–3pm<br>
-            Cash, debit, and certified cheques accepted.
-          </p>
+        <div class="info-box">
+          Pay in person at our office:<br>
+          <strong>123 Driving Ave, Suite 10, Toronto, ON M1A 2B3</strong><br><br>
+          Hours: Mon–Fri 9am–6pm · Sat 10am–3pm<br>
+          Cash, debit, and certified cheques accepted.
         </div>
       </div>
 
       <div class="price-row">
         <div>
           <div class="price-label">Course Total</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Select a course above</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace;">Select a course above to see price</div>
         </div>
         <div class="price-value" id="total-display">—</div>
       </div>
@@ -416,7 +545,7 @@
   </form>
 </div>
 
-<!-- SUCCESS -->
+<!-- SUCCESS OVERLAY -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-icon">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -426,27 +555,13 @@
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════════════
-//  SETUP — two things to do before going live:
-//
-//  STEP 1 ▸ Replace the key below with your real Stripe
-//           Publishable Key from dashboard.stripe.com/apikeys
-//           (use pk_live_... for production, pk_test_... for testing)
-//
-//  STEP 2 ▸ To actually charge cards you need a tiny backend
-//           (a Stripe Payment Intent). The easiest no-code option:
-//           use Stripe Payment Links for each course, OR set up
-//           a free Netlify/Vercel function. See:
-//           https://stripe.com/docs/payments/accept-a-payment
-//
-//           The form currently tokenizes the card securely with
-//           Stripe and logs the token — replace the TODO below
-//           with a fetch() to your backend endpoint.
-// ════════════════════════════════════════════════════════════════
-
+// ══════════════════════════════════════════════════════
+//  Replace with your Stripe Publishable Key:
+//  https://dashboard.stripe.com/apikeys
+//  pk_test_... for testing / pk_live_... for production
+// ══════════════════════════════════════════════════════
 const STRIPE_KEY = 'pk_test_REPLACE_WITH_YOUR_KEY';
 
-// ── Stripe Elements setup ────────────────────────────────────────
 const stripe   = Stripe(STRIPE_KEY);
 const elements = stripe.elements({
   fonts: [{ cssSrc: 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }]
@@ -454,13 +569,13 @@ const elements = stripe.elements({
 
 const stripeStyle = {
   base: {
-    color: '#f0efe9',
+    color: '#111111',
     fontFamily: '"DM Mono", monospace',
     fontSize: '15px',
     fontSmoothing: 'antialiased',
-    '::placeholder': { color: '#4d5059' }
+    '::placeholder': { color: '#aaaaaa' }
   },
-  invalid: { color: '#e05c5c', iconColor: '#e05c5c' }
+  invalid: { color: '#cc0000', iconColor: '#cc0000' }
 };
 
 const cardNumber = elements.create('cardNumber', { style: stripeStyle, showIcon: true });
@@ -471,9 +586,8 @@ cardNumber.mount('#stripe-card-number');
 cardExpiry.mount('#stripe-card-expiry');
 cardCvc.mount('#stripe-card-cvc');
 
-// Focus glow
-[{el: cardNumber, id:'stripe-card-number'}, {el: cardExpiry, id:'stripe-card-expiry'}, {el: cardCvc, id:'stripe-card-cvc'}]
-  .forEach(({el, id}) => {
+[{el:cardNumber,id:'stripe-card-number'},{el:cardExpiry,id:'stripe-card-expiry'},{el:cardCvc,id:'stripe-card-cvc'}]
+  .forEach(({el,id}) => {
     el.on('focus', () => document.getElementById(id).classList.add('focused'));
     el.on('blur',  () => document.getElementById(id).classList.remove('focused'));
   });
@@ -484,7 +598,26 @@ cardNumber.on('change', e => {
   else err.style.display = 'none';
 });
 
-// ── Payment tabs ─────────────────────────────────────────────────
+// ── Phone formatting: auto-inserts dashes → 416-555-0000 ──
+function formatPhone(el) {
+  let v = el.value.replace(/\D/g, '').substring(0, 10);
+  if (v.length >= 7) v = v.substring(0,3) + '-' + v.substring(3,6) + '-' + v.substring(6);
+  else if (v.length >= 4) v = v.substring(0,3) + '-' + v.substring(3);
+  el.value = v;
+}
+document.getElementById('cell').addEventListener('input', function(){ formatPhone(this); });
+document.getElementById('home').addEventListener('input', function(){ formatPhone(this); });
+
+// ── License formatting: A1234-12345-12345 ──
+function formatLicense(el) {
+  let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 15);
+  if (v.length > 9) v = v.substring(0,5) + '-' + v.substring(5,10) + '-' + v.substring(10);
+  else if (v.length > 4) v = v.substring(0,5) + '-' + v.substring(5);
+  el.value = v;
+}
+document.getElementById('license').addEventListener('input', function(){ formatLicense(this); });
+
+// ── Payment tabs ──
 let currentMethod = 'card';
 function switchPayment(m) {
   currentMethod = m;
@@ -495,53 +628,68 @@ function switchPayment(m) {
   });
 }
 
-// ── Course price display ──────────────────────────────────────────
+// ── Course price ──
 const priceLabels = { beginner:'$799', refresher:'$299', 'road-test':'$199', winter:'$349', highway:'$449' };
 document.getElementById('course').addEventListener('change', function() {
   const [name] = this.value.split(':');
   document.getElementById('total-display').textContent = priceLabels[name] || '—';
 });
 
-// ── Validation ───────────────────────────────────────────────────
-function showErr(id, msg) { const e = document.getElementById(id); if(e){ if(msg) e.textContent=msg; e.classList.add('show'); } }
-function hideErr(id)      { document.getElementById(id)?.classList.remove('show'); }
-function markErr(id)      { document.getElementById(id)?.classList.add('error'); }
-function clearErr(id)     { document.getElementById(id)?.classList.remove('error'); }
+// ── Validation helpers ──
+function showErr(id,msg){ const e=document.getElementById(id); if(e){if(msg)e.textContent=msg; e.classList.add('show');} }
+function hideErr(id){ document.getElementById(id)?.classList.remove('show'); }
+function markErr(id){ document.getElementById(id)?.classList.add('error'); }
+function clearErr(id){ document.getElementById(id)?.classList.remove('error'); }
 
-document.querySelectorAll('input, select').forEach(el => {
+document.querySelectorAll('input,select').forEach(el => {
   el.addEventListener('input',  () => { clearErr(el.id); hideErr(`err-${el.id}`); });
   el.addEventListener('change', () => { clearErr(el.id); hideErr(`err-${el.id}`); });
 });
 
 function validateForm() {
   let ok = true;
+
+  // Required text fields
   [
-    { id:'fullname', msg:'Please enter your full name' },
-    { id:'cell',     msg:'Please enter your cell phone' },
-    { id:'email',    msg:'Please enter a valid email' },
-    { id:'address',  msg:'Please enter your address' },
-    { id:'postal',   msg:'Please enter your postal code' },
-    { id:'license',  msg:'Please enter your license number' },
-    { id:'expiry',   msg:'Please enter the expiry date' },
-    { id:'heard',    msg:'Please select how you heard about us' },
-    { id:'course',   msg:'Please select a course' },
-  ].forEach(({id, msg}) => {
-    if (!document.getElementById(id).value.trim()) { markErr(id); showErr(`err-${id}`, msg); ok = false; }
+    {id:'fullname', msg:'Please enter your full name'},
+    {id:'email',    msg:'Please enter a valid email'},
+    {id:'address',  msg:'Please enter your address'},
+    {id:'postal',   msg:'Please enter your postal code'},
+    {id:'expiry',   msg:'Please enter the expiry date'},
+    {id:'heard',    msg:'Please select how you heard about us'},
+    {id:'course',   msg:'Please select a course'},
+  ].forEach(({id,msg}) => {
+    if (!document.getElementById(id).value.trim()) { markErr(id); showErr(`err-${id}`,msg); ok=false; }
     else { clearErr(id); hideErr(`err-${id}`); }
   });
 
+  // Email format
   const email = document.getElementById('email').value;
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    markErr('email'); showErr('err-email', 'Enter a valid email address'); ok = false;
+    markErr('email'); showErr('err-email','Enter a valid email address'); ok=false;
   }
 
-  if (currentMethod === 'card' && !document.getElementById('cc-name').value.trim()) {
-    markErr('cc-name'); showErr('err-cc-name', 'Enter the name on your card'); ok = false;
+  // Cell phone — must be 12 chars with dashes: 416-555-0000
+  const cell = document.getElementById('cell').value;
+  if (!cell || cell.replace(/\D/g,'').length !== 10) {
+    markErr('cell'); showErr('err-cell','Please enter a valid 10-digit phone number'); ok=false;
+  } else { clearErr('cell'); hideErr('err-cell'); }
+
+  // License format: A1234-12345-12345
+  const lic = document.getElementById('license').value;
+  if (!lic || lic.replace(/[^A-Z0-9]/gi,'').length !== 15) {
+    markErr('license'); showErr('err-license','Format must be A1234-12345-12345'); ok=false;
+  } else { clearErr('license'); hideErr('err-license'); }
+
+  // Card name
+  if (currentMethod==='card' && !document.getElementById('cc-name').value.trim()) {
+    markErr('cc-name'); showErr('err-cc-name','Enter the name on your card'); ok=false;
   }
+
   return ok;
 }
 
-// ── Stripe card payment ───────────────────────────────────────────
+// ── Stripe card payment ──
 async function handleCardPayment() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -560,32 +708,20 @@ async function handleCardPayment() {
     return;
   }
 
-  // ── token.id is ready — send to your backend to charge ──────────
-  // Example: POST to a Netlify/Vercel function or your server
-  //
+  // Send token to your backend when ready:
   // const [courseName, amountCents] = document.getElementById('course').value.split(':');
-  // const res = await fetch('https://YOUR-BACKEND.com/charge', {
+  // await fetch('https://YOUR-BACKEND.com/charge', {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
   //   body: JSON.stringify({
   //     stripeToken: token.id,
-  //     amount:   parseInt(amountCents),   // e.g. 79900 = $799.00
+  //     amount: parseInt(amountCents),
   //     currency: 'cad',
-  //     course:   courseName,
-  //     name:     document.getElementById('fullname').value,
-  //     email:    document.getElementById('email').value,
-  //     cell:     document.getElementById('cell').value,
-  //     home:     document.getElementById('home').value,
-  //     address:  document.getElementById('address').value,
-  //     postal:   document.getElementById('postal').value,
-  //     license:  document.getElementById('license').value,
-  //     expiry:   document.getElementById('expiry').value,
-  //     heard:    document.getElementById('heard').value,
+  //     name:  document.getElementById('fullname').value,
+  //     email: document.getElementById('email').value,
   //   })
   // });
-  // if (!res.ok) { /* handle error */ return; }
 
-  // Remove the line below once your backend is connected:
   console.log('Stripe token:', token.id);
   showSuccess();
 }
@@ -595,15 +731,11 @@ function showSuccess() {
   document.body.style.overflow = 'hidden';
 }
 
-// ── Form submit ───────────────────────────────────────────────────
 document.getElementById('regForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   if (!validateForm()) return;
-  if (currentMethod === 'card') {
-    await handleCardPayment();
-  } else {
-    showSuccess();
-  }
+  if (currentMethod === 'card') { await handleCardPayment(); }
+  else { showSuccess(); }
 });
 </script>
 </body>
