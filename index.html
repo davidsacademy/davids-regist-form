@@ -10,17 +10,17 @@
 const COURSES = {
   gold: {
     label:'Gold Package', pretax:699.99, total:790.98, original:799.99, save:100,
-    badge:'Most Popular', desc:'Best value for G2 success',
+    badge:'Most Popular', badge2:'Limited Time Offer', desc:'Best value for G2 success',
     features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Car for Road Test Included','Flexible Scheduling','Free Road Test Booking','Free Pick & Drop Off']
   },
   platinum: {
     label:'Platinum Package', pretax:779.99, total:881.39, original:null, save:null,
-    badge:null, desc:'Premium upgrade for faster success',
+    badge:null, badge2:null, desc:'Premium upgrade for faster success',
     features:['Everything in Gold','12 Hours In-Car Training','Car for Road Test Included','Priority Scheduling','Flexible Rescheduling','Free Pick & Drop Off']
   },
   silver: {
     label:'Silver Package', pretax:549.99, total:621.49, original:null, save:null,
-    badge:null, desc:'Starter package for new drivers',
+    badge:null, badge2:null, desc:'Starter package for new drivers',
     features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Free Pick Up & Drop Off','Free Road Test Booking']
   },
 };
@@ -30,7 +30,7 @@ const COURSES = {
     --bg:#ffffff; --surface:#f8f9fa; --card:#ffffff; --border:#222222;
     --yellow:#f5c400; --yellow-dark:#b38a00; --black:#111111; --body:#111111;
     --muted:#555555; --danger:#cc0000; --success:#1a7a4a; --accent-bg:#fffbe6;
-    --green:#1db954; --green-dark:#158a3e; --green-bg:#f0fff6;
+    --green:#1db954; --green-dark:#158a3e;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html,body { width:100%; background:var(--bg); color:var(--body); font-family:'DM Sans',sans-serif; min-height:100vh; }
@@ -44,55 +44,37 @@ const COURSES = {
   header { text-align:center; margin-bottom:32px; animation:fadeDown 0.6s ease both; }
   .logo-badge {
     display:inline-flex; align-items:center; gap:8px;
-    background:var(--black); color:#fff; padding:7px 18px 7px 12px; border-radius:999px;
-    font-family:'DM Mono',monospace; font-size:11px; font-weight:500;
-    letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px; border:2px solid var(--black);
+    background:var(--black); color:#fff; padding:7px 18px 7px 12px;
+    border-radius:999px; font-family:'DM Mono',monospace; font-size:11px;
+    font-weight:500; letter-spacing:0.1em; text-transform:uppercase;
+    margin-bottom:16px; border:2px solid var(--black);
   }
   .logo-badge svg { width:16px; height:16px; }
   h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(40px,8vw,72px); letter-spacing:0.03em; line-height:0.95; color:var(--black); margin-bottom:8px; }
   h1 span { color:var(--yellow-dark); }
   .subtitle { color:var(--muted); font-size:15px; }
 
-  /* STEP PROGRESS BAR */
-  .step-progress {
-    display:flex; align-items:center; justify-content:center;
-    gap:0; margin:24px 0 32px; padding:0 8px;
-  }
-  .step-item {
-    display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; position:relative;
-  }
-  .step-item:not(:last-child)::after {
-    content:''; position:absolute; top:18px; left:calc(50% + 18px);
-    width:calc(100% - 36px); height:2px; background:#ddd; z-index:0;
-  }
+  /* STEP PROGRESS */
+  .step-progress { display:flex; align-items:center; justify-content:center; gap:0; margin:24px 0 32px; padding:0 8px; }
+  .step-item { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; position:relative; }
+  .step-item:not(:last-child)::after { content:''; position:absolute; top:18px; left:calc(50% + 18px); width:calc(100% - 36px); height:2px; background:#ddd; z-index:0; }
   .step-item.completed:not(:last-child)::after { background:var(--black); }
-  .step-circle {
-    width:36px; height:36px; border-radius:50%; border:2px solid #ddd;
-    background:#fff; display:flex; align-items:center; justify-content:center;
-    font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:#bbb;
-    position:relative; z-index:1; transition:all 0.3s;
-  }
-  .step-item.active   .step-circle { border-color:var(--black); background:var(--yellow); color:var(--black); box-shadow:3px 3px 0px var(--black); }
+  .step-circle { width:36px; height:36px; border-radius:50%; border:2px solid #ddd; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:#bbb; position:relative; z-index:1; transition:all 0.3s; }
+  .step-item.active    .step-circle { border-color:var(--black); background:var(--yellow); color:var(--black); box-shadow:3px 3px 0px var(--black); }
   .step-item.completed .step-circle { border-color:var(--black); background:var(--black); color:#fff; }
   .step-label { font-size:10px; font-weight:600; color:#bbb; letter-spacing:0.06em; text-transform:uppercase; text-align:center; font-family:'DM Mono',monospace; }
   .step-item.active    .step-label { color:var(--black); }
   .step-item.completed .step-label { color:var(--muted); }
-  @media(max-width:400px){ .step-label { display:none; } }
+  @media(max-width:400px){ .step-label{ display:none; } }
 
   /* FORM STEPS */
   .form-step { display:none; animation:fadeUp 0.4s ease both; }
   .form-step.active { display:block; }
 
-  .step-card {
-    background:var(--card); border:2px solid var(--black); border-radius:14px;
-    padding:28px 24px; box-shadow:4px 4px 0px var(--black); width:100%;
-  }
+  .step-card { background:var(--card); border:2px solid var(--black); border-radius:14px; padding:28px 24px; box-shadow:4px 4px 0px var(--black); width:100%; }
   @media(min-width:600px){ .step-card{ padding:36px 32px; } }
 
-  .step-title {
-    font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.05em;
-    color:var(--black); margin-bottom:6px;
-  }
+  .step-title    { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.05em; color:var(--black); margin-bottom:6px; }
   .step-subtitle { font-size:13px; color:var(--muted); margin-bottom:24px; font-family:'DM Mono',monospace; }
 
   /* GRID */
@@ -109,73 +91,114 @@ const COURSES = {
   input, select {
     background:#fff; border:2px solid var(--black); border-radius:8px;
     color:var(--black); font-family:'DM Mono',monospace; font-size:15px;
-    padding:13px 15px; transition:border-color 0.15s,box-shadow 0.15s,background 0.15s;
+    padding:0 15px; height:54px; line-height:54px;
+    transition:border-color 0.15s,box-shadow 0.15s,background 0.15s;
     outline:none; width:100%; -webkit-appearance:none; font-weight:500;
-    height:54px; box-sizing:border-box;
+    box-sizing:border-box; display:block;
   }
   input::placeholder { color:#aaa; font-weight:400; }
   input:focus, select:focus { border-color:var(--black); background:var(--accent-bg); box-shadow:3px 3px 0px var(--black); }
-  select { cursor:pointer; background-color:#fff; line-height:1.5; }
+  select { cursor:pointer; }
   select option { background:#fff; color:var(--black); }
 
+  /* DATE FIELD — fully fixed alignment */
   input[type="date"] {
-    color:var(--black); font-family:'DM Sans',sans-serif; font-size:15px;
     background:#fff; border:2px solid var(--black); border-radius:8px;
-    padding:14px 18px; cursor:pointer; height:54px; line-height:1.5; box-sizing:border-box;
+    color:var(--black); font-family:'DM Sans',sans-serif; font-size:15px;
+    font-weight:600; padding:0 15px; height:54px; line-height:54px;
+    cursor:pointer; width:100%; display:flex; align-items:center;
+    box-sizing:border-box; -webkit-appearance:none; appearance:none;
+    outline:none;
   }
   input[type="date"]:focus { border-color:var(--black); background:var(--accent-bg); box-shadow:3px 3px 0px var(--black); outline:none; }
-  input[type="date"]::-webkit-calendar-picker-indicator { cursor:pointer; opacity:0.8; width:18px; height:18px; }
-  input[type="date"]::-webkit-datetime-edit { color:var(--black); }
+  input[type="date"]::-webkit-calendar-picker-indicator { cursor:pointer; width:20px; height:20px; opacity:0.7; margin-right:4px; }
+  input[type="date"]::-webkit-datetime-edit-fields-wrapper { padding:0; display:flex; align-items:center; height:52px; }
+  input[type="date"]::-webkit-datetime-edit { padding:0; display:flex; align-items:center; }
+  input[type="date"]::-webkit-datetime-edit-text { color:var(--muted); padding:0 2px; }
   input[type="date"]::-webkit-datetime-edit-month-field,
   input[type="date"]::-webkit-datetime-edit-day-field,
-  input[type="date"]::-webkit-datetime-edit-year-field { color:var(--black); font-weight:600; }
+  input[type="date"]::-webkit-datetime-edit-year-field { color:var(--black); font-weight:700; padding:0 1px; }
+  input[type="date"]::-webkit-inner-spin-button { display:none; }
 
   .select-wrap { position:relative; }
   .select-wrap::after { content:'▾'; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--black); pointer-events:none; font-size:14px; font-weight:700; }
 
-  /* PACKAGE DETAIL */
-  .pkg-detail-box { display:none; margin-top:14px; border:2px solid var(--black); border-radius:12px; overflow:hidden; box-shadow:4px 4px 0px var(--black); animation:fadeUp 0.3s ease both; }
-  .pkg-detail-box.show { display:block; }
-  .pkg-detail-header { padding:16px 20px; background:var(--black); color:#fff; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; }
-  .pkg-detail-box.gold-box .pkg-detail-header { background:linear-gradient(135deg,#1a1200,#3d2e00); border-bottom:2px solid #c9a100; }
-  .pkg-detail-box.platinum-box .pkg-detail-header { background:linear-gradient(135deg,#1a1a1a,#3a3a3a); border-bottom:2px solid #888; }
-  .pkg-detail-box.silver-box .pkg-detail-header { background:linear-gradient(135deg,#1c1c1c,#2e2e2e); border-bottom:2px solid #666; }
-  .pkg-detail-name { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.05em; color:#fff; }
-  .pkg-detail-box.gold-box .pkg-detail-name { color:var(--yellow); }
-  .pkg-badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
-  .pkg-badge { display:inline-block; font-family:'DM Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:3px 10px; border-radius:999px; }
-  .badge-popular { background:#e8000d; color:#fff; }
-  .badge-save    { background:var(--green); color:#fff; }
-  .pkg-price-block { text-align:right; }
-  .pkg-price-main  { font-family:'Bebas Neue',sans-serif; font-size:32px; color:#fff; letter-spacing:0.03em; }
-  .pkg-detail-box.gold-box .pkg-price-main { color:var(--yellow); }
-  .pkg-price-hst      { font-size:11px; color:rgba(255,255,255,0.6); font-family:'DM Mono',monospace; }
-  .pkg-price-original { font-size:12px; color:rgba(255,255,255,0.45); font-family:'DM Mono',monospace; text-decoration:line-through; }
-  .pkg-price-desc  { font-size:12px; color:rgba(255,255,255,0.65); margin-top:2px; }
-  .pkg-price-total { font-size:11px; color:rgba(255,255,255,0.5); font-family:'DM Mono',monospace; margin-top:3px; }
-  .pkg-features { padding:16px 20px; background:#fafafa; display:grid; grid-template-columns:1fr; gap:8px; }
-  @media(min-width:480px){ .pkg-features{ grid-template-columns:1fr 1fr; } }
-  .pkg-feature { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--black); font-weight:500; }
-  .pkg-feature-check { width:20px; height:20px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:var(--black); }
-  .pkg-detail-box.gold-box     .pkg-feature-check { background:var(--yellow-dark); }
-  .pkg-detail-box.platinum-box .pkg-feature-check { background:#555; }
-  .pkg-detail-box.silver-box   .pkg-feature-check { background:#777; }
-  .pkg-feature-check svg { width:11px; height:11px; color:#fff; }
+  /* COURSE LOCKED FIELD */
+  .course-locked-row {
+    display:flex; align-items:center; gap:10px; position:relative;
+  }
+  .course-locked-field {
+    flex:1; background:var(--accent-bg); border:2px solid var(--black); border-radius:8px;
+    color:var(--black); font-family:'DM Mono',monospace; font-size:15px; font-weight:700;
+    padding:0 15px; height:54px; display:flex; align-items:center; justify-content:space-between;
+    box-sizing:border-box;
+  }
+  .course-locked-price { font-size:13px; color:var(--yellow-dark); font-weight:700; }
+  .course-locked-badge { font-size:9px; background:var(--green); color:#fff; padding:2px 7px; border-radius:999px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-left:6px; font-family:'DM Mono',monospace; }
+
+  /* INFO ICON + TOOLTIP */
+  .info-icon-wrap { position:relative; flex-shrink:0; }
+  .info-icon {
+    width:32px; height:32px; border-radius:50%; border:2px solid var(--black);
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-family:'DM Mono',monospace; font-size:14px; font-weight:700;
+    color:var(--black); transition:all 0.15s; user-select:none; flex-shrink:0;
+  }
+  .info-icon:hover { background:var(--yellow); box-shadow:2px 2px 0 var(--black); }
+
+  .pkg-tooltip {
+    display:none; position:absolute; right:0; top:44px; z-index:999;
+    width:300px; background:var(--black); border:2px solid var(--black);
+    border-radius:14px; overflow:hidden; box-shadow:6px 6px 0px rgba(0,0,0,0.3);
+    animation:fadeUp 0.2s ease both;
+  }
+  @media(max-width:480px){ .pkg-tooltip{ right:-80px; width:280px; } }
+  .info-icon-wrap:hover .pkg-tooltip,
+  .info-icon-wrap.open   .pkg-tooltip { display:block; }
+
+  .tooltip-header {
+    padding:14px 16px;
+    background:linear-gradient(135deg,#1a1200,#3d2e00);
+    border-bottom:2px solid #c9a100;
+  }
+  .pkg-tooltip.platinum-tip .tooltip-header { background:linear-gradient(135deg,#1a1a1a,#3a3a3a); border-bottom-color:#888; }
+  .pkg-tooltip.silver-tip   .tooltip-header { background:linear-gradient(135deg,#1c1c1c,#2e2e2e); border-bottom-color:#666; }
+
+  .tooltip-badges { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px; }
+  .tooltip-badge { font-family:'DM Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:999px; background:#e8000d; color:#fff; }
+  .tooltip-badge.save { background:var(--green); }
+
+  .tooltip-name  { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--yellow); letter-spacing:0.04em; }
+  .pkg-tooltip.platinum-tip .tooltip-name,
+  .pkg-tooltip.silver-tip   .tooltip-name { color:#fff; }
+
+  .tooltip-price-row { display:flex; align-items:baseline; gap:8px; margin-top:4px; }
+  .tooltip-price { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--yellow); letter-spacing:0.03em; }
+  .pkg-tooltip.platinum-tip .tooltip-price,
+  .pkg-tooltip.silver-tip   .tooltip-price { color:#fff; }
+  .tooltip-hst   { font-size:11px; color:rgba(255,255,255,0.6); font-family:'DM Mono',monospace; }
+  .tooltip-orig  { font-size:11px; color:rgba(255,255,255,0.4); font-family:'DM Mono',monospace; text-decoration:line-through; }
+  .tooltip-total { font-size:10px; color:rgba(255,255,255,0.45); font-family:'DM Mono',monospace; margin-top:2px; }
+  .tooltip-desc  { font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px; }
+
+  .tooltip-features { padding:12px 16px; display:flex; flex-direction:column; gap:6px; background:#111; }
+  .tooltip-feature { display:flex; align-items:center; gap:7px; font-size:12px; color:#eee; }
+  .tooltip-check { width:16px; height:16px; border-radius:50%; background:var(--yellow-dark); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .pkg-tooltip.platinum-tip .tooltip-check { background:#666; }
+  .pkg-tooltip.silver-tip   .tooltip-check { background:#777; }
+  .tooltip-check svg { width:9px; height:9px; color:#fff; }
 
   /* PAYMENT AMOUNT */
-  .amount-section { margin-top:20px; }
-  .amount-label { font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--black); display:block; margin-bottom:6px; }
+  .amount-section { margin-top:20px; padding-top:20px; border-top:1px dashed #ddd; }
+  .amount-label { font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--black); display:block; margin-bottom:4px; }
   .amount-hint  { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:12px; }
   .amount-options { display:flex; flex-direction:column; gap:10px; }
   @media(min-width:480px){ .amount-options{ flex-direction:row; } }
-  .amount-option {
-    flex:1; border:2px solid var(--black); border-radius:10px; padding:14px 16px;
-    cursor:pointer; background:#fff; transition:all 0.15s; user-select:none; display:flex; flex-direction:column; gap:3px;
-  }
+  .amount-option { flex:1; border:2px solid var(--black); border-radius:10px; padding:14px 16px; cursor:pointer; background:#fff; transition:all 0.15s; user-select:none; display:flex; flex-direction:column; gap:3px; }
   .amount-option:hover { box-shadow:3px 3px 0px var(--black); transform:translateY(-1px); }
   .amount-option.selected.deposit-opt { background:#fff8e1; border-color:var(--yellow-dark); box-shadow:3px 3px 0px var(--yellow-dark); }
   .amount-option.selected.half-opt    { background:#e8f5e9; border-color:var(--green-dark);  box-shadow:3px 3px 0px var(--green-dark); }
-  .amount-option.selected.full-opt    { background:var(--black); color:#fff; box-shadow:3px 3px 0px var(--yellow-dark); }
+  .amount-option.selected.full-opt    { background:var(--black); box-shadow:3px 3px 0px var(--yellow-dark); }
   .amount-opt-title { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
   .amount-option.selected .amount-opt-title { color:var(--black); }
   .amount-option.selected.full-opt .amount-opt-title { color:rgba(255,255,255,0.7); }
@@ -186,45 +209,46 @@ const COURSES = {
 
   /* PAYMENT METHOD TABS */
   .pay-tabs { display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap; }
-  .pay-tab {
-    display:flex; align-items:center; gap:7px; padding:10px 16px; border-radius:8px;
-    border:2px solid var(--black); background:#fff; color:var(--muted);
-    font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; user-select:none;
-    flex:1 1 auto; justify-content:center;
-  }
+  .pay-tab { display:flex; align-items:center; gap:7px; padding:10px 16px; border-radius:8px; border:2px solid var(--black); background:#fff; color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; user-select:none; flex:1 1 auto; justify-content:center; }
   @media(min-width:600px){ .pay-tab{ flex:0 1 auto; justify-content:flex-start; } }
   .pay-tab.active { background:var(--yellow); color:var(--black); box-shadow:3px 3px 0px var(--black); }
   .pay-tab svg { width:17px; height:17px; flex-shrink:0; }
 
-  /* STRIPE ELEMENTS */
-  .stripe-row { display:grid; gap:16px; grid-template-columns:1fr; margin-bottom:16px; }
-  @media(min-width:480px){ .stripe-row.two{ grid-template-columns:1fr 1fr; } }
+  /* STRIPE */
+  .stripe-field { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+  .stripe-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  @media(max-width:400px){ .stripe-row-2{ grid-template-columns:1fr; } }
 
-  .stripe-field { display:flex; flex-direction:column; gap:6px; }
   .stripe-element-box {
     background:#fff; border:2px solid var(--black); border-radius:8px;
-    padding:0 15px; transition:box-shadow 0.15s,background 0.15s;
-    height:54px; box-sizing:border-box; display:flex; align-items:center;
+    height:54px; padding:0 15px; box-sizing:border-box;
+    display:flex; align-items:center;
+    transition:box-shadow 0.15s, background 0.15s;
   }
+  .stripe-element-box > div { width:100%; }
   .stripe-element-box.focused { background:var(--accent-bg); box-shadow:3px 3px 0px var(--black); }
 
   .card-icons { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
-  .card-badge { border:2px solid var(--black); border-radius:6px; padding:4px 10px; font-size:10px; font-weight:800; letter-spacing:0.08em; font-family:'DM Mono',monospace; }
-  .card-badge.visa  { background:#1a1f71; color:white; }
-  .card-badge.mc    { background:#eb6b2c; color:white; }
-  .card-badge.amex  { background:#2e77bc; color:white; }
+  .card-badge { border:2px solid var(--black); border-radius:6px; padding:5px 12px; font-size:11px; font-weight:800; letter-spacing:0.08em; font-family:'DM Mono',monospace; }
+  .card-badge.visa  { background:#1a1f71; color:#fff; }
+  .card-badge.mc    { background:#eb6b2c; color:#fff; }
+  .card-badge.amex  { background:#2e77bc; color:#fff; }
 
-  .secure-note {
-    display:flex; align-items:flex-start; gap:8px; font-size:12px; color:var(--black);
-    margin-top:14px; padding:12px 14px; background:#f0fff4;
-    border-radius:8px; border:2px solid var(--black); line-height:1.5; font-weight:500;
-  }
+  .secure-note { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:var(--black); margin-top:14px; padding:12px 14px; background:#f0fff4; border-radius:8px; border:2px solid var(--black); line-height:1.5; font-weight:500; }
   .secure-note svg { width:14px; height:14px; color:var(--success); flex-shrink:0; margin-top:1px; }
 
   #stripe-error { display:none; color:var(--danger); font-size:12px; margin-top:10px; padding:10px 14px; background:#fff0f0; border-radius:8px; border:2px solid var(--danger); font-weight:600; }
 
   .info-box { background:var(--accent-bg); border:2px solid var(--black); border-radius:10px; padding:18px 20px; font-size:14px; color:var(--body); line-height:1.8; box-shadow:3px 3px 0px var(--black); }
   .info-box strong { color:var(--black); font-weight:700; }
+
+  /* REVIEW */
+  .review-box { background:var(--surface); border:2px solid var(--black); border-radius:10px; padding:16px 20px; margin-bottom:20px; }
+  .review-box h4 { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+  .review-row { display:flex; justify-content:space-between; font-size:13px; padding:5px 0; border-bottom:1px solid #e5e5e5; }
+  .review-row:last-child { border-bottom:none; }
+  .review-key { color:var(--muted); font-weight:500; }
+  .review-val { color:var(--black); font-weight:600; text-align:right; max-width:60%; }
 
   /* TOTAL */
   .price-row { display:flex; justify-content:space-between; align-items:center; border-top:2px solid var(--black); padding-top:20px; margin-top:20px; }
@@ -234,32 +258,11 @@ const COURSES = {
 
   /* BUTTONS */
   .btn-row { display:flex; gap:12px; margin-top:24px; }
-  .btn-back {
-    padding:16px 24px; background:#fff; color:var(--black);
-    border:2px solid var(--black); border-radius:10px;
-    font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.08em;
-    cursor:pointer; transition:all 0.15s; white-space:nowrap;
-  }
+  .btn-back { padding:16px 24px; background:#fff; color:var(--black); border:2px solid var(--black); border-radius:10px; font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.08em; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
   .btn-back:hover { background:var(--surface); box-shadow:3px 3px 0px var(--black); }
-
-  .btn-next, .btn-submit {
-    flex:1; padding:17px; background:var(--black); color:#fff;
-    border:2px solid var(--black); border-radius:10px;
-    font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.1em;
-    cursor:pointer; transition:all 0.15s;
-    box-shadow:4px 4px 0px var(--yellow-dark);
-  }
+  .btn-next, .btn-submit { flex:1; padding:17px; background:var(--black); color:#fff; border:2px solid var(--black); border-radius:10px; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.1em; cursor:pointer; transition:all 0.15s; box-shadow:4px 4px 0px var(--yellow-dark); }
   .btn-next:hover, .btn-submit:hover { background:#222; transform:translateY(-2px); box-shadow:6px 6px 0px var(--yellow-dark); }
-  .btn-next:active, .btn-submit:active { transform:translateY(0); }
   .btn-submit:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-
-  /* REVIEW SUMMARY */
-  .review-box { background:var(--surface); border:2px solid var(--black); border-radius:10px; padding:16px 20px; margin-bottom:20px; }
-  .review-box h4 { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
-  .review-row { display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-bottom:1px solid #e5e5e5; }
-  .review-row:last-child { border-bottom:none; }
-  .review-key { color:var(--muted); font-weight:500; }
-  .review-val { color:var(--black); font-weight:600; text-align:right; max-width:60%; }
 
   input.error, select.error { border-color:var(--danger) !important; background:#fff0f0 !important; }
   .error-msg { font-size:11px; color:var(--danger); margin-top:3px; display:none; font-weight:600; font-family:'DM Mono',monospace; }
@@ -298,27 +301,15 @@ const COURSES = {
 
   <!-- STEP PROGRESS -->
   <div class="step-progress">
-    <div class="step-item active" id="step-ind-1">
-      <div class="step-circle">1</div>
-      <div class="step-label">Personal</div>
-    </div>
-    <div class="step-item" id="step-ind-2">
-      <div class="step-circle">2</div>
-      <div class="step-label">Address</div>
-    </div>
-    <div class="step-item" id="step-ind-3">
-      <div class="step-circle">3</div>
-      <div class="step-label">Course</div>
-    </div>
-    <div class="step-item" id="step-ind-4">
-      <div class="step-circle">4</div>
-      <div class="step-label">Payment</div>
-    </div>
+    <div class="step-item active" id="step-ind-1"><div class="step-circle">1</div><div class="step-label">Personal</div></div>
+    <div class="step-item"        id="step-ind-2"><div class="step-circle">2</div><div class="step-label">Address</div></div>
+    <div class="step-item"        id="step-ind-3"><div class="step-circle">3</div><div class="step-label">Course</div></div>
+    <div class="step-item"        id="step-ind-4"><div class="step-circle">4</div><div class="step-label">Payment</div></div>
   </div>
 
   <form id="regForm" novalidate>
 
-    <!-- ══ STEP 1: PERSONAL INFO ══ -->
+    <!-- ══ STEP 1: PERSONAL ══ -->
     <div class="form-step active" id="step-1">
       <div class="step-card">
         <div class="step-title">Personal Information</div>
@@ -385,7 +376,7 @@ const COURSES = {
     <div class="form-step" id="step-3">
       <div class="step-card">
         <div class="step-title">License &amp; Course</div>
-        <div class="step-subtitle">Step 3 of 4 — License details and package selection</div>
+        <div class="step-subtitle">Step 3 of 4 — License details and selected package</div>
         <div class="grid grid-2">
           <div class="field">
             <label for="license">Driver License Number</label>
@@ -414,41 +405,39 @@ const COURSES = {
             </div>
             <span class="error-msg" id="err-heard">Please select an option</span>
           </div>
+
+          <!-- COURSE LOCKED FIELD -->
           <div class="field">
-            <label for="course">Select Your Package</label>
-            <div class="select-wrap">
-              <select id="course" required onchange="onCourseChange(this)">
-                <option value="" disabled selected>Select a package</option>
-                <option value="gold">⭐ Gold Package — Most Popular</option>
-                <option value="platinum">Platinum Package</option>
-                <option value="silver">Silver Package</option>
-              </select>
+            <label>Selected Package</label>
+            <div class="course-locked-row">
+              <div class="course-locked-field" id="courseLocked">
+                <span id="courseLockedLabel">—</span>
+                <span class="course-locked-price" id="courseLockedPrice"></span>
+              </div>
+              <!-- INFO ICON WITH TOOLTIP -->
+              <div class="info-icon-wrap" id="infoWrap" onclick="toggleTooltip()">
+                <div class="info-icon">ⓘ</div>
+                <div class="pkg-tooltip" id="pkgTooltip">
+                  <div class="tooltip-header">
+                    <div class="tooltip-badges" id="ttBadges"></div>
+                    <div class="tooltip-name"  id="ttName"></div>
+                    <div class="tooltip-price-row">
+                      <div class="tooltip-price" id="ttPrice"></div>
+                      <div class="tooltip-hst">+ HST</div>
+                      <div class="tooltip-orig" id="ttOrig"></div>
+                    </div>
+                    <div class="tooltip-total" id="ttTotal"></div>
+                    <div class="tooltip-desc"  id="ttDesc"></div>
+                  </div>
+                  <div class="tooltip-features" id="ttFeatures"></div>
+                </div>
+              </div>
             </div>
-            <span class="error-msg" id="err-course">Please select a package</span>
           </div>
         </div>
 
-        <!-- Package detail box -->
-        <div class="pkg-detail-box" id="pkgDetailBox">
-          <div class="pkg-detail-header">
-            <div>
-              <div class="pkg-detail-name" id="pkgDetailName"></div>
-              <div class="pkg-badges" id="pkgBadges"></div>
-              <div class="pkg-price-desc" id="pkgDesc"></div>
-            </div>
-            <div class="pkg-price-block">
-              <div class="pkg-price-original" id="pkgOriginal"></div>
-              <div class="pkg-price-main" id="pkgPretax"></div>
-              <div class="pkg-price-hst">+ HST</div>
-              <div class="pkg-price-total" id="pkgTotal"></div>
-            </div>
-          </div>
-          <div class="pkg-features" id="pkgFeatures"></div>
-        </div>
-
-        <!-- Payment amount options -->
-        <div class="amount-section" id="amountSection" style="display:none;">
-          <div style="height:1px;background:var(--border);margin:20px 0;opacity:0.15;"></div>
+        <!-- PAYMENT AMOUNT -->
+        <div class="amount-section" id="amountSection">
           <span class="amount-label">How Much Would You Like to Pay Today?</span>
           <p class="amount-hint">Minimum $50.00 deposit required to complete registration</p>
           <div class="amount-options">
@@ -484,7 +473,6 @@ const COURSES = {
         <div class="step-title">Payment</div>
         <div class="step-subtitle">Step 4 of 4 — Review and complete your registration</div>
 
-        <!-- Review Summary -->
         <div class="review-box">
           <h4>Registration Summary</h4>
           <div class="review-row"><span class="review-key">Name</span><span class="review-val" id="rv-name">—</span></div>
@@ -495,7 +483,6 @@ const COURSES = {
           <div class="review-row"><span class="review-key">Amount Due Today</span><span class="review-val" id="rv-amount">—</span></div>
         </div>
 
-        <!-- Payment Method -->
         <div class="pay-tabs">
           <div class="pay-tab active" data-method="card" onclick="switchPayment('card')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
@@ -511,47 +498,46 @@ const COURSES = {
           </div>
         </div>
 
-        <!-- CARD PANEL -->
+        <!-- CARD PANEL — Stripe Elements only, no regular inputs -->
         <div id="panel-card">
           <div class="card-icons">
             <span class="card-badge visa">VISA</span>
             <span class="card-badge mc">MASTERCARD</span>
             <span class="card-badge amex">AMEX</span>
           </div>
-          <div class="stripe-row" style="margin-bottom:0;">
-            <div class="stripe-field">
-              <label>Card Number</label>
-              <div class="stripe-element-box" id="stripe-card-number"></div>
-              <span class="error-msg" id="err-card-number"></span>
-            </div>
+
+          <div class="stripe-field">
+            <label>Card Number</label>
+            <div class="stripe-element-box" id="stripe-card-number"></div>
           </div>
-          <div class="stripe-row two" style="margin-top:16px;">
-            <div class="stripe-field">
+
+          <div class="stripe-row-2">
+            <div class="stripe-field" style="margin-bottom:0;">
               <label>Expiry Date</label>
               <div class="stripe-element-box" id="stripe-card-expiry"></div>
-              <span class="error-msg" id="err-card-expiry"></span>
             </div>
-            <div class="stripe-field">
+            <div class="stripe-field" style="margin-bottom:0;">
               <label>CVV</label>
               <div class="stripe-element-box" id="stripe-card-cvc"></div>
-              <span class="error-msg" id="err-card-cvc"></span>
             </div>
           </div>
-          <div class="stripe-row" style="margin-top:16px;">
-            <div class="field">
-              <label for="cc-name">Name on Card</label>
-              <input type="text" id="cc-name" placeholder="JANE SMITH">
-              <span class="error-msg" id="err-cc-name">Enter the name on your card</span>
+
+          <div class="stripe-field">
+            <label>Name on Card</label>
+            <div class="stripe-element-box" id="stripe-card-name" style="background:#f8f9fa; cursor:not-allowed; opacity:0.7;">
+              <span id="cardNameDisplay" style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:#111;letter-spacing:0.05em;"></span>
             </div>
+            <div class="field-hint">Auto-filled from your registration name</div>
           </div>
+
           <div id="stripe-error"></div>
+
           <div class="secure-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Secured by Stripe — card details encrypted, never stored on our servers.
           </div>
         </div>
 
-        <!-- E-TRANSFER -->
         <div id="panel-etransfer" style="display:none;">
           <div class="info-box">
             Send your e-Transfer to:<br>
@@ -561,7 +547,6 @@ const COURSES = {
           </div>
         </div>
 
-        <!-- CASH -->
         <div id="panel-cash" style="display:none;">
           <div class="info-box">
             Pay in person at our office:<br>
@@ -599,26 +584,87 @@ const COURSES = {
 </div>
 
 <script>
+// ── State ─────────────────────────────────────────────────
 let currentStep    = 1;
 let selectedCourse = null;
 let selectedAmount = null;
 let amountToPay    = 0;
-let cardNumberComplete = false;
-let cardExpiryComplete = false;
-let cardCvcComplete    = false;
+
+// ── Read package from URL: ?package=gold ─────────────────
+// Your Carrd "Book Gold Package" button links to:
+// https://imtiazkhawaja.github.io/student-registration-form/?package=gold
+// "Book Platinum Package" → ?package=platinum  etc.
+function initFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const pkg    = params.get('package') || 'gold';
+  selectedCourse = COURSES[pkg] ? pkg : 'gold';
+  renderLockedCourse(selectedCourse);
+  renderTooltip(selectedCourse);
+}
+
+function renderLockedCourse(key) {
+  const c = COURSES[key];
+  document.getElementById('courseLockedLabel').textContent = c.label;
+  document.getElementById('courseLockedPrice').textContent = '$' + c.total.toFixed(2) + ' incl. HST';
+  document.getElementById('half-amount').textContent = '$' + (c.total / 2).toFixed(2);
+  document.getElementById('full-amount').textContent = '$' + c.total.toFixed(2);
+}
+
+function renderTooltip(key) {
+  const c   = COURSES[key];
+  const tip = document.getElementById('pkgTooltip');
+
+  // Set tooltip style class
+  tip.className = `pkg-tooltip ${key}-tip`;
+
+  // Badges
+  let badges = '';
+  if (c.badge)  badges += `<span class="tooltip-badge">${c.badge}</span>`;
+  if (c.badge2) badges += `<span class="tooltip-badge">${c.badge2}</span>`;
+  if (c.save)   badges += `<span class="tooltip-badge save">Save $${c.save}</span>`;
+  document.getElementById('ttBadges').innerHTML = badges;
+
+  document.getElementById('ttName').textContent  = c.label;
+  document.getElementById('ttPrice').textContent = '$' + c.pretax.toFixed(2);
+  document.getElementById('ttDesc').textContent  = c.desc;
+  document.getElementById('ttTotal').textContent = 'Total incl. HST: $' + c.total.toFixed(2);
+
+  if (c.original) {
+    document.getElementById('ttOrig').textContent    = 'Was $' + c.original.toFixed(2);
+    document.getElementById('ttOrig').style.display  = 'block';
+  } else {
+    document.getElementById('ttOrig').style.display  = 'none';
+  }
+
+  document.getElementById('ttFeatures').innerHTML = c.features.map(f => `
+    <div class="tooltip-feature">
+      <div class="tooltip-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>${f}
+    </div>`).join('');
+}
+
+// Toggle tooltip on mobile tap
+function toggleTooltip() {
+  document.getElementById('infoWrap').classList.toggle('open');
+}
+// Close on outside click
+document.addEventListener('click', function(e) {
+  if (!document.getElementById('infoWrap').contains(e.target)) {
+    document.getElementById('infoWrap').classList.remove('open');
+  }
+});
 
 // ── Step navigation ───────────────────────────────────────
 function goToStep(n) {
   document.getElementById(`step-${currentStep}`).classList.remove('active');
   document.getElementById(`step-ind-${currentStep}`).classList.remove('active');
   document.getElementById(`step-ind-${currentStep}`).classList.add('completed');
-
   currentStep = n;
   document.getElementById(`step-${currentStep}`).classList.add('active');
   document.getElementById(`step-ind-${currentStep}`).classList.remove('completed');
   document.getElementById(`step-ind-${currentStep}`).classList.add('active');
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
 
 function prevStep(from) {
@@ -628,7 +674,7 @@ function prevStep(from) {
   document.getElementById(`step-${currentStep}`).classList.add('active');
   document.getElementById(`step-ind-${currentStep}`).classList.remove('completed');
   document.getElementById(`step-ind-${currentStep}`).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
 
 function nextStep(from) {
@@ -637,110 +683,47 @@ function nextStep(from) {
   goToStep(from + 1);
 }
 
-// ── Validation per step ───────────────────────────────────
+// ── Validation ────────────────────────────────────────────
 function validateStep(step) {
   let ok = true;
-
   if (step === 1) {
-    [
-      {id:'fullname', msg:'Please enter your full name'},
-      {id:'email',    msg:'Please enter a valid email'},
-      {id:'cell',     msg:'Please enter your cell phone'},
-    ].forEach(({id,msg}) => {
-      if (!document.getElementById(id).value.trim()) { markErr(id); showErr(`err-${id}`,msg); ok=false; }
-      else { clearErr(id); hideErr(`err-${id}`); }
-    });
+    [{id:'fullname',msg:'Please enter your full name'},{id:'email',msg:'Please enter a valid email'},{id:'cell',msg:'Please enter your cell phone'}]
+      .forEach(({id,msg}) => { if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
     const email = document.getElementById('email').value;
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      markErr('email'); showErr('err-email','Enter a valid email address'); ok=false;
-    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { markErr('email'); showErr('err-email','Enter a valid email'); ok=false; }
     const cell = document.getElementById('cell').value;
-    if (cell && cell.replace(/\D/g,'').length !== 10) {
-      markErr('cell'); showErr('err-cell','Please enter a valid 10-digit number'); ok=false;
-    }
+    if (cell && cell.replace(/\D/g,'').length !== 10) { markErr('cell'); showErr('err-cell','Please enter a valid 10-digit number'); ok=false; }
   }
-
   if (step === 2) {
     [{id:'address',msg:'Please enter your address'},{id:'city',msg:'Please enter your city'},{id:'postal',msg:'Please enter your postal code'}]
-      .forEach(({id,msg}) => {
-        if (!document.getElementById(id).value.trim()) { markErr(id); showErr(`err-${id}`,msg); ok=false; }
-        else { clearErr(id); hideErr(`err-${id}`); }
-      });
+      .forEach(({id,msg}) => { if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
   }
-
   if (step === 3) {
-    [{id:'license',msg:'Format must be A1234-12345-12345'},{id:'expiry',msg:'Please enter the expiry date'},{id:'heard',msg:'Please select an option'},{id:'course',msg:'Please select a package'}]
-      .forEach(({id,msg}) => {
-        if (!document.getElementById(id).value.trim()) { markErr(id); showErr(`err-${id}`,msg); ok=false; }
-        else { clearErr(id); hideErr(`err-${id}`); }
-      });
+    [{id:'license',msg:'Format must be A1234-12345-12345'},{id:'expiry',msg:'Please enter the expiry date'},{id:'heard',msg:'Please select an option'}]
+      .forEach(({id,msg}) => { if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
     const lic = document.getElementById('license').value;
-    if (lic && lic.replace(/[^A-Z0-9]/gi,'').length !== 15) {
-      markErr('license'); showErr('err-license','Format must be A1234-12345-12345'); ok=false;
-    }
-    if (!selectedAmount) {
-      document.getElementById('err-amount').classList.add('show'); ok=false;
-    }
+    if (lic && lic.replace(/[^A-Z0-9]/gi,'').length !== 15) { markErr('license'); showErr('err-license','Format must be A1234-12345-12345'); ok=false; }
+    if (!selectedAmount) { document.getElementById('err-amount').classList.add('show'); ok=false; }
   }
-
   return ok;
 }
 
-// ── Review summary ────────────────────────────────────────
 function populateReview() {
   const payLabels = { deposit:'$50 Deposit', half:'50% Payment', full:'Full Payment' };
   document.getElementById('rv-name').textContent    = document.getElementById('fullname').value;
   document.getElementById('rv-email').textContent   = document.getElementById('email').value;
   document.getElementById('rv-city').textContent    = document.getElementById('city').value;
-  document.getElementById('rv-package').textContent = selectedCourse ? COURSES[selectedCourse].label : '—';
-  document.getElementById('rv-paytype').textContent = selectedAmount ? payLabels[selectedAmount] : '—';
+  document.getElementById('rv-package').textContent = COURSES[selectedCourse].label;
+  document.getElementById('rv-paytype').textContent = payLabels[selectedAmount];
   document.getElementById('rv-amount').textContent  = '$' + amountToPay.toFixed(2);
   document.getElementById('total-display').textContent = '$' + amountToPay.toFixed(2);
-  const notes = { deposit:'Deposit — balance due before course start', half:'50% — balance due before course start', full:'Full payment incl. tax' };
-  document.getElementById('price-sub-note').textContent = notes[selectedAmount] || '—';
+  const notes = { deposit:'Deposit — balance due before course start', half:'50% — balance due before course start', full:'Full payment incl. HST' };
+  document.getElementById('price-sub-note').textContent = notes[selectedAmount];
+  // Auto-fill card name display
+  document.getElementById('cardNameDisplay').textContent = document.getElementById('fullname').value.toUpperCase();
 }
 
-// ── Course selection ──────────────────────────────────────
-function onCourseChange(sel) {
-  const key = sel.value;
-  selectedCourse = key;
-  selectedAmount = null;
-  amountToPay    = 0;
-  const c = COURSES[key];
-  const box = document.getElementById('pkgDetailBox');
-
-  document.getElementById('pkgDetailName').textContent = c.label;
-  document.getElementById('pkgDesc').textContent       = c.desc;
-
-  const badgeEl = document.getElementById('pkgBadges');
-  badgeEl.innerHTML = '';
-  if (c.badge) badgeEl.innerHTML += `<span class="pkg-badge badge-popular">${c.badge}</span>`;
-  if (c.save)  badgeEl.innerHTML += `<span class="pkg-badge badge-save">Save $${c.save}</span>`;
-
-  document.getElementById('pkgPretax').textContent = '$' + c.pretax.toFixed(2) + ' + HST';
-  document.getElementById('pkgTotal').textContent  = 'Total incl. HST: $' + c.total.toFixed(2);
-  if (c.original) {
-    document.getElementById('pkgOriginal').textContent    = 'Was $' + c.original.toFixed(2);
-    document.getElementById('pkgOriginal').style.display = 'block';
-  } else {
-    document.getElementById('pkgOriginal').style.display = 'none';
-  }
-
-  document.getElementById('pkgFeatures').innerHTML = c.features.map(f => `
-    <div class="pkg-feature">
-      <div class="pkg-feature-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>${f}</div>`).join('');
-
-  box.className = `pkg-detail-box show ${key}-box`;
-
-  document.getElementById('half-amount').textContent = '$' + (c.total / 2).toFixed(2);
-  document.getElementById('full-amount').textContent = '$' + c.total.toFixed(2);
-  ['opt-deposit','opt-half','opt-full'].forEach(id => document.getElementById(id).classList.remove('selected'));
-  document.getElementById('amountSection').style.display = 'block';
-  clearErr('course'); hideErr('err-course');
-}
-
+// ── Amount selection ──────────────────────────────────────
 function selectAmount(type) {
   selectedAmount = type;
   const c = COURSES[selectedCourse];
@@ -753,12 +736,12 @@ function selectAmount(type) {
 }
 
 // ── Stripe ────────────────────────────────────────────────
-// Replace with your key from https://dashboard.stripe.com/apikeys
+// Replace with your key: https://dashboard.stripe.com/apikeys
 const STRIPE_KEY = 'pk_test_REPLACE_WITH_YOUR_KEY';
 
 const stripe   = Stripe(STRIPE_KEY);
 const elements = stripe.elements({
-  fonts: [{ cssSrc: 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }]
+  fonts: [{ cssSrc:'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }]
 });
 const stripeStyle = {
   base: { color:'#111111', fontFamily:'"DM Mono",monospace', fontSize:'15px', fontSmoothing:'antialiased', '::placeholder':{color:'#aaaaaa'} },
@@ -779,9 +762,11 @@ cardCvc.mount('#stripe-card-cvc');
     el.on('blur',  () => document.getElementById(id).classList.remove('focused'));
   });
 
-cardNumber.on('change', e => { cardNumberComplete = e.complete; const err = document.getElementById('stripe-error'); if(e.error){err.textContent=e.error.message;err.style.display='block';}else err.style.display='none'; });
-cardExpiry.on('change', e => { cardExpiryComplete = e.complete; });
-cardCvc.on('change',    e => { cardCvcComplete    = e.complete; });
+cardNumber.on('change', e => {
+  const err = document.getElementById('stripe-error');
+  if (e.error) { err.textContent=e.error.message; err.style.display='block'; }
+  else err.style.display='none';
+});
 
 // ── Phone ─────────────────────────────────────────────────
 function formatPhone(el) {
@@ -813,12 +798,11 @@ function switchPayment(m) {
   });
 }
 
-// ── Validation helpers ────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────
 function showErr(id,msg){ const e=document.getElementById(id); if(e){if(msg)e.textContent=msg; e.classList.add('show');} }
 function hideErr(id){ document.getElementById(id)?.classList.remove('show'); }
 function markErr(id){ document.getElementById(id)?.classList.add('error'); }
 function clearErr(id){ document.getElementById(id)?.classList.remove('error'); }
-
 document.querySelectorAll('input,select').forEach(el => {
   el.addEventListener('input',  () => { clearErr(el.id); hideErr(`err-${el.id}`); });
   el.addEventListener('change', () => { clearErr(el.id); hideErr(`err-${el.id}`); });
@@ -831,7 +815,7 @@ async function handleCardPayment() {
   btn.innerHTML = '<span class="spinner"></span>Processing…';
 
   const { token, error } = await stripe.createToken(cardNumber, {
-    name: document.getElementById('cc-name').value.trim()
+    name: document.getElementById('fullname').value.trim()
   });
 
   if (error) {
@@ -856,7 +840,7 @@ async function handleCardPayment() {
   //   })
   // });
 
-  console.log('Token:', token.id, '| $' + amountToPay.toFixed(2), '|', COURSES[selectedCourse].label);
+  console.log('Token:', token.id, '| $'+amountToPay.toFixed(2), '|', COURSES[selectedCourse].label);
   showSuccess();
 }
 
@@ -867,15 +851,12 @@ function showSuccess() {
 
 document.getElementById('regForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  if (currentMethod==='card') {
-    if (!document.getElementById('cc-name').value.trim()) {
-      markErr('cc-name'); showErr('err-cc-name','Enter the name on your card'); return;
-    }
-    await handleCardPayment();
-  } else {
-    showSuccess();
-  }
+  if (currentMethod==='card') { await handleCardPayment(); }
+  else { showSuccess(); }
 });
+
+// ── Init on load ──────────────────────────────────────────
+initFromURL();
 </script>
 </body>
 </html>
