@@ -8,12 +8,62 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script>
 // ══════════════════════════════════════════════════════
-//  COURSE PRICES — change here and it updates everywhere
+//  COURSE PRICES — change here and updates everywhere
+//  pretax = price before HST
+//  total  = price including HST (tax included)
 // ══════════════════════════════════════════════════════
 const COURSES = {
-  gold:     { label: 'Gold Package',     price: 790.98 },
-  platinum: { label: 'Platinum Package', price: 779.40 },
-  silver:   { label: 'Silver Package',   price: 621.50 },
+  gold: {
+    label:    'Gold Package',
+    pretax:   699.99,
+    total:    790.98,
+    original: 799.99,
+    save:     100,
+    badge:    'Most Popular',
+    desc:     'Best value for G2 success',
+    features: [
+      '20 Hours Online Course',
+      '10 Hours Homelink',
+      '10 Hours In-Car Training',
+      'Car for Road Test Included',
+      'Flexible Scheduling',
+      'Free Road Test Booking',
+      'Free Pick & Drop Off',
+    ]
+  },
+  platinum: {
+    label:    'Platinum Package',
+    pretax:   779.99,
+    total:    881.39,
+    original: null,
+    save:     null,
+    badge:    null,
+    desc:     'Premium upgrade for faster success',
+    features: [
+      'Everything in Gold',
+      '12 Hours In-Car Training',
+      'Car for Road Test Included',
+      'Priority Scheduling',
+      'Flexible Rescheduling',
+      'Free Pick & Drop Off',
+    ]
+  },
+  silver: {
+    label:    'Silver Package',
+    pretax:   549.99,
+    total:    621.49,
+    original: null,
+    save:     null,
+    badge:    null,
+    desc:     'Starter package for new drivers',
+    features: [
+      '20 Hours Online Course',
+      '10 Hours Homelink',
+      '10 Hours In-Car Training',
+      'Free Pick Up & Drop Off',
+      'Free Road Test Booking',
+    ]
+  },
 };
 </script>
 <style>
@@ -36,57 +86,36 @@ const COURSES = {
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; background: var(--bg); color: var(--body); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
 
-  html, body {
-    width: 100%;
-    background: var(--bg);
-    color: var(--body);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-  }
-
-  .page-wrap {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 40px 16px 80px;
-  }
-
+  .page-wrap { width: 100%; max-width: 1100px; margin: 0 auto; padding: 40px 16px 80px; }
   @media (min-width: 1024px) { .page-wrap { padding: 56px 48px 80px; } }
   @media (min-width: 600px) and (max-width: 1023px) { .page-wrap { padding: 40px 28px 80px; } }
   @media (max-width: 374px) { .page-wrap { padding: 28px 10px 60px; } }
 
-  /* HEADER */
   header { text-align: center; margin-bottom: 40px; animation: fadeDown 0.6s ease both; }
 
   .logo-badge {
     display: inline-flex; align-items: center; gap: 8px;
-    background: var(--black); color: #ffffff;
+    background: var(--black); color: #fff;
     padding: 7px 18px 7px 12px; border-radius: 999px;
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 18px; border: 2px solid var(--black);
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px; border: 2px solid var(--black);
   }
   .logo-badge svg { width: 16px; height: 16px; }
 
-  h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(44px, 8vw, 80px);
-    letter-spacing: 0.03em; line-height: 0.95;
-    color: var(--black); margin-bottom: 10px;
-  }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 8vw, 80px); letter-spacing: 0.03em; line-height: 0.95; color: var(--black); margin-bottom: 10px; }
   h1 span { color: var(--yellow-dark); }
   .subtitle { color: var(--muted); font-size: 15px; }
 
   .progress { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 20px; }
-  .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #cccccc; border: 1.5px solid var(--black); }
+  .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; border: 1.5px solid var(--black); }
   .progress-dot.active { background: var(--yellow); width: 24px; border-radius: 4px; border-color: var(--yellow-dark); }
 
-  /* SECTIONS */
   .form-section {
-    background: var(--card); border: 2px solid var(--black);
-    border-radius: 12px; padding: 28px 24px; margin-bottom: 16px;
-    box-shadow: 4px 4px 0px var(--black); animation: fadeUp 0.5s ease both; width: 100%;
+    background: var(--card); border: 2px solid var(--black); border-radius: 12px;
+    padding: 28px 24px; margin-bottom: 16px; box-shadow: 4px 4px 0px var(--black);
+    animation: fadeUp 0.5s ease both; width: 100%;
   }
   @media (min-width: 600px) { .form-section { padding: 32px 28px; } }
   @media (min-width: 1024px) { .form-section { padding: 36px 40px; border-radius: 14px; } }
@@ -104,48 +133,34 @@ const COURSES = {
   }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--black); opacity: 0.2; }
 
-  /* GRID */
   .grid { display: grid; gap: 14px; }
   .grid-2 { grid-template-columns: 1fr; }
   .col-span-2 { grid-column: span 1; }
-  @media (min-width: 480px) {
-    .grid-2 { grid-template-columns: 1fr 1fr; gap: 16px; }
-    .col-span-2 { grid-column: span 2; }
-  }
+  @media (min-width: 480px) { .grid-2 { grid-template-columns: 1fr 1fr; gap: 16px; } .col-span-2 { grid-column: span 2; } }
 
-  /* FIELDS */
   .field { display: flex; flex-direction: column; gap: 6px; }
-
   label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--black); }
-
   .field-hint { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: -2px; margin-bottom: 2px; }
 
   input, select {
-    background: #ffffff; border: 2px solid var(--black); border-radius: 8px;
+    background: #fff; border: 2px solid var(--black); border-radius: 8px;
     color: var(--black); font-family: 'DM Mono', monospace; font-size: 15px;
     padding: 13px 15px; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     outline: none; width: 100%; -webkit-appearance: none; font-weight: 500;
     height: 54px; box-sizing: border-box;
   }
   @media (min-width: 1024px) { input, select { padding: 14px 18px; } }
-  input::placeholder { color: #aaaaaa; font-weight: 400; }
-  input:focus, select:focus {
-    border-color: var(--black); background: var(--accent-bg);
-    box-shadow: 3px 3px 0px var(--black);
-  }
-  select { cursor: pointer; background-color: #ffffff; line-height: 1.5; }
-  select option { background: #ffffff; color: var(--black); }
+  input::placeholder { color: #aaa; font-weight: 400; }
+  input:focus, select:focus { border-color: var(--black); background: var(--accent-bg); box-shadow: 3px 3px 0px var(--black); }
+  select { cursor: pointer; background-color: #fff; line-height: 1.5; }
+  select option { background: #fff; color: var(--black); }
 
   input[type="date"] {
-    color: var(--black); font-family: 'DM Sans', sans-serif;
-    font-size: 15px; background: #ffffff; border: 2px solid var(--black);
-    border-radius: 8px; padding: 14px 18px; cursor: pointer;
-    height: 54px; line-height: 1.5; box-sizing: border-box;
+    color: var(--black); font-family: 'DM Sans', sans-serif; font-size: 15px;
+    background: #fff; border: 2px solid var(--black); border-radius: 8px;
+    padding: 14px 18px; cursor: pointer; height: 54px; line-height: 1.5; box-sizing: border-box;
   }
-  input[type="date"]:focus {
-    border-color: var(--black); background: var(--accent-bg);
-    box-shadow: 3px 3px 0px var(--black); outline: none;
-  }
+  input[type="date"]:focus { border-color: var(--black); background: var(--accent-bg); box-shadow: 3px 3px 0px var(--black); outline: none; }
   input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.8; width: 18px; height: 18px; }
   input[type="date"]::-webkit-datetime-edit { color: var(--black); font-family: 'DM Sans', sans-serif; }
   input[type="date"]::-webkit-datetime-edit-month-field,
@@ -153,170 +168,183 @@ const COURSES = {
   input[type="date"]::-webkit-datetime-edit-year-field { color: var(--black); font-weight: 600; }
 
   .select-wrap { position: relative; }
-  .select-wrap::after {
-    content: '▾'; position: absolute; right: 14px; top: 50%;
-    transform: translateY(-50%); color: var(--black); pointer-events: none; font-size: 14px; font-weight: 700;
-  }
+  .select-wrap::after { content: '▾'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--black); pointer-events: none; font-size: 14px; font-weight: 700; }
 
-  /* ── PACKAGE CARDS ─────────────────────────────────── */
-  .package-grid {
+  /* ── PACKAGE DETAIL BOX ──────────────────────────── */
+  .pkg-detail-box {
+    display: none;
+    margin-top: 14px;
+    border: 2px solid var(--black);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 4px 4px 0px var(--black);
+    animation: fadeUp 0.3s ease both;
+  }
+  .pkg-detail-box.show { display: block; }
+
+  .pkg-detail-header {
+    padding: 16px 20px;
+    background: var(--black);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pkg-detail-box.gold-box .pkg-detail-header { background: linear-gradient(135deg, #1a1200, #3d2e00); border-bottom: 2px solid #c9a100; }
+  .pkg-detail-box.platinum-box .pkg-detail-header { background: linear-gradient(135deg, #1a1a1a, #3a3a3a); border-bottom: 2px solid #888; }
+  .pkg-detail-box.silver-box .pkg-detail-header { background: linear-gradient(135deg, #1c1c1c, #2e2e2e); border-bottom: 2px solid #666; }
+
+  .pkg-detail-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 0.05em; color: #fff;
+  }
+  .pkg-detail-box.gold-box .pkg-detail-name { color: var(--yellow); }
+
+  .pkg-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .pkg-badge {
+    display: inline-block; font-family: 'DM Mono', monospace;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+  }
+  .badge-popular { background: #e8000d; color: #fff; }
+  .badge-limited { background: #e8000d; color: #fff; }
+  .badge-save    { background: var(--green); color: #fff; }
+
+  .pkg-price-block { text-align: right; }
+  .pkg-price-main { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #fff; letter-spacing: 0.03em; }
+  .pkg-detail-box.gold-box .pkg-price-main { color: var(--yellow); }
+  .pkg-price-hst { font-size: 11px; color: rgba(255,255,255,0.6); font-family: 'DM Mono', monospace; }
+  .pkg-price-original { font-size: 12px; color: rgba(255,255,255,0.45); font-family: 'DM Mono', monospace; text-decoration: line-through; }
+  .pkg-price-desc { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+  .pkg-price-total { font-size: 11px; color: rgba(255,255,255,0.5); font-family: 'DM Mono', monospace; margin-top: 3px; }
+
+  .pkg-features {
+    padding: 16px 20px;
+    background: #fafafa;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 14px;
-    margin-bottom: 6px;
+    gap: 8px;
   }
-  @media (min-width: 480px) { .package-grid { grid-template-columns: 1fr 1fr 1fr; } }
+  @media (min-width: 480px) { .pkg-features { grid-template-columns: 1fr 1fr; } }
 
-  .package-card {
-    border: 2px solid var(--black);
-    border-radius: 10px;
-    padding: 18px 16px;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: #ffffff;
-    position: relative;
-    user-select: none;
+  .pkg-feature {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--black); font-weight: 500;
   }
-
-  .package-card:hover { box-shadow: 3px 3px 0px var(--black); transform: translateY(-1px); }
-
-  .package-card.selected {
-    border-color: var(--black);
-    box-shadow: 4px 4px 0px var(--black);
-    background: var(--accent-bg);
-  }
-
-  /* GOLD — best value */
-  .package-card.gold {
-    border-color: var(--green-dark);
-    background: var(--green-bg);
-  }
-  .package-card.gold:hover { box-shadow: 3px 3px 0px var(--green-dark); }
-  .package-card.gold.selected {
-    background: #d4f7e4;
-    border-color: var(--green-dark);
-    box-shadow: 4px 4px 0px var(--green-dark);
-  }
-
-  .best-value-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    background: var(--green); color: #ffffff;
-    font-family: 'DM Mono', monospace; font-size: 9px;
-    font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 999px;
-    border: 1.5px solid var(--green-dark);
-    margin-bottom: 8px;
-  }
-
-  .package-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px; letter-spacing: 0.05em;
-    color: var(--black); line-height: 1;
-    margin-bottom: 6px;
-  }
-  .package-card.gold .package-name { color: var(--green-dark); }
-
-  .package-price {
-    font-family: 'DM Mono', monospace;
-    font-size: 20px; font-weight: 700;
-    color: var(--black); margin-bottom: 4px;
-  }
-  .package-card.gold .package-price { color: var(--green-dark); }
-
-  .package-tax {
-    font-size: 11px; color: var(--muted);
-    font-family: 'DM Mono', monospace;
-  }
-
-  .package-check {
-    position: absolute; top: 12px; right: 12px;
-    width: 22px; height: 22px; border-radius: 50%;
-    border: 2px solid #cccccc;
-    background: #ffffff;
+  .pkg-feature-check {
+    width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
+    background: var(--black);
   }
-  .package-card.selected .package-check {
-    background: var(--black); border-color: var(--black);
-  }
-  .package-card.gold.selected .package-check {
-    background: var(--green-dark); border-color: var(--green-dark);
-  }
-  .package-check svg { width: 12px; height: 12px; color: #ffffff; opacity: 0; transition: opacity 0.15s; }
-  .package-card.selected .package-check svg { opacity: 1; }
+  .pkg-detail-box.gold-box .pkg-feature-check { background: var(--yellow-dark); }
+  .pkg-detail-box.platinum-box .pkg-feature-check { background: #555; }
+  .pkg-detail-box.silver-box .pkg-feature-check { background: #777; }
+  .pkg-feature-check svg { width: 11px; height: 11px; color: #fff; }
 
-  .error-msg-package {
-    font-size: 11px; color: var(--danger); margin-top: 4px;
-    display: none; font-weight: 600; font-family: 'DM Mono', monospace;
+  /* ── PAYMENT AMOUNT OPTIONS ──────────────────────── */
+  .payment-amount-section {
+    display: none;
+    margin-top: 6px;
   }
-  .error-msg-package.show { display: block; }
+  .payment-amount-section.show { display: block; }
+
+  .amount-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--black); margin-bottom: 10px;
+    display: block;
+  }
+
+  .amount-options { display: flex; flex-direction: column; gap: 10px; }
+  @media (min-width: 480px) { .amount-options { flex-direction: row; } }
+
+  .amount-option {
+    flex: 1; border: 2px solid var(--black); border-radius: 10px;
+    padding: 14px 16px; cursor: pointer; background: #fff;
+    transition: all 0.15s; user-select: none;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .amount-option:hover { box-shadow: 3px 3px 0px var(--black); transform: translateY(-1px); }
+  .amount-option.selected { background: var(--accent-bg); box-shadow: 3px 3px 0px var(--black); }
+  .amount-option.selected.deposit-opt { background: #fff8e1; border-color: var(--yellow-dark); }
+  .amount-option.selected.half-opt    { background: #e8f5e9; border-color: var(--green-dark); }
+  .amount-option.selected.full-opt    { background: var(--black); color: #fff; }
+
+  .amount-opt-title {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  }
+  .amount-option.selected .amount-opt-title { color: var(--black); }
+  .amount-option.selected.full-opt .amount-opt-title { color: rgba(255,255,255,0.7); }
+
+  .amount-opt-value {
+    font-family: 'Bebas Neue', sans-serif; font-size: 26px;
+    letter-spacing: 0.05em; color: var(--black);
+  }
+  .amount-option.selected.full-opt .amount-opt-value { color: var(--yellow); }
+
+  .amount-opt-note { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .amount-option.selected.full-opt .amount-opt-note { color: rgba(255,255,255,0.5); }
+
+  .error-amount { font-size: 11px; color: var(--danger); margin-top: 6px; display: none; font-weight: 600; font-family: 'DM Mono', monospace; }
+  .error-amount.show { display: block; }
 
   /* PAYMENT TABS */
   .payment-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
   .pay-tab {
     display: flex; align-items: center; gap: 7px;
-    padding: 10px 16px; border-radius: 8px;
-    border: 2px solid var(--black); background: #ffffff;
-    color: var(--muted); font-size: 13px; font-weight: 600;
+    padding: 10px 16px; border-radius: 8px; border: 2px solid var(--black);
+    background: #fff; color: var(--muted); font-size: 13px; font-weight: 600;
     cursor: pointer; transition: all 0.15s; user-select: none;
     flex: 1 1 auto; justify-content: center;
   }
   @media (min-width: 600px) { .pay-tab { flex: 0 1 auto; justify-content: flex-start; } }
-  .pay-tab.active { border-color: var(--black); background: var(--yellow); color: var(--black); box-shadow: 3px 3px 0px var(--black); }
+  .pay-tab.active { background: var(--yellow); color: var(--black); box-shadow: 3px 3px 0px var(--black); }
   .pay-tab svg { width: 17px; height: 17px; flex-shrink: 0; }
 
-  /* STRIPE */
   .stripe-element-box {
-    background: #ffffff; border: 2px solid var(--black); border-radius: 8px;
+    background: #fff; border: 2px solid var(--black); border-radius: 8px;
     padding: 13px 15px; transition: box-shadow 0.15s, background 0.15s;
     height: 54px; box-sizing: border-box; display: flex; align-items: center;
   }
-  @media (min-width: 1024px) { .stripe-element-box { padding: 14px 18px; } }
   .stripe-element-box.focused { background: var(--accent-bg); box-shadow: 3px 3px 0px var(--black); }
 
   .card-icons { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .card-badge {
-    border: 2px solid var(--black); border-radius: 6px; padding: 4px 10px;
-    font-size: 10px; font-weight: 800; letter-spacing: 0.08em; font-family: 'DM Mono', monospace;
-  }
+  .card-badge { border: 2px solid var(--black); border-radius: 6px; padding: 4px 10px; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; font-family: 'DM Mono', monospace; }
   .card-badge.visa  { background: #1a1f71; color: white; }
   .card-badge.mc    { background: #eb6b2c; color: white; }
   .card-badge.amex  { background: #2e77bc; color: white; }
 
   .secure-note {
-    display: flex; align-items: flex-start; gap: 8px;
-    font-size: 12px; color: var(--black); margin-top: 14px;
-    padding: 12px 14px; background: #f0fff4;
-    border-radius: 8px; border: 2px solid var(--black);
-    line-height: 1.5; font-weight: 500;
+    display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--black);
+    margin-top: 14px; padding: 12px 14px; background: #f0fff4;
+    border-radius: 8px; border: 2px solid var(--black); line-height: 1.5; font-weight: 500;
   }
   .secure-note svg { width: 14px; height: 14px; color: var(--success); flex-shrink: 0; margin-top: 1px; }
 
   #stripe-error {
     display: none; color: var(--danger); font-size: 12px; margin-top: 10px;
-    padding: 10px 14px; background: #fff0f0;
-    border-radius: 8px; border: 2px solid var(--danger); font-weight: 600;
+    padding: 10px 14px; background: #fff0f0; border-radius: 8px; border: 2px solid var(--danger); font-weight: 600;
   }
 
   .info-box {
-    background: var(--accent-bg); border: 2px solid var(--black);
-    border-radius: 10px; padding: 18px 20px;
-    font-size: 14px; color: var(--body); line-height: 1.8;
+    background: var(--accent-bg); border: 2px solid var(--black); border-radius: 10px;
+    padding: 18px 20px; font-size: 14px; color: var(--body); line-height: 1.8;
     box-shadow: 3px 3px 0px var(--black);
   }
   .info-box strong { color: var(--black); font-weight: 700; }
 
-  /* TOTAL */
   .price-row {
     display: flex; justify-content: space-between; align-items: center;
     border-top: 2px solid var(--black); padding-top: 20px; margin-top: 20px;
   }
   .price-label { font-size: 13px; font-weight: 700; color: var(--black); text-transform: uppercase; letter-spacing: 0.06em; }
+  .price-sub { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'DM Mono', monospace; }
   .price-value { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 0.04em; color: var(--black); }
 
-  /* SUBMIT */
   .submit-btn {
-    width: 100%; padding: 18px; background: var(--black); color: #ffffff;
+    width: 100%; padding: 18px; background: var(--black); color: #fff;
     border: 2px solid var(--black); border-radius: 10px;
     font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.1em;
     cursor: pointer; margin-top: 8px;
@@ -324,7 +352,7 @@ const COURSES = {
     box-shadow: 4px 4px 0px var(--yellow-dark);
   }
   @media (min-width: 1024px) { .submit-btn { font-size: 26px; padding: 20px; } }
-  .submit-btn:hover { background: #222222; transform: translateY(-2px); box-shadow: 6px 6px 0px var(--yellow-dark); }
+  .submit-btn:hover { background: #222; transform: translateY(-2px); box-shadow: 6px 6px 0px var(--yellow-dark); }
   .submit-btn:active { transform: translateY(0); box-shadow: 2px 2px 0px var(--yellow-dark); }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
@@ -333,9 +361,8 @@ const COURSES = {
   .error-msg.show { display: block; }
 
   .success-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(255,255,255,0.96); z-index: 100;
-    align-items: center; justify-content: center;
+    display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.96);
+    z-index: 100; align-items: center; justify-content: center;
     flex-direction: column; text-align: center; padding: 40px;
   }
   .success-overlay.show { display: flex; animation: fadeIn 0.4s ease both; }
@@ -346,7 +373,7 @@ const COURSES = {
     border: 3px solid var(--black); box-shadow: 4px 4px 0px var(--black);
   }
   .success-icon svg { width: 44px; height: 44px; color: var(--black); }
-  .success-overlay h2 { font-family:'Bebas Neue',sans-serif; font-size:56px; color:var(--black); margin-bottom:10px; }
+  .success-overlay h2 { font-family:'Bebas Neue',sans-serif; font-size: 56px; color: var(--black); margin-bottom: 10px; }
   .success-overlay p { color: var(--muted); font-size: 15px; max-width: 340px; line-height: 1.6; }
 
   .spinner {
@@ -364,7 +391,6 @@ const COURSES = {
 </style>
 </head>
 <body>
-
 <div class="page-wrap">
 
   <header>
@@ -460,54 +486,64 @@ const COURSES = {
           </div>
           <span class="error-msg" id="err-heard">Please select an option</span>
         </div>
-
-        <!-- SELECT YOUR COURSE replaced with package cards below -->
         <div class="field">
-          <label for="heard">How Did You Hear About Us?</label>
+          <label for="course">Select Your Package</label>
+          <div class="select-wrap">
+            <select id="course" required onchange="onCourseChange(this)">
+              <option value="" disabled selected>Select a package</option>
+              <option value="gold">⭐ Gold Package — Most Popular</option>
+              <option value="platinum">Platinum Package</option>
+              <option value="silver">Silver Package</option>
+            </select>
+          </div>
+          <span class="error-msg" id="err-course">Please select a package</span>
         </div>
       </div>
 
-      <!-- PACKAGE CARDS -->
-      <div style="margin-top:8px;">
-        <label style="display:block;margin-bottom:10px;">Select Your Package</label>
-        <div class="package-grid" id="packageGrid">
-
-          <!-- GOLD — Best Value -->
-          <div class="package-card gold" data-package="gold" onclick="selectPackage('gold')">
-            <div class="best-value-badge">
-              ★ Best Value
-            </div>
-            <div class="package-check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="package-name" id="label-gold">Gold Package</div>
-            <div class="package-price" id="price-gold">—</div>
-            <div class="package-tax">Tax included</div>
+      <!-- Package detail box — appears after selection -->
+      <div class="pkg-detail-box" id="pkgDetailBox">
+        <div class="pkg-detail-header">
+          <div>
+            <div class="pkg-detail-name" id="pkgDetailName"></div>
+            <div class="pkg-badges" id="pkgBadges"></div>
+            <div class="pkg-price-desc" id="pkgDesc"></div>
           </div>
-
-          <!-- PLATINUM -->
-          <div class="package-card" data-package="platinum" onclick="selectPackage('platinum')">
-            <div class="package-check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="package-name" id="label-platinum">Platinum Package</div>
-            <div class="package-price" id="price-platinum">—</div>
-            <div class="package-tax">Tax included</div>
+          <div class="pkg-price-block">
+            <div class="pkg-price-original" id="pkgOriginal"></div>
+            <div class="pkg-price-main" id="pkgPretax"></div>
+            <div class="pkg-price-hst">+ HST</div>
+            <div class="pkg-price-total" id="pkgTotal"></div>
           </div>
-
-          <!-- SILVER -->
-          <div class="package-card" data-package="silver" onclick="selectPackage('silver')">
-            <div class="package-check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="package-name" id="label-silver">Silver Package</div>
-            <div class="package-price" id="price-silver">—</div>
-            <div class="package-tax">Tax included</div>
-          </div>
-
         </div>
-        <span class="error-msg-package" id="err-package">Please select a package</span>
+        <div class="pkg-features" id="pkgFeatures"></div>
       </div>
+
+      <!-- Payment amount selector — appears after package selected -->
+      <div class="payment-amount-section" id="amountSection">
+        <div style="margin-top:20px;margin-bottom:10px;">
+          <span class="amount-label">How Much Would You Like to Pay Today?</span>
+          <div class="field-hint">Minimum $50.00 deposit required to complete registration</div>
+        </div>
+        <div class="amount-options">
+          <div class="amount-option deposit-opt" onclick="selectAmount('deposit')" id="opt-deposit">
+            <div class="amount-opt-title">Deposit</div>
+            <div class="amount-opt-value">$50.00</div>
+            <div class="amount-opt-note">Minimum to register</div>
+          </div>
+          <div class="amount-option half-opt" onclick="selectAmount('half')" id="opt-half">
+            <div class="amount-opt-title">50% Payment</div>
+            <div class="amount-opt-value" id="half-amount">—</div>
+            <div class="amount-opt-note">Balance due before course</div>
+          </div>
+          <div class="amount-option full-opt" onclick="selectAmount('full')" id="opt-full">
+            <div class="amount-opt-title">Full Payment</div>
+            <div class="amount-opt-value" id="full-amount">—</div>
+            <div class="amount-opt-note">Tax included</div>
+          </div>
+        </div>
+        <div class="error-amount" id="err-amount">Please select a payment amount</div>
+      </div>
+
     </div>
 
     <!-- 04 PAYMENT -->
@@ -581,8 +617,8 @@ const COURSES = {
 
       <div class="price-row">
         <div>
-          <div class="price-label">Total</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace;">Select a package above</div>
+          <div class="price-label">Amount Due Today</div>
+          <div class="price-sub" id="price-sub-note">Select package &amp; payment option above</div>
         </div>
         <div class="price-value" id="total-display">—</div>
       </div>
@@ -593,58 +629,119 @@ const COURSES = {
   </form>
 </div>
 
+<!-- SUCCESS -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-icon">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
   <h2>You're Enrolled!</h2>
-  <p>Payment confirmed. Check your email for your receipt and course details.</p>
+  <p>Payment confirmed. Check your email for your receipt and next steps.</p>
 </div>
 
 <script>
-// ── Populate package cards from COURSES variable ──────────
-Object.keys(COURSES).forEach(key => {
-  const c = COURSES[key];
-  const el = document.getElementById(`price-${key}`);
-  if (el) el.textContent = '$' + c.price.toFixed(2);
-  const lbl = document.getElementById(`label-${key}`);
-  if (lbl) lbl.textContent = c.label;
-});
+let selectedCourse = null;
+let selectedAmount = null;
+let amountToPay    = 0;
 
-// ── Package selection ─────────────────────────────────────
-let selectedPackage = null;
+// ── Package selection & detail box ────────────────────────
+function onCourseChange(sel) {
+  const key = sel.value;
+  selectedCourse = key;
+  selectedAmount = null;
+  amountToPay    = 0;
+  document.getElementById('total-display').textContent = '—';
+  document.getElementById('price-sub-note').textContent = 'Select a payment option above';
 
-function selectPackage(key) {
-  selectedPackage = key;
-  document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
-  document.querySelector(`[data-package="${key}"]`).classList.add('selected');
-  const price = COURSES[key].price;
-  document.getElementById('total-display').textContent = '$' + price.toFixed(2);
-  document.getElementById('err-package').classList.remove('show');
+  const c   = COURSES[key];
+  const box = document.getElementById('pkgDetailBox');
+
+  // Header
+  document.getElementById('pkgDetailName').textContent = c.label;
+  document.getElementById('pkgDesc').textContent       = c.desc;
+
+  // Badges
+  const badgeEl = document.getElementById('pkgBadges');
+  badgeEl.innerHTML = '';
+  if (c.badge)  badgeEl.innerHTML += `<span class="pkg-badge badge-popular">${c.badge}</span>`;
+  if (c.save)   badgeEl.innerHTML += `<span class="pkg-badge badge-save">Save $${c.save}</span>`;
+
+  // Prices
+  document.getElementById('pkgPretax').textContent  = '$' + c.pretax.toFixed(2) + ' + HST';
+  document.getElementById('pkgTotal').textContent   = 'Total incl. HST: $' + c.total.toFixed(2);
+  if (c.original) {
+    document.getElementById('pkgOriginal').textContent = 'Was $' + c.original.toFixed(2);
+    document.getElementById('pkgOriginal').style.display = 'block';
+  } else {
+    document.getElementById('pkgOriginal').style.display = 'none';
+  }
+
+  // Features
+  const featEl = document.getElementById('pkgFeatures');
+  featEl.innerHTML = c.features.map(f => `
+    <div class="pkg-feature">
+      <div class="pkg-feature-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      ${f}
+    </div>`).join('');
+
+  // Box style
+  box.className = `pkg-detail-box show ${key}-box`;
+
+  // Amount options
+  const half = (c.total / 2).toFixed(2);
+  const full = c.total.toFixed(2);
+  document.getElementById('half-amount').textContent = '$' + half;
+  document.getElementById('full-amount').textContent = '$' + full;
+
+  // Reset selections
+  ['opt-deposit','opt-half','opt-full'].forEach(id => {
+    document.getElementById(id).classList.remove('selected');
+  });
+
+  document.getElementById('amountSection').classList.add('show');
+  clearErr('course'); hideErr('err-course');
 }
 
-// ── Stripe setup ──────────────────────────────────────────
-// Replace with your key from https://dashboard.stripe.com/apikeys
+function selectAmount(type) {
+  selectedAmount = type;
+  const c = COURSES[selectedCourse];
+
+  if (type === 'deposit') amountToPay = 50.00;
+  else if (type === 'half') amountToPay = parseFloat((c.total / 2).toFixed(2));
+  else amountToPay = c.total;
+
+  ['opt-deposit','opt-half','opt-full'].forEach(id => {
+    document.getElementById(id).classList.remove('selected');
+  });
+  document.getElementById(`opt-${type}`).classList.add('selected');
+  document.getElementById('total-display').textContent = '$' + amountToPay.toFixed(2);
+
+  const notes = {
+    deposit: 'Deposit — balance due before course start',
+    half:    '50% payment — balance due before course start',
+    full:    'Full payment — tax included'
+  };
+  document.getElementById('price-sub-note').textContent = notes[type];
+  document.getElementById('err-amount').classList.remove('show');
+}
+
+// ── Stripe ────────────────────────────────────────────────
+// Replace with your key: https://dashboard.stripe.com/apikeys
 const STRIPE_KEY = 'pk_test_REPLACE_WITH_YOUR_KEY';
 
 const stripe   = Stripe(STRIPE_KEY);
 const elements = stripe.elements({
   fonts: [{ cssSrc: 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }]
 });
-
 const stripeStyle = {
-  base: {
-    color: '#111111', fontFamily: '"DM Mono", monospace',
-    fontSize: '15px', fontSmoothing: 'antialiased',
-    '::placeholder': { color: '#aaaaaa' }
-  },
-  invalid: { color: '#cc0000', iconColor: '#cc0000' }
+  base: { color:'#111111', fontFamily:'"DM Mono",monospace', fontSize:'15px', fontSmoothing:'antialiased', '::placeholder':{color:'#aaaaaa'} },
+  invalid: { color:'#cc0000', iconColor:'#cc0000' }
 };
 
 const cardNumber = elements.create('cardNumber', { style: stripeStyle, showIcon: true });
 const cardExpiry = elements.create('cardExpiry', { style: stripeStyle });
 const cardCvc    = elements.create('cardCvc',    { style: stripeStyle });
-
 cardNumber.mount('#stripe-card-number');
 cardExpiry.mount('#stripe-card-expiry');
 cardCvc.mount('#stripe-card-cvc');
@@ -654,14 +751,13 @@ cardCvc.mount('#stripe-card-cvc');
     el.on('focus', () => document.getElementById(id).classList.add('focused'));
     el.on('blur',  () => document.getElementById(id).classList.remove('focused'));
   });
-
 cardNumber.on('change', e => {
   const err = document.getElementById('stripe-error');
   if (e.error) { err.textContent = e.error.message; err.style.display = 'block'; }
   else err.style.display = 'none';
 });
 
-// ── Phone format ──────────────────────────────────────────
+// ── Phone ─────────────────────────────────────────────────
 function formatPhone(el) {
   let v = el.value.replace(/\D/g,'').substring(0,10);
   if (v.length >= 7) v = v.substring(0,3)+'-'+v.substring(3,6)+'-'+v.substring(6);
@@ -671,7 +767,7 @@ function formatPhone(el) {
 document.getElementById('cell').addEventListener('input', function(){ formatPhone(this); });
 document.getElementById('home').addEventListener('input', function(){ formatPhone(this); });
 
-// ── License format ────────────────────────────────────────
+// ── License ───────────────────────────────────────────────
 function formatLicense(el) {
   let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,15);
   if (v.length > 9) v = v.substring(0,5)+'-'+v.substring(5,10)+'-'+v.substring(10);
@@ -711,6 +807,7 @@ function validateForm() {
     {id:'postal',   msg:'Please enter your postal code'},
     {id:'expiry',   msg:'Please enter the expiry date'},
     {id:'heard',    msg:'Please select how you heard about us'},
+    {id:'course',   msg:'Please select a package'},
   ].forEach(({id,msg}) => {
     if (!document.getElementById(id).value.trim()) { markErr(id); showErr(`err-${id}`,msg); ok=false; }
     else { clearErr(id); hideErr(`err-${id}`); }
@@ -720,7 +817,6 @@ function validateForm() {
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     markErr('email'); showErr('err-email','Enter a valid email address'); ok=false;
   }
-
   const cell = document.getElementById('cell').value;
   if (!cell || cell.replace(/\D/g,'').length !== 10) {
     markErr('cell'); showErr('err-cell','Please enter a valid 10-digit phone number'); ok=false;
@@ -731,8 +827,8 @@ function validateForm() {
     markErr('license'); showErr('err-license','Format must be A1234-12345-12345'); ok=false;
   } else { clearErr('license'); hideErr('err-license'); }
 
-  if (!selectedPackage) {
-    document.getElementById('err-package').classList.add('show'); ok=false;
+  if (!selectedAmount) {
+    document.getElementById('err-amount').classList.add('show'); ok=false;
   }
 
   if (currentMethod==='card' && !document.getElementById('cc-name').value.trim()) {
@@ -765,15 +861,16 @@ async function handleCardPayment() {
   //   headers: { 'Content-Type': 'application/json' },
   //   body: JSON.stringify({
   //     stripeToken: token.id,
-  //     amount: Math.round(COURSES[selectedPackage].price * 100),
+  //     amount:   Math.round(amountToPay * 100),
   //     currency: 'cad',
-  //     name:  document.getElementById('fullname').value,
-  //     email: document.getElementById('email').value,
-  //     package: COURSES[selectedPackage].label,
+  //     name:     document.getElementById('fullname').value,
+  //     email:    document.getElementById('email').value,
+  //     package:  COURSES[selectedCourse].label,
+  //     payType:  selectedAmount,
   //   })
   // });
 
-  console.log('Stripe token:', token.id, '| Package:', COURSES[selectedPackage].label);
+  console.log('Token:', token.id, '| Amount: $' + amountToPay.toFixed(2), '| Package:', COURSES[selectedCourse].label);
   showSuccess();
 }
 
