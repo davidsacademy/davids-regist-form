@@ -3,576 +3,755 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>David's Academy of Defensive Driving – Student Registration</title>
+<title>David's Academy of Defensive Driving</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://js.stripe.com/v3/"></script>
-<script>
-const COURSES = {
-  gold: {
-    label:'Gold Package', pretax:699.99, total:790.98, original:799.99, save:100,
-    badge:'Most Popular', badge2:'Limited Time Offer', desc:'Best value for G2 success',
-    features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Car for Road Test Included','Flexible Scheduling','Free Road Test Booking','Free Pick & Drop Off']
-  },
-  platinum: {
-    label:'Platinum Package', pretax:779.99, total:881.39, original:null, save:null,
-    badge:null, badge2:null, desc:'Premium upgrade for faster success',
-    features:['Everything in Gold','12 Hours In-Car Training','Car for Road Test Included','Priority Scheduling','Flexible Rescheduling','Free Pick & Drop Off']
-  },
-  silver: {
-    label:'Silver Package', pretax:549.99, total:621.49, original:null, save:null,
-    badge:null, badge2:null, desc:'Starter package for new drivers',
-    features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Free Pick Up & Drop Off','Free Road Test Booking']
-  },
-};
-</script>
 <style>
-  :root {
-    --bg:#ffffff; --surface:#f8f9fa; --card:#ffffff; --border:#222222;
-    --yellow:#f5c400; --yellow-dark:#b38a00; --black:#111111; --body:#111111;
-    --muted:#555555; --danger:#cc0000; --success:#1a7a4a; --accent-bg:#fffbe6;
-    --green:#1db954; --green-dark:#158a3e;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html,body { width:100%; background:var(--bg); color:var(--body); font-family:'DM Sans',sans-serif; min-height:100vh; }
+:root {
+  --bg:#ffffff; --surface:#f8f9fa; --card:#ffffff; --border:#222222;
+  --yellow:#f5c400; --yellow-dark:#b38a00; --black:#111111; --body:#111111;
+  --muted:#555555; --danger:#cc0000; --success:#1a7a4a; --accent-bg:#fffbe6;
+  --green:#1db954; --green-dark:#158a3e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;background:#f2f2f2;color:var(--body);font-family:'DM Sans',sans-serif;min-height:100vh;}
 
-  .page-wrap { width:100%; max-width:780px; margin:0 auto; padding:40px 16px 80px; }
-  @media(min-width:1024px){ .page-wrap{ padding:56px 48px 80px; } }
-  @media(min-width:600px) and (max-width:1023px){ .page-wrap{ padding:40px 28px 80px; } }
-  @media(max-width:374px){ .page-wrap{ padding:28px 10px 60px; } }
+/* ── PRICING SECTION ── */
+.pricing-section{max-width:1100px;margin:0 auto;padding:60px 20px;}
+.pricing-header{text-align:center;margin-bottom:48px;}
+.pricing-header h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,7vw,72px);letter-spacing:0.03em;color:var(--black);margin-bottom:8px;}
+.pricing-header h2 span{color:var(--yellow-dark);}
+.pricing-header p{color:var(--muted);font-size:15px;}
 
-  /* HEADER */
-  header { text-align:center; margin-bottom:32px; animation:fadeDown 0.6s ease both; }
-  .logo-badge {
-    display:inline-flex; align-items:center; gap:8px;
-    background:var(--black); color:#fff; padding:7px 18px 7px 12px;
-    border-radius:999px; font-family:'DM Mono',monospace; font-size:11px;
-    font-weight:500; letter-spacing:0.1em; text-transform:uppercase;
-    margin-bottom:16px; border:2px solid var(--black);
-  }
-  .logo-badge svg { width:16px; height:16px; }
-  h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(40px,8vw,72px); letter-spacing:0.03em; line-height:0.95; color:var(--black); margin-bottom:8px; }
-  h1 span { color:var(--yellow-dark); }
-  .subtitle { color:var(--muted); font-size:15px; }
+.cards-grid{display:grid;grid-template-columns:1fr;gap:24px;}
+@media(min-width:680px){.cards-grid{grid-template-columns:repeat(3,1fr);}}
 
-  /* STEP PROGRESS */
-  .step-progress { display:flex; align-items:center; justify-content:center; gap:0; margin:24px 0 32px; padding:0 8px; }
-  .step-item { display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; position:relative; }
-  .step-item:not(:last-child)::after { content:''; position:absolute; top:18px; left:calc(50% + 18px); width:calc(100% - 36px); height:2px; background:#ddd; z-index:0; }
-  .step-item.completed:not(:last-child)::after { background:var(--black); }
-  .step-circle { width:36px; height:36px; border-radius:50%; border:2px solid #ddd; background:#fff; display:flex; align-items:center; justify-content:center; font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:#bbb; position:relative; z-index:1; transition:all 0.3s; }
-  .step-item.active    .step-circle { border-color:var(--black); background:var(--yellow); color:var(--black); box-shadow:3px 3px 0px var(--black); }
-  .step-item.completed .step-circle { border-color:var(--black); background:var(--black); color:#fff; }
-  .step-label { font-size:10px; font-weight:600; color:#bbb; letter-spacing:0.06em; text-transform:uppercase; text-align:center; font-family:'DM Mono',monospace; }
-  .step-item.active    .step-label { color:var(--black); }
-  .step-item.completed .step-label { color:var(--muted); }
-  @media(max-width:400px){ .step-label{ display:none; } }
+/* Dark card base — matches website exactly */
+.pkg-card{
+  background:#0d0d0d;
+  border-radius:22px;
+  overflow:hidden;
+  position:relative;
+  transition:transform 0.22s,box-shadow 0.22s;
+  /* subtle silver outline like the website */
+  box-shadow:0 0 0 2px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.45);
+}
+.pkg-card:hover{transform:translateY(-5px);}
+/* Gold card: golden border glow */
+.pkg-card.gold-card{
+  box-shadow:0 0 0 2px #c9a100, 0 0 28px rgba(201,161,0,0.25), 0 8px 32px rgba(0,0,0,0.5);
+}
+.pkg-card.gold-card:hover{
+  box-shadow:0 0 0 2.5px #e8c000, 0 0 40px rgba(232,192,0,0.35), 0 12px 40px rgba(0,0,0,0.55);
+}
 
-  /* FORM STEPS */
-  .form-step { display:none; animation:fadeUp 0.4s ease both; }
-  .form-step.active { display:block; }
+/* Entire card is dark — no split header/body */
+.pkg-card-body{padding:28px 26px 24px;display:flex;flex-direction:column;gap:0;}
 
-  .step-card { background:var(--card); border:2px solid var(--black); border-radius:14px; padding:28px 24px; box-shadow:4px 4px 0px var(--black); width:100%; }
-  @media(min-width:600px){ .step-card{ padding:36px 32px; } }
+/* Badges */
+.pkg-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;justify-content:center;}
+.pkg-badge{
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:800;
+  letter-spacing:0.06em;text-transform:uppercase;
+  padding:5px 14px;border-radius:999px;
+}
+.badge-pop{background:#e8000d;color:#fff;}
+.badge-ltd{background:#e8000d;color:#fff;}
+.badge-save{background:#1db954;color:#fff;}
 
-  .step-title    { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.05em; color:var(--black); margin-bottom:6px; }
-  .step-subtitle { font-size:13px; color:var(--muted); margin-bottom:24px; font-family:'DM Mono',monospace; }
+/* Package name */
+.pkg-name{
+  font-family:'DM Sans',sans-serif;font-size:28px;font-weight:300;
+  color:rgba(255,255,255,0.75);letter-spacing:0.01em;
+  text-align:center;margin-bottom:10px;
+}
 
-  /* GRID */
-  .grid { display:grid; gap:16px; }
-  .grid-2 { grid-template-columns:1fr; }
-  .col-span-2 { grid-column:span 1; }
-  @media(min-width:480px){ .grid-2{ grid-template-columns:1fr 1fr; } .col-span-2{ grid-column:span 2; } }
+/* Price */
+.pkg-price-block{text-align:center;margin-bottom:6px;}
+.pkg-price{
+  font-family:'DM Sans',sans-serif;font-size:46px;font-weight:800;
+  color:#ffffff;letter-spacing:-0.02em;line-height:1;
+}
+.pkg-price-hst{
+  font-family:'DM Sans',sans-serif;font-size:46px;font-weight:800;
+  color:#ffffff;letter-spacing:-0.02em;
+}
+.pkg-desc{font-size:13px;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:10px;}
 
-  /* FIELDS */
-  .field { display:flex; flex-direction:column; gap:6px; }
-  label { font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--black); }
-  .field-hint { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; margin-top:-2px; margin-bottom:2px; }
+/* Strikethrough + save row */
+.pkg-save-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;}
+.pkg-orig{font-size:16px;color:rgba(255,255,255,0.35);text-decoration:line-through;font-weight:500;}
+.pkg-save-badge{background:#1db954;color:#fff;font-size:13px;font-weight:700;padding:4px 12px;border-radius:999px;}
 
-  input, select {
-    background:#fff; border:2px solid var(--black); border-radius:8px;
-    color:var(--black); font-family:'DM Mono',monospace; font-size:15px;
-    padding:0 15px; height:54px; line-height:54px;
-    transition:border-color 0.15s,box-shadow 0.15s,background 0.15s;
-    outline:none; width:100%; -webkit-appearance:none; font-weight:500;
-    box-sizing:border-box; display:block;
-  }
-  input::placeholder { color:#aaa; font-weight:400; }
-  input:focus, select:focus { border-color:var(--black); background:var(--accent-bg); box-shadow:3px 3px 0px var(--black); }
-  select { cursor:pointer; }
-  select option { background:#fff; color:var(--black); }
+/* Features */
+.pkg-features{display:flex;flex-direction:column;gap:11px;margin-bottom:26px;}
+.pkg-feature{
+  display:flex;align-items:center;gap:10px;
+  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+  color:rgba(255,255,255,0.88);
+}
+.feat-check{
+  font-size:18px;color:#fff;flex-shrink:0;line-height:1;
+}
 
-  /* DATE FIELD — fully fixed alignment */
-  input[type="date"] {
-    background:#fff; border:2px solid var(--black); border-radius:8px;
-    color:var(--black); font-family:'DM Sans',sans-serif; font-size:15px;
-    font-weight:600; padding:0 15px; height:54px; line-height:54px;
-    cursor:pointer; width:100%; display:flex; align-items:center;
-    box-sizing:border-box; -webkit-appearance:none; appearance:none;
-    outline:none;
-  }
-  input[type="date"]:focus { border-color:var(--black); background:var(--accent-bg); box-shadow:3px 3px 0px var(--black); outline:none; }
-  input[type="date"]::-webkit-calendar-picker-indicator { cursor:pointer; width:20px; height:20px; opacity:0.7; margin-right:4px; }
-  input[type="date"]::-webkit-datetime-edit-fields-wrapper { padding:0; display:flex; align-items:center; height:52px; }
-  input[type="date"]::-webkit-datetime-edit { padding:0; display:flex; align-items:center; }
-  input[type="date"]::-webkit-datetime-edit-text { color:var(--muted); padding:0 2px; }
-  input[type="date"]::-webkit-datetime-edit-month-field,
-  input[type="date"]::-webkit-datetime-edit-day-field,
-  input[type="date"]::-webkit-datetime-edit-year-field { color:var(--black); font-weight:700; padding:0 1px; }
-  input[type="date"]::-webkit-inner-spin-button { display:none; }
+/* Register button */
+.btn-register{
+  width:100%;padding:16px;border:none;border-radius:999px;
+  font-family:'DM Sans',sans-serif;font-size:17px;font-weight:800;
+  letter-spacing:0.01em;cursor:pointer;transition:all 0.18s;
+}
+.gold-card .btn-register{
+  background:linear-gradient(135deg,#f5c400,#c9a100);
+  color:#111;
+  box-shadow:0 2px 16px rgba(245,196,0,0.3);
+}
+.gold-card .btn-register:hover{
+  background:linear-gradient(135deg,#ffe033,#e8b800);
+  transform:translateY(-1px);box-shadow:0 4px 22px rgba(245,196,0,0.45);
+}
+.platinum-card .btn-register,.silver-card .btn-register{
+  background:rgba(255,255,255,0.12);
+  color:#fff;border:1.5px solid rgba(255,255,255,0.25);
+}
+.platinum-card .btn-register:hover,.silver-card .btn-register:hover{
+  background:rgba(255,255,255,0.2);transform:translateY(-1px);
+}
 
-  .select-wrap { position:relative; }
-  .select-wrap::after { content:'▾'; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--black); pointer-events:none; font-size:14px; font-weight:700; }
+/* ── MODAL OVERLAY ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  z-index:1000;align-items:flex-start;justify-content:center;
+  padding:20px 12px 40px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.modal-overlay.open{display:flex;animation:fadeIn 0.25s ease both;}
 
-  /* COURSE LOCKED FIELD */
-  .course-locked-row {
-    display:flex; align-items:center; gap:10px; position:relative;
-  }
-  .course-locked-field {
-    flex:1; background:var(--accent-bg); border:2px solid var(--black); border-radius:8px;
-    color:var(--black); font-family:'DM Mono',monospace; font-size:15px; font-weight:700;
-    padding:0 15px; height:54px; display:flex; align-items:center; justify-content:space-between;
-    box-sizing:border-box;
-  }
-  .course-locked-price { font-size:13px; color:var(--yellow-dark); font-weight:700; }
-  .course-locked-badge { font-size:9px; background:var(--green); color:#fff; padding:2px 7px; border-radius:999px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-left:6px; font-family:'DM Mono',monospace; }
+.modal-box{
+  background:#fff;border:2px solid var(--black);border-radius:18px;
+  width:100%;max-width:700px;box-shadow:8px 8px 0 var(--black);
+  position:relative;margin:auto;
+  /* don't clip Stripe iframes on iOS */
+  overflow:visible;
+}
 
-  /* INFO ICON + TOOLTIP */
-  .info-icon-wrap { position:relative; flex-shrink:0; }
-  .info-icon {
-    width:32px; height:32px; border-radius:50%; border:2px solid var(--black);
-    background:#fff; display:flex; align-items:center; justify-content:center;
-    cursor:pointer; font-family:'DM Mono',monospace; font-size:14px; font-weight:700;
-    color:var(--black); transition:all 0.15s; user-select:none; flex-shrink:0;
-  }
-  .info-icon:hover { background:var(--yellow); box-shadow:2px 2px 0 var(--black); }
+.modal-close{
+  position:absolute;top:16px;right:16px;width:36px;height:36px;
+  border-radius:50%;border:2px solid var(--black);background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:18px;font-weight:700;color:var(--black);z-index:10;
+  transition:all 0.15s;line-height:1;
+}
+.modal-close:hover{background:var(--yellow);box-shadow:2px 2px 0 var(--black);}
 
-  .pkg-tooltip {
-    display:none; position:absolute; right:0; top:44px; z-index:999;
-    width:300px; background:var(--black); border:2px solid var(--black);
-    border-radius:14px; overflow:hidden; box-shadow:6px 6px 0px rgba(0,0,0,0.3);
-    animation:fadeUp 0.2s ease both;
-  }
-  @media(max-width:480px){ .pkg-tooltip{ right:-80px; width:280px; } }
-  .info-icon-wrap:hover .pkg-tooltip,
-  .info-icon-wrap.open   .pkg-tooltip { display:block; }
+.modal-inner{padding:36px 28px 32px;background:#fff;border-radius:18px;}
+@media(min-width:600px){.modal-inner{padding:44px 40px 36px;}}
 
-  .tooltip-header {
-    padding:14px 16px;
-    background:linear-gradient(135deg,#1a1200,#3d2e00);
-    border-bottom:2px solid #c9a100;
-  }
-  .pkg-tooltip.platinum-tip .tooltip-header { background:linear-gradient(135deg,#1a1a1a,#3a3a3a); border-bottom-color:#888; }
-  .pkg-tooltip.silver-tip   .tooltip-header { background:linear-gradient(135deg,#1c1c1c,#2e2e2e); border-bottom-color:#666; }
+/* ── FORM INTERNALS (same as before) ── */
+.page-wrap{width:100%;}
 
-  .tooltip-badges { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px; }
-  .tooltip-badge { font-family:'DM Mono',monospace; font-size:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:2px 8px; border-radius:999px; background:#e8000d; color:#fff; }
-  .tooltip-badge.save { background:var(--green); }
+header{text-align:center;margin-bottom:28px;animation:fadeDown 0.5s ease both;}
+.logo-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--black);color:#fff;padding:7px 18px 7px 12px;
+  border-radius:999px;font-family:'DM Mono',monospace;font-size:11px;
+  font-weight:500;letter-spacing:0.1em;text-transform:uppercase;
+  margin-bottom:14px;border:2px solid var(--black);
+}
+.logo-badge svg{width:16px;height:16px;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,7vw,60px);letter-spacing:0.03em;line-height:0.95;color:var(--black);margin-bottom:6px;}
+h1 span{color:var(--yellow-dark);}
+.subtitle{color:var(--muted);font-size:14px;}
 
-  .tooltip-name  { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--yellow); letter-spacing:0.04em; }
-  .pkg-tooltip.platinum-tip .tooltip-name,
-  .pkg-tooltip.silver-tip   .tooltip-name { color:#fff; }
+.step-progress{display:flex;align-items:center;justify-content:center;gap:0;margin:20px 0 28px;padding:0 8px;}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:18px;left:calc(50% + 18px);width:calc(100% - 36px);height:2px;background:#ddd;z-index:0;}
+.step-item.completed:not(:last-child)::after{background:var(--black);}
+.step-circle{width:36px;height:36px;border-radius:50%;border:2px solid #ddd;background:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#bbb;position:relative;z-index:1;transition:all 0.3s;}
+.step-item.active .step-circle{border-color:var(--black);background:var(--yellow);color:var(--black);box-shadow:3px 3px 0px var(--black);}
+.step-item.completed .step-circle{border-color:var(--black);background:var(--black);color:#fff;}
+.step-label{font-size:10px;font-weight:600;color:#bbb;letter-spacing:0.06em;text-transform:uppercase;text-align:center;font-family:'DM Mono',monospace;}
+.step-item.active .step-label{color:var(--black);}
+.step-item.completed .step-label{color:var(--muted);}
+@media(max-width:400px){.step-label{display:none;}}
 
-  .tooltip-price-row { display:flex; align-items:baseline; gap:8px; margin-top:4px; }
-  .tooltip-price { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--yellow); letter-spacing:0.03em; }
-  .pkg-tooltip.platinum-tip .tooltip-price,
-  .pkg-tooltip.silver-tip   .tooltip-price { color:#fff; }
-  .tooltip-hst   { font-size:11px; color:rgba(255,255,255,0.6); font-family:'DM Mono',monospace; }
-  .tooltip-orig  { font-size:11px; color:rgba(255,255,255,0.4); font-family:'DM Mono',monospace; text-decoration:line-through; }
-  .tooltip-total { font-size:10px; color:rgba(255,255,255,0.45); font-family:'DM Mono',monospace; margin-top:2px; }
-  .tooltip-desc  { font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px; }
+.form-step{display:none;animation:fadeUp 0.4s ease both;}
+.form-step.active{display:block;}
 
-  .tooltip-features { padding:12px 16px; display:flex; flex-direction:column; gap:6px; background:#111; }
-  .tooltip-feature { display:flex; align-items:center; gap:7px; font-size:12px; color:#eee; }
-  .tooltip-check { width:16px; height:16px; border-radius:50%; background:var(--yellow-dark); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-  .pkg-tooltip.platinum-tip .tooltip-check { background:#666; }
-  .pkg-tooltip.silver-tip   .tooltip-check { background:#777; }
-  .tooltip-check svg { width:9px; height:9px; color:#fff; }
+.step-card{background:var(--card);border:2px solid var(--black);border-radius:14px;padding:24px 20px;box-shadow:4px 4px 0px var(--black);width:100%;}
+@media(min-width:600px){.step-card{padding:32px 28px;}}
 
-  /* PAYMENT AMOUNT */
-  .amount-section { margin-top:20px; padding-top:20px; border-top:1px dashed #ddd; }
-  .amount-label { font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--black); display:block; margin-bottom:4px; }
-  .amount-hint  { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; margin-bottom:12px; }
-  .amount-options { display:flex; flex-direction:column; gap:10px; }
-  @media(min-width:480px){ .amount-options{ flex-direction:row; } }
-  .amount-option { flex:1; border:2px solid var(--black); border-radius:10px; padding:14px 16px; cursor:pointer; background:#fff; transition:all 0.15s; user-select:none; display:flex; flex-direction:column; gap:3px; }
-  .amount-option:hover { box-shadow:3px 3px 0px var(--black); transform:translateY(-1px); }
-  .amount-option.selected.deposit-opt { background:#fff8e1; border-color:var(--yellow-dark); box-shadow:3px 3px 0px var(--yellow-dark); }
-  .amount-option.selected.half-opt    { background:#e8f5e9; border-color:var(--green-dark);  box-shadow:3px 3px 0px var(--green-dark); }
-  .amount-option.selected.full-opt    { background:var(--black); box-shadow:3px 3px 0px var(--yellow-dark); }
-  .amount-opt-title { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
-  .amount-option.selected .amount-opt-title { color:var(--black); }
-  .amount-option.selected.full-opt .amount-opt-title { color:rgba(255,255,255,0.7); }
-  .amount-opt-value { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.05em; color:var(--black); }
-  .amount-option.selected.full-opt .amount-opt-value { color:var(--yellow); }
-  .amount-opt-note { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
-  .amount-option.selected.full-opt .amount-opt-note { color:rgba(255,255,255,0.5); }
+.step-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.05em;color:var(--black);margin-bottom:6px;}
+.step-subtitle{font-size:13px;color:var(--muted);margin-bottom:22px;font-family:'DM Mono',monospace;}
 
-  /* PAYMENT METHOD TABS */
-  .pay-tabs { display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap; }
-  .pay-tab { display:flex; align-items:center; gap:7px; padding:10px 16px; border-radius:8px; border:2px solid var(--black); background:#fff; color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; user-select:none; flex:1 1 auto; justify-content:center; }
-  @media(min-width:600px){ .pay-tab{ flex:0 1 auto; justify-content:flex-start; } }
-  .pay-tab.active { background:var(--yellow); color:var(--black); box-shadow:3px 3px 0px var(--black); }
-  .pay-tab svg { width:17px; height:17px; flex-shrink:0; }
+.grid{display:grid;gap:14px;}
+.grid-2{grid-template-columns:1fr;}
+.col-span-2{grid-column:span 1;}
+@media(min-width:480px){.grid-2{grid-template-columns:1fr 1fr;}.col-span-2{grid-column:span 2;}}
 
-  /* STRIPE */
-  .stripe-field { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
-  .stripe-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
-  @media(max-width:400px){ .stripe-row-2{ grid-template-columns:1fr; } }
+.field{display:flex;flex-direction:column;gap:6px;}
+label{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--black);}
+.field-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:-2px;margin-bottom:2px;}
 
-  .stripe-element-box {
-    background:#fff; border:2px solid var(--black); border-radius:8px;
-    height:54px; padding:0 15px; box-sizing:border-box;
-    display:flex; align-items:center;
-    transition:box-shadow 0.15s, background 0.15s;
-  }
-  .stripe-element-box > div { width:100%; }
-  .stripe-element-box.focused { background:var(--accent-bg); box-shadow:3px 3px 0px var(--black); }
+input,select{
+  background:#fff;border:2px solid var(--black);border-radius:8px;
+  color:var(--black);font-family:'DM Mono',monospace;font-size:14px;
+  padding:0 13px;height:46px;line-height:46px;
+  transition:border-color 0.15s,box-shadow 0.15s,background 0.15s;
+  outline:none;width:100%;-webkit-appearance:none;font-weight:500;
+  box-sizing:border-box;display:block;
+}
+input::placeholder{color:#aaa;font-weight:400;}
+input:focus,select:focus{border-color:var(--black);background:var(--accent-bg);box-shadow:3px 3px 0px var(--black);}
+select{cursor:pointer;}
+select option{background:#fff;color:var(--black);}
 
-  .card-icons { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
-  .card-badge { border:2px solid var(--black); border-radius:6px; padding:5px 12px; font-size:11px; font-weight:800; letter-spacing:0.08em; font-family:'DM Mono',monospace; }
-  .card-badge.visa  { background:#1a1f71; color:#fff; }
-  .card-badge.mc    { background:#eb6b2c; color:#fff; }
-  .card-badge.amex  { background:#2e77bc; color:#fff; }
+/* DATE — flex wrapper centres content reliably cross-browser */
+.date-input-wrap{
+  position:relative;display:flex;align-items:stretch;
+}
+.date-input-wrap input[type="date"]{
+  flex:1;
+  background:#fff;border:2px solid var(--black);border-radius:8px;
+  color:var(--black);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  height:46px;padding:0 12px;
+  cursor:pointer;width:100%;box-sizing:border-box;outline:none;
+  -webkit-appearance:none;appearance:none;
+  /* flex inner content vertically */
+  display:flex;align-items:center;
+}
+.date-input-wrap input[type="date"]::-webkit-calendar-picker-indicator{
+  cursor:pointer;width:20px;height:20px;opacity:0.65;flex-shrink:0;
+}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-fields-wrapper{
+  display:flex;align-items:center;padding:0;height:44px;
+}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit{
+  display:flex;align-items:center;padding:0;line-height:1;
+}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-month-field,
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-day-field,
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-year-field{color:var(--black);font-weight:700;}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-text{color:var(--muted);padding:0 1px;}
+.date-input-wrap input[type="date"]::-webkit-inner-spin-button{display:none;}
+.date-input-wrap input[type="date"]:focus{border-color:var(--black);background:var(--accent-bg);box-shadow:3px 3px 0px var(--black);}
 
-  .secure-note { display:flex; align-items:flex-start; gap:8px; font-size:12px; color:var(--black); margin-top:14px; padding:12px 14px; background:#f0fff4; border-radius:8px; border:2px solid var(--black); line-height:1.5; font-weight:500; }
-  .secure-note svg { width:14px; height:14px; color:var(--success); flex-shrink:0; margin-top:1px; }
+.select-wrap{position:relative;}
+.select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--black);pointer-events:none;font-size:14px;font-weight:700;}
 
-  #stripe-error { display:none; color:var(--danger); font-size:12px; margin-top:10px; padding:10px 14px; background:#fff0f0; border-radius:8px; border:2px solid var(--danger); font-weight:600; }
+.course-locked-row{display:flex;align-items:center;gap:10px;position:relative;}
+.course-locked-field{
+  flex:1;background:var(--accent-bg);border:2px solid var(--black);border-radius:8px;
+  color:var(--black);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
+  padding:0 13px;height:46px;display:flex;align-items:center;justify-content:space-between;
+  box-sizing:border-box;
+}
+.course-locked-price{font-size:12px;color:var(--yellow-dark);font-weight:600;}
 
-  .info-box { background:var(--accent-bg); border:2px solid var(--black); border-radius:10px; padding:18px 20px; font-size:14px; color:var(--body); line-height:1.8; box-shadow:3px 3px 0px var(--black); }
-  .info-box strong { color:var(--black); font-weight:700; }
+.info-icon-wrap{position:relative;flex-shrink:0;}
+.info-icon{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--black);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-family:'DM Mono',monospace;font-size:14px;font-weight:700;
+  color:var(--black);transition:all 0.15s;user-select:none;flex-shrink:0;
+}
+.info-icon:hover{background:var(--yellow);box-shadow:2px 2px 0 var(--black);}
+.pkg-tooltip{
+  display:none;position:absolute;right:0;top:44px;z-index:999;
+  width:300px;background:var(--black);border:2px solid var(--black);
+  border-radius:14px;overflow:hidden;box-shadow:6px 6px 0px rgba(0,0,0,0.3);
+  animation:fadeUp 0.2s ease both;
+}
+@media(max-width:480px){.pkg-tooltip{right:-80px;width:280px;}}
+.info-icon-wrap:hover .pkg-tooltip,.info-icon-wrap.open .pkg-tooltip{display:block;}
+.tooltip-header{padding:14px 16px;background:linear-gradient(135deg,#1a1200,#3d2e00);border-bottom:2px solid #c9a100;}
+.pkg-tooltip.platinum-tip .tooltip-header{background:linear-gradient(135deg,#1a1a1a,#3a3a3a);border-bottom-color:#888;}
+.pkg-tooltip.silver-tip .tooltip-header{background:linear-gradient(135deg,#1c1c1c,#2e2e2e);border-bottom-color:#666;}
+.tooltip-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
+.tooltip-badge{font-family:'DM Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:#e8000d;color:#fff;}
+.tooltip-badge.save{background:var(--green);}
+.tooltip-name{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);letter-spacing:0.04em;}
+.pkg-tooltip.platinum-tip .tooltip-name,.pkg-tooltip.silver-tip .tooltip-name{color:#fff;}
+.tooltip-price-row{display:flex;align-items:baseline;gap:8px;margin-top:4px;}
+.tooltip-price{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--yellow);letter-spacing:0.03em;}
+.pkg-tooltip.platinum-tip .tooltip-price,.pkg-tooltip.silver-tip .tooltip-price{color:#fff;}
+.tooltip-hst{font-size:11px;color:rgba(255,255,255,0.6);font-family:'DM Mono',monospace;}
+.tooltip-orig{font-size:11px;color:rgba(255,255,255,0.4);font-family:'DM Mono',monospace;text-decoration:line-through;}
+.tooltip-total{font-size:10px;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;margin-top:2px;}
+.tooltip-desc{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;}
+.tooltip-features{padding:12px 16px;display:flex;flex-direction:column;gap:6px;background:#111;}
+.tooltip-feature{display:flex;align-items:center;gap:7px;font-size:12px;color:#eee;}
+.tooltip-check{width:16px;height:16px;border-radius:50%;background:var(--yellow-dark);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.pkg-tooltip.platinum-tip .tooltip-check{background:#666;}
+.pkg-tooltip.silver-tip .tooltip-check{background:#777;}
+.tooltip-check svg{width:9px;height:9px;color:#fff;}
 
-  /* REVIEW */
-  .review-box { background:var(--surface); border:2px solid var(--black); border-radius:10px; padding:16px 20px; margin-bottom:20px; }
-  .review-box h4 { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
-  .review-row { display:flex; justify-content:space-between; font-size:13px; padding:5px 0; border-bottom:1px solid #e5e5e5; }
-  .review-row:last-child { border-bottom:none; }
-  .review-key { color:var(--muted); font-weight:500; }
-  .review-val { color:var(--black); font-weight:600; text-align:right; max-width:60%; }
+.amount-section{margin-top:20px;padding-top:20px;border-top:1px dashed #ddd;}
+.amount-label{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--black);display:block;margin-bottom:4px;}
+.amount-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:12px;}
+.amount-options{display:flex;flex-direction:column;gap:10px;}
+@media(min-width:480px){.amount-options{flex-direction:row;}}
+.amount-option{flex:1;border:2px solid var(--black);border-radius:10px;padding:14px 16px;cursor:pointer;background:#fff;transition:all 0.15s;user-select:none;display:flex;flex-direction:column;gap:3px;}
+.amount-option:hover{box-shadow:3px 3px 0px var(--black);transform:translateY(-1px);}
+.amount-option.selected.deposit-opt{background:#fff8e1;border-color:var(--yellow-dark);box-shadow:3px 3px 0px var(--yellow-dark);}
+.amount-option.selected.half-opt{background:#e8f5e9;border-color:var(--green-dark);box-shadow:3px 3px 0px var(--green-dark);}
+.amount-option.selected.full-opt{background:var(--black);box-shadow:3px 3px 0px var(--yellow-dark);}
+.amount-opt-title{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+.amount-option.selected .amount-opt-title{color:var(--black);}
+.amount-option.selected.full-opt .amount-opt-title{color:rgba(255,255,255,0.7);}
+.amount-opt-value{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.05em;color:var(--black);}
+.amount-option.selected.full-opt .amount-opt-value{color:var(--yellow);}
+.amount-opt-note{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+.amount-option.selected.full-opt .amount-opt-note{color:rgba(255,255,255,0.5);}
 
-  /* TOTAL */
-  .price-row { display:flex; justify-content:space-between; align-items:center; border-top:2px solid var(--black); padding-top:20px; margin-top:20px; }
-  .price-label { font-size:13px; font-weight:700; color:var(--black); text-transform:uppercase; letter-spacing:0.06em; }
-  .price-sub   { font-size:11px; color:var(--muted); margin-top:2px; font-family:'DM Mono',monospace; }
-  .price-value { font-family:'Bebas Neue',sans-serif; font-size:48px; letter-spacing:0.04em; color:var(--black); }
+.pay-tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
+.pay-tab{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:8px;border:2px solid var(--black);background:#fff;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;user-select:none;flex:1 1 auto;justify-content:center;}
+@media(min-width:600px){.pay-tab{flex:0 1 auto;justify-content:flex-start;}}
+.pay-tab.active{background:var(--yellow);color:var(--black);box-shadow:3px 3px 0px var(--black);}
+.pay-tab svg{width:17px;height:17px;flex-shrink:0;}
 
-  /* BUTTONS */
-  .btn-row { display:flex; gap:12px; margin-top:24px; }
-  .btn-back { padding:16px 24px; background:#fff; color:var(--black); border:2px solid var(--black); border-radius:10px; font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:0.08em; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
-  .btn-back:hover { background:var(--surface); box-shadow:3px 3px 0px var(--black); }
-  .btn-next, .btn-submit { flex:1; padding:17px; background:var(--black); color:#fff; border:2px solid var(--black); border-radius:10px; font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.1em; cursor:pointer; transition:all 0.15s; box-shadow:4px 4px 0px var(--yellow-dark); }
-  .btn-next:hover, .btn-submit:hover { background:#222; transform:translateY(-2px); box-shadow:6px 6px 0px var(--yellow-dark); }
-  .btn-submit:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+.stripe-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.stripe-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+@media(max-width:400px){.stripe-row-2{grid-template-columns:1fr;}}
+.stripe-element-box{
+  background:#fff;border:2px solid var(--black);border-radius:8px;
+  height:46px;padding:0 13px;box-sizing:border-box;
+  display:flex;align-items:center;
+  transition:box-shadow 0.15s,background 0.15s;
+  position:relative;z-index:1;
+  /* critical for mobile Stripe iframes */
+  -webkit-transform:translateZ(0);transform:translateZ(0);
+  touch-action:manipulation;
+}
+.stripe-element-box>div{width:100%;pointer-events:auto;}
+/* Stripe iframe must be fully interactive on mobile */
+.stripe-element-box iframe{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+}
+.stripe-element-box.focused{background:var(--accent-bg);box-shadow:3px 3px 0px var(--black);}
+.card-icons{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.card-badge{border:2px solid var(--black);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:800;letter-spacing:0.08em;font-family:'DM Mono',monospace;}
+.card-badge.visa{background:#1a1f71;color:#fff;}
+.card-badge.mc{background:#eb6b2c;color:#fff;}
+.card-badge.amex{background:#2e77bc;color:#fff;}
+.secure-note{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--black);margin-top:14px;padding:12px 14px;background:#f0fff4;border-radius:8px;border:2px solid var(--black);line-height:1.5;font-weight:500;}
+.secure-note svg{width:14px;height:14px;color:var(--success);flex-shrink:0;margin-top:1px;}
+#stripe-error{display:none;color:var(--danger);font-size:12px;margin-top:10px;padding:10px 14px;background:#fff0f0;border-radius:8px;border:2px solid var(--danger);font-weight:600;}
 
-  input.error, select.error { border-color:var(--danger) !important; background:#fff0f0 !important; }
-  .error-msg { font-size:11px; color:var(--danger); margin-top:3px; display:none; font-weight:600; font-family:'DM Mono',monospace; }
-  .error-msg.show { display:block; }
-  .err-standalone { font-size:11px; color:var(--danger); margin-top:6px; display:none; font-weight:600; font-family:'DM Mono',monospace; }
-  .err-standalone.show { display:block; }
+.info-box{background:var(--accent-bg);border:2px solid var(--black);border-radius:10px;padding:18px 20px;font-size:14px;color:var(--body);line-height:1.8;box-shadow:3px 3px 0px var(--black);}
+.info-box strong{color:var(--black);font-weight:700;}
 
-  /* SUCCESS */
-  .success-overlay { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.97); z-index:100; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:40px; }
-  .success-overlay.show { display:flex; animation:fadeIn 0.4s ease both; }
-  .success-icon { width:88px; height:88px; background:var(--yellow); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:24px; animation:popIn 0.4s 0.2s ease both; opacity:0; border:3px solid var(--black); box-shadow:4px 4px 0px var(--black); }
-  .success-icon svg { width:44px; height:44px; color:var(--black); }
-  .success-overlay h2 { font-family:'Bebas Neue',sans-serif; font-size:56px; color:var(--black); margin-bottom:10px; }
-  .success-overlay p { color:var(--muted); font-size:15px; max-width:340px; line-height:1.6; }
+.review-box{background:var(--surface);border:2px solid var(--black);border-radius:10px;padding:16px 20px;margin-bottom:20px;}
+.review-box h4{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.review-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #e5e5e5;}
+.review-row:last-child{border-bottom:none;}
+.review-key{color:var(--muted);font-weight:500;}
+.review-val{color:var(--black);font-weight:600;text-align:right;max-width:60%;}
 
-  .spinner { display:inline-block; width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; vertical-align:middle; margin-right:8px; }
+.price-row{display:flex;justify-content:space-between;align-items:center;border-top:2px solid var(--black);padding-top:20px;margin-top:20px;}
+.price-label{font-size:13px;font-weight:700;color:var(--black);text-transform:uppercase;letter-spacing:0.06em;}
+.price-sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace;}
+.price-value{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:0.04em;color:var(--black);}
 
-  @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:translateY(0)} }
-  @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
-  @keyframes popIn    { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
-  @keyframes spin     { to{transform:rotate(360deg)} }
+.btn-row{display:flex;gap:12px;margin-top:24px;}
+.btn-back{padding:16px 24px;background:#fff;color:var(--black);border:2px solid var(--black);border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.08em;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.btn-back:hover{background:var(--surface);box-shadow:3px 3px 0px var(--black);}
+.btn-next,.btn-submit{flex:1;padding:17px;background:var(--black);color:#fff;border:2px solid var(--black);border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.1em;cursor:pointer;transition:all 0.15s;box-shadow:4px 4px 0px var(--yellow-dark);}
+.btn-next:hover,.btn-submit:hover{background:#222;transform:translateY(-2px);box-shadow:6px 6px 0px var(--yellow-dark);}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+input.error,select.error{border-color:var(--danger)!important;background:#fff0f0!important;}
+.error-msg{font-size:11px;color:var(--danger);margin-top:3px;display:none;font-weight:600;font-family:'DM Mono',monospace;}
+.error-msg.show{display:block;}
+.err-standalone{font-size:11px;color:var(--danger);margin-top:6px;display:none;font-weight:600;font-family:'DM Mono',monospace;}
+.err-standalone.show{display:block;}
+
+/* SUCCESS */
+.success-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,0.97);z-index:2000;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;}
+.success-overlay.show{display:flex;animation:fadeIn 0.4s ease both;}
+.success-icon{width:88px;height:88px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:popIn 0.4s 0.2s ease both;opacity:0;border:3px solid var(--black);box-shadow:4px 4px 0px var(--black);}
+.success-icon svg{width:44px;height:44px;color:var(--black);}
+.success-overlay h2{font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--black);margin-bottom:10px;}
+.success-overlay p{color:var(--muted);font-size:15px;max-width:340px;line-height:1.6;}
+
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:8px;}
+
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<div class="page-wrap">
 
-  <header>
-    <div class="logo-badge">
+<!-- ═══ PRICING CARDS ═══ -->
+<div class="pricing-section">
+  <div class="pricing-header">
+    <div class="logo-badge" style="margin-bottom:16px;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 17h2l1-3h12l1 3h2M5 17l-1-5h16l-1 5M9 10V7a3 3 0 016 0v3"/></svg>
       David's Academy of Defensive Driving
     </div>
-    <h1>Student<br><span>Registration</span></h1>
-    <p class="subtitle">Complete all steps to enrol in your driving course</p>
-  </header>
-
-  <!-- STEP PROGRESS -->
-  <div class="step-progress">
-    <div class="step-item active" id="step-ind-1"><div class="step-circle">1</div><div class="step-label">Personal</div></div>
-    <div class="step-item"        id="step-ind-2"><div class="step-circle">2</div><div class="step-label">Address</div></div>
-    <div class="step-item"        id="step-ind-3"><div class="step-circle">3</div><div class="step-label">Course</div></div>
-    <div class="step-item"        id="step-ind-4"><div class="step-circle">4</div><div class="step-label">Payment</div></div>
+    <h2>Choose Your <span>Package</span></h2>
+    <p>All packages include in-car training, flexible scheduling, and free pick &amp; drop off</p>
   </div>
 
-  <form id="regForm" novalidate>
+  <div class="cards-grid">
 
-    <!-- ══ STEP 1: PERSONAL ══ -->
-    <div class="form-step active" id="step-1">
-      <div class="step-card">
-        <div class="step-title">Personal Information</div>
-        <div class="step-subtitle">Step 1 of 4 — Tell us about yourself</div>
-        <div class="grid grid-2">
-          <div class="field col-span-2">
-            <label for="fullname">Full Name</label>
-            <input type="text" id="fullname" placeholder="Jane Smith" required>
-            <span class="error-msg" id="err-fullname">Please enter your full name</span>
-          </div>
-          <div class="field">
-            <label for="cell">Cell Phone</label>
-            <div class="field-hint">Format: 416-555-0000</div>
-            <input type="tel" id="cell" placeholder="416-555-0000" maxlength="12" required>
-            <span class="error-msg" id="err-cell">Please enter a valid 10-digit number</span>
-          </div>
-          <div class="field">
-            <label for="home">Home Phone</label>
-            <div class="field-hint">Format: 416-555-0000</div>
-            <input type="tel" id="home" placeholder="416-555-0000" maxlength="12">
-          </div>
-          <div class="field col-span-2">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" placeholder="jane@example.com" required>
-            <span class="error-msg" id="err-email">Please enter a valid email</span>
-          </div>
+    <!-- SILVER -->
+    <div class="pkg-card silver-card">
+      <div class="pkg-card-body">
+        <div class="pkg-name">Silver Package</div>
+        <div class="pkg-price-block">
+          <span class="pkg-price">$549.99</span><span class="pkg-price-hst"> + HST</span>
         </div>
-        <div class="btn-row">
-          <button type="button" class="btn-next" onclick="nextStep(1)">Continue →</button>
+        <div class="pkg-desc">Starter package for new drivers</div>
+        <div style="height:16px;"></div>
+        <div class="pkg-features">
+          <div class="pkg-feature"><span class="feat-check">✔</span>20 Hours Online Course</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>10 Hours Homelink</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>10 Hours In-Car Training</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Free Pick Up &amp; Drop Off</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Free Road Test Booking</div>
         </div>
+        <button class="btn-register" onclick="openModal('silver')">Book Silver Package</button>
       </div>
     </div>
 
-    <!-- ══ STEP 2: ADDRESS ══ -->
-    <div class="form-step" id="step-2">
-      <div class="step-card">
-        <div class="step-title">Address</div>
-        <div class="step-subtitle">Step 2 of 4 — Where are you located?</div>
-        <div class="grid">
-          <div class="field">
-            <label for="address">Full Address</label>
-            <input type="text" id="address" placeholder="123 Main Street, Apt 4B" required>
-            <span class="error-msg" id="err-address">Please enter your address</span>
-          </div>
-          <div class="field">
-            <label for="city">City</label>
-            <input type="text" id="city" placeholder="Toronto" required>
-            <span class="error-msg" id="err-city">Please enter your city</span>
-          </div>
-          <div class="field">
-            <label for="postal">Postal Code</label>
-            <input type="text" id="postal" placeholder="A1B 2C3" required maxlength="7">
-            <span class="error-msg" id="err-postal">Please enter your postal code</span>
-          </div>
+    <!-- GOLD (featured) -->
+    <div class="pkg-card gold-card">
+      <div class="pkg-card-body">
+        <div class="pkg-badges">
+          <span class="pkg-badge badge-pop">MOST POPULAR</span>
+          <span class="pkg-badge badge-ltd">LIMITED TIME OFFER</span>
         </div>
-        <div class="btn-row">
-          <button type="button" class="btn-back" onclick="prevStep(2)">← Back</button>
-          <button type="button" class="btn-next" onclick="nextStep(2)">Continue →</button>
+        <div class="pkg-name">Gold Package</div>
+        <div class="pkg-price-block">
+          <span class="pkg-price">$699.99</span><span class="pkg-price-hst"> + HST</span>
         </div>
+        <div class="pkg-desc">Best value for G2 success</div>
+        <div class="pkg-save-row">
+          <span class="pkg-orig">$799.99</span>
+          <span class="pkg-save-badge">Save $100</span>
+        </div>
+        <div class="pkg-features">
+          <div class="pkg-feature"><span class="feat-check">✔</span>20 Hours Online Course</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>10 Hours Homelink</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>10 Hours In-Car Training</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Car for Road Test Included</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Flexible Scheduling</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Free Road Test Booking</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Free Pick &amp; Drop Off</div>
+        </div>
+        <button class="btn-register" onclick="openModal('gold')">Book Gold Package</button>
       </div>
     </div>
 
-    <!-- ══ STEP 3: LICENSE & COURSE ══ -->
-    <div class="form-step" id="step-3">
-      <div class="step-card">
-        <div class="step-title">License &amp; Course</div>
-        <div class="step-subtitle">Step 3 of 4 — License details and selected package</div>
-        <div class="grid grid-2">
-          <div class="field">
-            <label for="license">Driver License Number</label>
-            <div class="field-hint">Format: A1234-12345-12345</div>
-            <input type="text" id="license" placeholder="A1234-12345-12345" maxlength="17" required>
-            <span class="error-msg" id="err-license">Format must be A1234-12345-12345</span>
-          </div>
-          <div class="field">
-            <label for="expiry">License Expiry Date</label>
-            <input type="date" id="expiry" required>
-            <span class="error-msg" id="err-expiry">Please enter the expiry date</span>
-          </div>
-          <div class="field">
-            <label for="heard">How Did You Hear About Us?</label>
-            <div class="select-wrap">
-              <select id="heard" required>
-                <option value="" disabled selected>Select an option</option>
-                <option>Google Search</option>
-                <option>Facebook / Instagram</option>
-                <option>Friend or Family</option>
-                <option>Flyer / Poster</option>
-                <option>School Referral</option>
-                <option>Radio / TV</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <span class="error-msg" id="err-heard">Please select an option</span>
-          </div>
+    <!-- PLATINUM -->
+    <div class="pkg-card platinum-card">
+      <div class="pkg-card-body">
+        <div class="pkg-name">Platinum Package</div>
+        <div class="pkg-price-block">
+          <span class="pkg-price">$779.99</span><span class="pkg-price-hst"> + HST</span>
+        </div>
+        <div class="pkg-desc">Premium upgrade for faster success</div>
+        <div style="height:16px;"></div>
+        <div class="pkg-features">
+          <div class="pkg-feature"><span class="feat-check">✔</span>Everything in Gold</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>12 Hours In-Car Training</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Car for Road Test Included</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Priority Scheduling</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Flexible Rescheduling</div>
+          <div class="pkg-feature"><span class="feat-check">✔</span>Free Pick &amp; Drop Off</div>
+        </div>
+        <button class="btn-register" onclick="openModal('platinum')">Book Platinum Package</button>
+      </div>
+    </div>
 
-          <!-- COURSE LOCKED FIELD -->
-          <div class="field">
-            <label>Selected Package</label>
-            <div class="course-locked-row">
-              <div class="course-locked-field" id="courseLocked">
-                <span id="courseLockedLabel">—</span>
-                <span class="course-locked-price" id="courseLockedPrice"></span>
-              </div>
-              <!-- INFO ICON WITH TOOLTIP -->
-              <div class="info-icon-wrap" id="infoWrap" onclick="toggleTooltip()">
-                <div class="info-icon">ⓘ</div>
-                <div class="pkg-tooltip" id="pkgTooltip">
-                  <div class="tooltip-header">
-                    <div class="tooltip-badges" id="ttBadges"></div>
-                    <div class="tooltip-name"  id="ttName"></div>
-                    <div class="tooltip-price-row">
-                      <div class="tooltip-price" id="ttPrice"></div>
-                      <div class="tooltip-hst">+ HST</div>
-                      <div class="tooltip-orig" id="ttOrig"></div>
-                    </div>
-                    <div class="tooltip-total" id="ttTotal"></div>
-                    <div class="tooltip-desc"  id="ttDesc"></div>
-                  </div>
-                  <div class="tooltip-features" id="ttFeatures"></div>
+  </div>
+</div>
+
+<!-- ═══ REGISTRATION MODAL ═══ -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <div class="modal-inner">
+      <div class="page-wrap">
+
+        <header style="margin-bottom:16px;">
+          <h1 style="font-size:clamp(28px,5vw,42px);">Student <span>Registration</span></h1>
+          <p class="subtitle">Complete all steps to enrol in your driving course</p>
+        </header>
+
+        <div class="step-progress">
+          <div class="step-item active" id="step-ind-1"><div class="step-circle">1</div><div class="step-label">Personal</div></div>
+          <div class="step-item"        id="step-ind-2"><div class="step-circle">2</div><div class="step-label">Address</div></div>
+          <div class="step-item"        id="step-ind-3"><div class="step-circle">3</div><div class="step-label">Course</div></div>
+          <div class="step-item"        id="step-ind-4"><div class="step-circle">4</div><div class="step-label">Payment</div></div>
+        </div>
+
+        <form id="regForm" novalidate>
+
+          <!-- STEP 1 -->
+          <div class="form-step active" id="step-1">
+            <div class="step-card">
+              <div class="step-title">Personal Information</div>
+              <div class="step-subtitle">Step 1 of 4 — Tell us about yourself</div>
+              <div class="grid grid-2">
+                <div class="field col-span-2">
+                  <label for="fullname">Full Name</label>
+                  <input type="text" id="fullname" placeholder="Jane Smith" required>
+                  <span class="error-msg" id="err-fullname">Please enter your full name</span>
+                </div>
+                <div class="field">
+                  <label for="cell">Cell Phone</label>
+                  <div class="field-hint">Format: 416-555-0000</div>
+                  <input type="tel" id="cell" placeholder="416-555-0000" maxlength="12" required>
+                  <span class="error-msg" id="err-cell">Please enter a valid 10-digit number</span>
+                </div>
+                <div class="field">
+                  <label for="home">Home Phone</label>
+                  <div class="field-hint">Format: 416-555-0000</div>
+                  <input type="tel" id="home" placeholder="416-555-0000" maxlength="12">
+                </div>
+                <div class="field col-span-2">
+                  <label for="email">Email Address</label>
+                  <input type="email" id="email" placeholder="jane@example.com" required>
+                  <span class="error-msg" id="err-email">Please enter a valid email</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PAYMENT AMOUNT -->
-        <div class="amount-section" id="amountSection">
-          <span class="amount-label">How Much Would You Like to Pay Today?</span>
-          <p class="amount-hint">Minimum $50.00 deposit required to complete registration</p>
-          <div class="amount-options">
-            <div class="amount-option deposit-opt" onclick="selectAmount('deposit')" id="opt-deposit">
-              <div class="amount-opt-title">Deposit</div>
-              <div class="amount-opt-value">$50.00</div>
-              <div class="amount-opt-note">Minimum to register</div>
-            </div>
-            <div class="amount-option half-opt" onclick="selectAmount('half')" id="opt-half">
-              <div class="amount-opt-title">50% Payment</div>
-              <div class="amount-opt-value" id="half-amount">—</div>
-              <div class="amount-opt-note">Balance due before course</div>
-            </div>
-            <div class="amount-option full-opt" onclick="selectAmount('full')" id="opt-full">
-              <div class="amount-opt-title">Full Payment</div>
-              <div class="amount-opt-value" id="full-amount">—</div>
-              <div class="amount-opt-note">Tax included</div>
-            </div>
-          </div>
-          <div class="err-standalone" id="err-amount">Please select a payment amount</div>
-        </div>
-
-        <div class="btn-row">
-          <button type="button" class="btn-back" onclick="prevStep(3)">← Back</button>
-          <button type="button" class="btn-next" onclick="nextStep(3)">Continue →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ STEP 4: PAYMENT ══ -->
-    <div class="form-step" id="step-4">
-      <div class="step-card">
-        <div class="step-title">Payment</div>
-        <div class="step-subtitle">Step 4 of 4 — Review and complete your registration</div>
-
-        <div class="review-box">
-          <h4>Registration Summary</h4>
-          <div class="review-row"><span class="review-key">Name</span><span class="review-val" id="rv-name">—</span></div>
-          <div class="review-row"><span class="review-key">Email</span><span class="review-val" id="rv-email">—</span></div>
-          <div class="review-row"><span class="review-key">City</span><span class="review-val" id="rv-city">—</span></div>
-          <div class="review-row"><span class="review-key">Package</span><span class="review-val" id="rv-package">—</span></div>
-          <div class="review-row"><span class="review-key">Payment Type</span><span class="review-val" id="rv-paytype">—</span></div>
-          <div class="review-row"><span class="review-key">Amount Due Today</span><span class="review-val" id="rv-amount">—</span></div>
-        </div>
-
-        <div class="pay-tabs">
-          <div class="pay-tab active" data-method="card" onclick="switchPayment('card')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-            Credit / Debit Card
-          </div>
-          <div class="pay-tab" data-method="etransfer" onclick="switchPayment('etransfer')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM9 9h6M9 12h6M9 15h4"/></svg>
-            E-Transfer
-          </div>
-          <div class="pay-tab" data-method="cash" onclick="switchPayment('cash')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-            Pay In Person
-          </div>
-        </div>
-
-        <!-- CARD PANEL — Stripe Elements only, no regular inputs -->
-        <div id="panel-card">
-          <div class="card-icons">
-            <span class="card-badge visa">VISA</span>
-            <span class="card-badge mc">MASTERCARD</span>
-            <span class="card-badge amex">AMEX</span>
-          </div>
-
-          <div class="stripe-field">
-            <label>Card Number</label>
-            <div class="stripe-element-box" id="stripe-card-number"></div>
-          </div>
-
-          <div class="stripe-row-2">
-            <div class="stripe-field" style="margin-bottom:0;">
-              <label>Expiry Date</label>
-              <div class="stripe-element-box" id="stripe-card-expiry"></div>
-            </div>
-            <div class="stripe-field" style="margin-bottom:0;">
-              <label>CVV</label>
-              <div class="stripe-element-box" id="stripe-card-cvc"></div>
+              <div class="btn-row">
+                <button type="button" class="btn-next" onclick="nextStep(1)">Continue →</button>
+              </div>
             </div>
           </div>
 
-          <div class="stripe-field">
-            <label>Name on Card</label>
-            <div class="stripe-element-box" id="stripe-card-name" style="background:#f8f9fa; cursor:not-allowed; opacity:0.7;">
-              <span id="cardNameDisplay" style="font-family:'DM Mono',monospace;font-size:14px;font-weight:600;color:#111;letter-spacing:0.05em;"></span>
+          <!-- STEP 2 -->
+          <div class="form-step" id="step-2">
+            <div class="step-card">
+              <div class="step-title">Address</div>
+              <div class="step-subtitle">Step 2 of 4 — Where are you located?</div>
+              <div class="grid">
+                <div class="field">
+                  <label for="address">Full Address</label>
+                  <input type="text" id="address" placeholder="123 Main Street, Apt 4B" required>
+                  <span class="error-msg" id="err-address">Please enter your address</span>
+                </div>
+                <div class="field">
+                  <label for="city">City</label>
+                  <input type="text" id="city" placeholder="Toronto" required>
+                  <span class="error-msg" id="err-city">Please enter your city</span>
+                </div>
+                <div class="field">
+                  <label for="postal">Postal Code</label>
+                  <input type="text" id="postal" placeholder="A1B 2C3" required maxlength="7">
+                  <span class="error-msg" id="err-postal">Please enter your postal code</span>
+                </div>
+              </div>
+              <div class="btn-row">
+                <button type="button" class="btn-back" onclick="prevStep(2)">← Back</button>
+                <button type="button" class="btn-next" onclick="nextStep(2)">Continue →</button>
+              </div>
             </div>
-            <div class="field-hint">Auto-filled from your registration name</div>
           </div>
 
-          <div id="stripe-error"></div>
+          <!-- STEP 3 -->
+          <div class="form-step" id="step-3">
+            <div class="step-card">
+              <div class="step-title">License &amp; Course</div>
+              <div class="step-subtitle">Step 3 of 4 — License details and selected package</div>
+              <div class="grid grid-2">
+                <div class="field">
+                  <label for="license">Driver License Number</label>
+                  <div class="field-hint">Format: A1234-12345-12345</div>
+                  <input type="text" id="license" placeholder="A1234-12345-12345" maxlength="17" required>
+                  <span class="error-msg" id="err-license">Format must be A1234-12345-12345</span>
+                </div>
+                <div class="field">
+                  <label for="expiry">License Expiry Date</label>
+                  <!-- wrapper fixes vertical-centering cross-browser -->
+                  <div class="date-input-wrap">
+                    <input type="date" id="expiry" required>
+                  </div>
+                  <span class="error-msg" id="err-expiry">Please enter the expiry date</span>
+                </div>
+                <div class="field">
+                  <label for="heard">How Did You Hear About Us?</label>
+                  <div class="select-wrap">
+                    <select id="heard" required>
+                      <option value="" disabled selected>Select an option</option>
+                      <option>Google Search</option>
+                      <option>Facebook / Instagram</option>
+                      <option>Friend or Family</option>
+                      <option>Flyer / Poster</option>
+                      <option>School Referral</option>
+                      <option>Radio / TV</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <span class="error-msg" id="err-heard">Please select an option</span>
+                </div>
+                <div class="field">
+                  <label>Selected Package</label>
+                  <div class="course-locked-row">
+                    <div class="course-locked-field" id="courseLocked">
+                      <span id="courseLockedLabel">—</span>
+                      <span class="course-locked-price" id="courseLockedPrice"></span>
+                    </div>
+                    <div class="info-icon-wrap" id="infoWrap" onclick="toggleTooltip()">
+                      <div class="info-icon">ⓘ</div>
+                      <div class="pkg-tooltip" id="pkgTooltip">
+                        <div class="tooltip-header">
+                          <div class="tooltip-badges" id="ttBadges"></div>
+                          <div class="tooltip-name"  id="ttName"></div>
+                          <div class="tooltip-price-row">
+                            <div class="tooltip-price" id="ttPrice"></div>
+                            <div class="tooltip-hst">+ HST</div>
+                            <div class="tooltip-orig" id="ttOrig"></div>
+                          </div>
+                          <div class="tooltip-total" id="ttTotal"></div>
+                          <div class="tooltip-desc"  id="ttDesc"></div>
+                        </div>
+                        <div class="tooltip-features" id="ttFeatures"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          <div class="secure-note">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Secured by Stripe — card details encrypted, never stored on our servers.
+              <div class="amount-section" id="amountSection">
+                <span class="amount-label">How Much Would You Like to Pay Today?</span>
+                <p class="amount-hint">Minimum $50.00 deposit required to complete registration</p>
+                <div class="amount-options">
+                  <div class="amount-option deposit-opt" onclick="selectAmount('deposit')" id="opt-deposit">
+                    <div class="amount-opt-title">Deposit</div>
+                    <div class="amount-opt-value">$50.00</div>
+                    <div class="amount-opt-note">Minimum to register</div>
+                  </div>
+                  <div class="amount-option half-opt" onclick="selectAmount('half')" id="opt-half">
+                    <div class="amount-opt-title">50% Payment</div>
+                    <div class="amount-opt-value" id="half-amount">—</div>
+                    <div class="amount-opt-note">Balance due before course</div>
+                  </div>
+                  <div class="amount-option full-opt" onclick="selectAmount('full')" id="opt-full">
+                    <div class="amount-opt-title">Full Payment</div>
+                    <div class="amount-opt-value" id="full-amount">—</div>
+                    <div class="amount-opt-note">Tax included</div>
+                  </div>
+                </div>
+                <div class="err-standalone" id="err-amount">Please select a payment amount</div>
+              </div>
+
+              <div class="btn-row">
+                <button type="button" class="btn-back" onclick="prevStep(3)">← Back</button>
+                <button type="button" class="btn-next" onclick="nextStep(3)">Continue →</button>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div id="panel-etransfer" style="display:none;">
-          <div class="info-box">
-            Send your e-Transfer to:<br>
-            <strong>payments@davidsacademy.ca</strong><br><br>
-            Use your <strong>full name</strong> as the message/note.<br>
-            Registration confirmed within 1 business day of payment received.
+          <!-- STEP 4 -->
+          <div class="form-step" id="step-4">
+            <div class="step-card">
+              <div class="step-title">Payment</div>
+              <div class="step-subtitle">Step 4 of 4 — Review and complete your registration</div>
+
+              <div class="review-box">
+                <h4>Registration Summary</h4>
+                <div class="review-row"><span class="review-key">Name</span><span class="review-val" id="rv-name">—</span></div>
+                <div class="review-row"><span class="review-key">Email</span><span class="review-val" id="rv-email">—</span></div>
+                <div class="review-row"><span class="review-key">City</span><span class="review-val" id="rv-city">—</span></div>
+                <div class="review-row"><span class="review-key">Package</span><span class="review-val" id="rv-package">—</span></div>
+                <div class="review-row"><span class="review-key">Payment Type</span><span class="review-val" id="rv-paytype">—</span></div>
+                <div class="review-row"><span class="review-key">Amount Due Today</span><span class="review-val" id="rv-amount">—</span></div>
+              </div>
+
+              <div class="pay-tabs">
+                <div class="pay-tab active" data-method="card" onclick="switchPayment('card')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                  Credit / Debit Card
+                </div>
+                <div class="pay-tab" data-method="etransfer" onclick="switchPayment('etransfer')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM9 9h6M9 12h6M9 15h4"/></svg>
+                  E-Transfer
+                </div>
+                <div class="pay-tab" data-method="cash" onclick="switchPayment('cash')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+                  Pay In Person
+                </div>
+              </div>
+
+              <!-- CARD PANEL -->
+              <div id="panel-card">
+                <div class="card-icons">
+                  <span class="card-badge visa">VISA</span>
+                  <span class="card-badge mc">MASTERCARD</span>
+                  <span class="card-badge amex">AMEX</span>
+                </div>
+                <div class="stripe-field">
+                  <label>Card Number</label>
+                  <div class="stripe-element-box" id="stripe-card-number"></div>
+                </div>
+                <div class="stripe-row-2">
+                  <div class="stripe-field" style="margin-bottom:0;">
+                    <label>Expiry Date</label>
+                    <div class="stripe-element-box" id="stripe-card-expiry"></div>
+                  </div>
+                  <div class="stripe-field" style="margin-bottom:0;">
+                    <label>CVV</label>
+                    <div class="stripe-element-box" id="stripe-card-cvc"></div>
+                  </div>
+                </div>
+                <!-- EDITABLE card name — NOT auto-filled -->
+                <div class="stripe-field">
+                  <label for="cardName">Name on Card</label>
+                  <input type="text" id="cardName" placeholder="Name as it appears on card" autocomplete="cc-name">
+                  <div class="field-hint">Enter the cardholder's name exactly as shown on the card</div>
+                </div>
+                <div id="stripe-error"></div>
+                <div class="secure-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Secured by Stripe — card details encrypted, never stored on our servers.
+                </div>
+              </div>
+
+              <div id="panel-etransfer" style="display:none;">
+                <div class="info-box">
+                  Send your e-Transfer to:<br>
+                  <strong>payments@davidsacademy.ca</strong><br><br>
+                  Use your <strong>full name</strong> as the message/note.<br>
+                  Registration confirmed within 1 business day of payment received.
+                </div>
+              </div>
+
+              <div id="panel-cash" style="display:none;">
+                <div class="info-box">
+                  Pay in person at our office:<br>
+                  <strong>David's Academy of Defensive Driving</strong><br><br>
+                  Please call us to confirm office hours and location before visiting.<br>
+                  Cash, debit, and certified cheques accepted.
+                </div>
+              </div>
+
+              <div class="price-row">
+                <div>
+                  <div class="price-label">Amount Due Today</div>
+                  <div class="price-sub" id="price-sub-note">—</div>
+                </div>
+                <div class="price-value" id="total-display">—</div>
+              </div>
+
+              <div class="btn-row">
+                <button type="button" class="btn-back" onclick="prevStep(4)">← Back</button>
+                <button type="submit" class="btn-submit" id="submitBtn">Complete Registration →</button>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div id="panel-cash" style="display:none;">
-          <div class="info-box">
-            Pay in person at our office:<br>
-            <strong>David's Academy of Defensive Driving</strong><br><br>
-            Please call us to confirm office hours and location before visiting.<br>
-            Cash, debit, and certified cheques accepted.
-          </div>
-        </div>
-
-        <div class="price-row">
-          <div>
-            <div class="price-label">Amount Due Today</div>
-            <div class="price-sub" id="price-sub-note">—</div>
-          </div>
-          <div class="price-value" id="total-display">—</div>
-        </div>
-
-        <div class="btn-row">
-          <button type="button" class="btn-back" onclick="prevStep(4)">← Back</button>
-          <button type="submit" class="btn-submit" id="submitBtn">Complete Registration →</button>
-        </div>
-      </div>
-    </div>
-
-  </form>
-</div>
+        </form>
+      </div><!-- end page-wrap -->
+    </div><!-- end modal-inner -->
+  </div><!-- end modal-box -->
+</div><!-- end modal-overlay -->
 
 <!-- SUCCESS -->
 <div class="success-overlay" id="successOverlay">
@@ -584,78 +763,130 @@ const COURSES = {
 </div>
 
 <script>
-// ── State ─────────────────────────────────────────────────
+const COURSES = {
+  gold:     { label:'Gold Package',     pretax:699.99, total:790.98, original:799.99, save:100,  badge:'Most Popular', badge2:'Limited Time Offer', desc:'Best value for G2 success',           features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Car for Road Test Included','Flexible Scheduling','Free Road Test Booking','Free Pick & Drop Off'] },
+  platinum: { label:'Platinum Package', pretax:779.99, total:881.39, original:null,   save:null, badge:null,           badge2:null,                  desc:'Premium upgrade for faster success',  features:['Everything in Gold','12 Hours In-Car Training','Car for Road Test Included','Priority Scheduling','Flexible Rescheduling','Free Pick & Drop Off'] },
+  silver:   { label:'Silver Package',   pretax:549.99, total:621.49, original:null,   save:null, badge:null,           badge2:null,                  desc:'Starter package for new drivers',     features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Free Pick Up & Drop Off','Free Road Test Booking'] },
+};
+
 let currentStep    = 1;
 let selectedCourse = null;
 let selectedAmount = null;
 let amountToPay    = 0;
 
-// ── Read package from URL: ?package=gold ─────────────────
-// Your Carrd "Book Gold Package" button links to:
-// https://imtiazkhawaja.github.io/student-registration-form/?package=gold
-// "Book Platinum Package" → ?package=platinum  etc.
-function initFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const pkg    = params.get('package') || 'gold';
+// ── MODAL ─────────────────────────────────────────────────
+function openModal(pkg) {
   selectedCourse = COURSES[pkg] ? pkg : 'gold';
+  // Reset form to step 1
+  resetForm();
   renderLockedCourse(selectedCourse);
   renderTooltip(selectedCourse);
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // Mount Stripe elements after modal is visible
+  setTimeout(mountStripe, 100);
 }
 
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function resetForm() {
+  // Reset step indicators
+  currentStep = 1;
+  selectedAmount = null;
+  amountToPay = 0;
+  for (let i=1;i<=4;i++) {
+    const s = document.getElementById(`step-${i}`);
+    const ind = document.getElementById(`step-ind-${i}`);
+    s.classList.remove('active');
+    ind.classList.remove('active','completed');
+    if (i===1){ s.classList.add('active'); ind.classList.add('active'); }
+  }
+  // Clear amount selection
+  ['opt-deposit','opt-half','opt-full'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  document.getElementById('err-amount').classList.remove('show');
+  // Reset pay method
+  switchPayment('card');
+}
+
+// ── STRIPE ───────────────────────────────────────────────
+let stripe, elements, cardNumber, cardExpiry, cardCvc, stripeMounted = false;
+
+function mountStripe() {
+  if (stripeMounted) {
+    try { cardNumber.mount('#stripe-card-number'); } catch(e){}
+    try { cardExpiry.mount('#stripe-card-expiry'); } catch(e){}
+    try { cardCvc.mount('#stripe-card-cvc'); } catch(e){}
+    return;
+  }
+  const STRIPE_KEY = 'pk_test_REPLACE_WITH_YOUR_KEY';
+  stripe   = Stripe(STRIPE_KEY);
+  elements = stripe.elements({ fonts:[{ cssSrc:'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }] });
+  const stripeStyle = {
+    base: { color:'#111111', fontFamily:'"DM Mono",monospace', fontSize:'16px', fontSmoothing:'antialiased', '::placeholder':{color:'#aaaaaa'} },
+    invalid: { color:'#cc0000', iconColor:'#cc0000' }
+  };
+  cardNumber = elements.create('cardNumber', { style:stripeStyle, showIcon:true });
+  cardExpiry = elements.create('cardExpiry', { style:stripeStyle });
+  cardCvc    = elements.create('cardCvc',    { style:stripeStyle });
+  cardNumber.mount('#stripe-card-number');
+  cardExpiry.mount('#stripe-card-expiry');
+  cardCvc.mount('#stripe-card-cvc');
+  [{el:cardNumber,id:'stripe-card-number'},{el:cardExpiry,id:'stripe-card-expiry'},{el:cardCvc,id:'stripe-card-cvc'}]
+    .forEach(({el,id}) => {
+      el.on('focus', () => document.getElementById(id).classList.add('focused'));
+      el.on('blur',  () => document.getElementById(id).classList.remove('focused'));
+    });
+  cardNumber.on('change', e => {
+    const err = document.getElementById('stripe-error');
+    if(e.error){ err.textContent=e.error.message; err.style.display='block'; } else err.style.display='none';
+  });
+  stripeMounted = true;
+}
+
+// ── COURSE RENDERING ──────────────────────────────────────
 function renderLockedCourse(key) {
   const c = COURSES[key];
   document.getElementById('courseLockedLabel').textContent = c.label;
   document.getElementById('courseLockedPrice').textContent = '$' + c.total.toFixed(2) + ' incl. HST';
-  document.getElementById('half-amount').textContent = '$' + (c.total / 2).toFixed(2);
+  document.getElementById('half-amount').textContent = '$' + (c.total/2).toFixed(2);
   document.getElementById('full-amount').textContent = '$' + c.total.toFixed(2);
 }
 
 function renderTooltip(key) {
   const c   = COURSES[key];
   const tip = document.getElementById('pkgTooltip');
-
-  // Set tooltip style class
   tip.className = `pkg-tooltip ${key}-tip`;
-
-  // Badges
   let badges = '';
   if (c.badge)  badges += `<span class="tooltip-badge">${c.badge}</span>`;
   if (c.badge2) badges += `<span class="tooltip-badge">${c.badge2}</span>`;
   if (c.save)   badges += `<span class="tooltip-badge save">Save $${c.save}</span>`;
   document.getElementById('ttBadges').innerHTML = badges;
-
   document.getElementById('ttName').textContent  = c.label;
   document.getElementById('ttPrice').textContent = '$' + c.pretax.toFixed(2);
   document.getElementById('ttDesc').textContent  = c.desc;
   document.getElementById('ttTotal').textContent = 'Total incl. HST: $' + c.total.toFixed(2);
-
-  if (c.original) {
-    document.getElementById('ttOrig').textContent    = 'Was $' + c.original.toFixed(2);
-    document.getElementById('ttOrig').style.display  = 'block';
-  } else {
-    document.getElementById('ttOrig').style.display  = 'none';
-  }
-
-  document.getElementById('ttFeatures').innerHTML = c.features.map(f => `
+  const orig = document.getElementById('ttOrig');
+  if (c.original){ orig.textContent='Was $'+c.original.toFixed(2); orig.style.display='block'; } else orig.style.display='none';
+  document.getElementById('ttFeatures').innerHTML = c.features.map(f=>`
     <div class="tooltip-feature">
-      <div class="tooltip-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>${f}
+      <div class="tooltip-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>${f}
     </div>`).join('');
 }
 
-// Toggle tooltip on mobile tap
-function toggleTooltip() {
-  document.getElementById('infoWrap').classList.toggle('open');
-}
-// Close on outside click
+function toggleTooltip() { document.getElementById('infoWrap').classList.toggle('open'); }
 document.addEventListener('click', function(e) {
-  if (!document.getElementById('infoWrap').contains(e.target)) {
-    document.getElementById('infoWrap').classList.remove('open');
-  }
+  const w = document.getElementById('infoWrap');
+  if (w && !w.contains(e.target)) w.classList.remove('open');
 });
 
-// ── Step navigation ───────────────────────────────────────
+// ── STEP NAVIGATION ───────────────────────────────────────
 function goToStep(n) {
   document.getElementById(`step-${currentStep}`).classList.remove('active');
   document.getElementById(`step-ind-${currentStep}`).classList.remove('active');
@@ -664,7 +895,8 @@ function goToStep(n) {
   document.getElementById(`step-${currentStep}`).classList.add('active');
   document.getElementById(`step-ind-${currentStep}`).classList.remove('completed');
   document.getElementById(`step-ind-${currentStep}`).classList.add('active');
-  window.scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('modalBox').scrollTop = 0;
+  document.getElementById('modalOverlay').scrollTop = 0;
 }
 
 function prevStep(from) {
@@ -674,189 +906,132 @@ function prevStep(from) {
   document.getElementById(`step-${currentStep}`).classList.add('active');
   document.getElementById(`step-ind-${currentStep}`).classList.remove('completed');
   document.getElementById(`step-ind-${currentStep}`).classList.add('active');
-  window.scrollTo({ top:0, behavior:'smooth' });
+  document.getElementById('modalOverlay').scrollTop = 0;
 }
 
 function nextStep(from) {
   if (!validateStep(from)) return;
-  if (from === 3) populateReview();
-  goToStep(from + 1);
+  if (from===3) populateReview();
+  goToStep(from+1);
 }
 
-// ── Validation ────────────────────────────────────────────
+// ── VALIDATION ────────────────────────────────────────────
 function validateStep(step) {
   let ok = true;
-  if (step === 1) {
+  if (step===1) {
     [{id:'fullname',msg:'Please enter your full name'},{id:'email',msg:'Please enter a valid email'},{id:'cell',msg:'Please enter your cell phone'}]
-      .forEach(({id,msg}) => { if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
-    const email = document.getElementById('email').value;
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { markErr('email'); showErr('err-email','Enter a valid email'); ok=false; }
-    const cell = document.getElementById('cell').value;
-    if (cell && cell.replace(/\D/g,'').length !== 10) { markErr('cell'); showErr('err-cell','Please enter a valid 10-digit number'); ok=false; }
+      .forEach(({id,msg})=>{ if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
+    const email=document.getElementById('email').value;
+    if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){markErr('email');showErr('err-email','Enter a valid email');ok=false;}
+    const cell=document.getElementById('cell').value;
+    if(cell&&cell.replace(/\D/g,'').length!==10){markErr('cell');showErr('err-cell','Please enter a valid 10-digit number');ok=false;}
   }
-  if (step === 2) {
+  if (step===2) {
     [{id:'address',msg:'Please enter your address'},{id:'city',msg:'Please enter your city'},{id:'postal',msg:'Please enter your postal code'}]
-      .forEach(({id,msg}) => { if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
+      .forEach(({id,msg})=>{ if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
   }
-  if (step === 3) {
+  if (step===3) {
     [{id:'license',msg:'Format must be A1234-12345-12345'},{id:'expiry',msg:'Please enter the expiry date'},{id:'heard',msg:'Please select an option'}]
-      .forEach(({id,msg}) => { if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
-    const lic = document.getElementById('license').value;
-    if (lic && lic.replace(/[^A-Z0-9]/gi,'').length !== 15) { markErr('license'); showErr('err-license','Format must be A1234-12345-12345'); ok=false; }
-    if (!selectedAmount) { document.getElementById('err-amount').classList.add('show'); ok=false; }
+      .forEach(({id,msg})=>{ if(!document.getElementById(id).value.trim()){markErr(id);showErr(`err-${id}`,msg);ok=false;}else{clearErr(id);hideErr(`err-${id}`);}});
+    const lic=document.getElementById('license').value;
+    if(lic&&lic.replace(/[^A-Z0-9]/gi,'').length!==15){markErr('license');showErr('err-license','Format must be A1234-12345-12345');ok=false;}
+    if(!selectedAmount){document.getElementById('err-amount').classList.add('show');ok=false;}
   }
   return ok;
 }
 
 function populateReview() {
-  const payLabels = { deposit:'$50 Deposit', half:'50% Payment', full:'Full Payment' };
+  const payLabels={deposit:'$50 Deposit',half:'50% Payment',full:'Full Payment'};
   document.getElementById('rv-name').textContent    = document.getElementById('fullname').value;
   document.getElementById('rv-email').textContent   = document.getElementById('email').value;
   document.getElementById('rv-city').textContent    = document.getElementById('city').value;
   document.getElementById('rv-package').textContent = COURSES[selectedCourse].label;
   document.getElementById('rv-paytype').textContent = payLabels[selectedAmount];
-  document.getElementById('rv-amount').textContent  = '$' + amountToPay.toFixed(2);
-  document.getElementById('total-display').textContent = '$' + amountToPay.toFixed(2);
-  const notes = { deposit:'Deposit — balance due before course start', half:'50% — balance due before course start', full:'Full payment incl. HST' };
+  document.getElementById('rv-amount').textContent  = '$'+amountToPay.toFixed(2);
+  document.getElementById('total-display').textContent = '$'+amountToPay.toFixed(2);
+  const notes={deposit:'Deposit — balance due before course start',half:'50% — balance due before course start',full:'Full payment incl. HST'};
   document.getElementById('price-sub-note').textContent = notes[selectedAmount];
-  // Auto-fill card name display
-  document.getElementById('cardNameDisplay').textContent = document.getElementById('fullname').value.toUpperCase();
 }
 
-// ── Amount selection ──────────────────────────────────────
+// ── AMOUNT ────────────────────────────────────────────────
 function selectAmount(type) {
   selectedAmount = type;
   const c = COURSES[selectedCourse];
-  if (type==='deposit')  amountToPay = 50.00;
-  else if (type==='half') amountToPay = parseFloat((c.total/2).toFixed(2));
-  else amountToPay = c.total;
-  ['opt-deposit','opt-half','opt-full'].forEach(id => document.getElementById(id).classList.remove('selected'));
+  if(type==='deposit') amountToPay=50.00;
+  else if(type==='half') amountToPay=parseFloat((c.total/2).toFixed(2));
+  else amountToPay=c.total;
+  ['opt-deposit','opt-half','opt-full'].forEach(id=>document.getElementById(id).classList.remove('selected'));
   document.getElementById(`opt-${type}`).classList.add('selected');
   document.getElementById('err-amount').classList.remove('show');
 }
 
-// ── Stripe ────────────────────────────────────────────────
-// Replace with your key: https://dashboard.stripe.com/apikeys
-const STRIPE_KEY = 'pk_test_REPLACE_WITH_YOUR_KEY';
-
-const stripe   = Stripe(STRIPE_KEY);
-const elements = stripe.elements({
-  fonts: [{ cssSrc:'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }]
-});
-const stripeStyle = {
-  base: { color:'#111111', fontFamily:'"DM Mono",monospace', fontSize:'15px', fontSmoothing:'antialiased', '::placeholder':{color:'#aaaaaa'} },
-  invalid: { color:'#cc0000', iconColor:'#cc0000' }
-};
-
-const cardNumber = elements.create('cardNumber', { style:stripeStyle, showIcon:true });
-const cardExpiry = elements.create('cardExpiry', { style:stripeStyle });
-const cardCvc    = elements.create('cardCvc',    { style:stripeStyle });
-
-cardNumber.mount('#stripe-card-number');
-cardExpiry.mount('#stripe-card-expiry');
-cardCvc.mount('#stripe-card-cvc');
-
-[{el:cardNumber,id:'stripe-card-number'},{el:cardExpiry,id:'stripe-card-expiry'},{el:cardCvc,id:'stripe-card-cvc'}]
-  .forEach(({el,id}) => {
-    el.on('focus', () => document.getElementById(id).classList.add('focused'));
-    el.on('blur',  () => document.getElementById(id).classList.remove('focused'));
-  });
-
-cardNumber.on('change', e => {
-  const err = document.getElementById('stripe-error');
-  if (e.error) { err.textContent=e.error.message; err.style.display='block'; }
-  else err.style.display='none';
-});
-
-// ── Phone ─────────────────────────────────────────────────
-function formatPhone(el) {
-  let v = el.value.replace(/\D/g,'').substring(0,10);
-  if (v.length>=7) v=v.substring(0,3)+'-'+v.substring(3,6)+'-'+v.substring(6);
-  else if (v.length>=4) v=v.substring(0,3)+'-'+v.substring(3);
-  el.value = v;
-}
-document.getElementById('cell').addEventListener('input', function(){ formatPhone(this); });
-document.getElementById('home').addEventListener('input', function(){ formatPhone(this); });
-
-// ── License ───────────────────────────────────────────────
-function formatLicense(el) {
-  let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,15);
-  if (v.length>9) v=v.substring(0,5)+'-'+v.substring(5,10)+'-'+v.substring(10);
-  else if (v.length>4) v=v.substring(0,5)+'-'+v.substring(5);
-  el.value = v;
-}
-document.getElementById('license').addEventListener('input', function(){ formatLicense(this); });
-
-// ── Payment tabs ──────────────────────────────────────────
+// ── PAYMENT TAB ───────────────────────────────────────────
 let currentMethod = 'card';
 function switchPayment(m) {
-  currentMethod = m;
-  document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('active'));
+  currentMethod=m;
+  document.querySelectorAll('.pay-tab').forEach(t=>t.classList.remove('active'));
   document.querySelector(`[data-method="${m}"]`).classList.add('active');
-  ['card','etransfer','cash'].forEach(p => {
-    document.getElementById(`panel-${p}`).style.display = p===m ? 'block' : 'none';
-  });
+  ['card','etransfer','cash'].forEach(p=>{ document.getElementById(`panel-${p}`).style.display=p===m?'block':'none'; });
 }
 
-// ── Helpers ───────────────────────────────────────────────
-function showErr(id,msg){ const e=document.getElementById(id); if(e){if(msg)e.textContent=msg; e.classList.add('show');} }
-function hideErr(id){ document.getElementById(id)?.classList.remove('show'); }
-function markErr(id){ document.getElementById(id)?.classList.add('error'); }
-function clearErr(id){ document.getElementById(id)?.classList.remove('error'); }
-document.querySelectorAll('input,select').forEach(el => {
-  el.addEventListener('input',  () => { clearErr(el.id); hideErr(`err-${el.id}`); });
-  el.addEventListener('change', () => { clearErr(el.id); hideErr(`err-${el.id}`); });
+// ── PHONE FORMATTING ──────────────────────────────────────
+function formatPhone(el) {
+  let v=el.value.replace(/\D/g,'').substring(0,10);
+  if(v.length>=7) v=v.substring(0,3)+'-'+v.substring(3,6)+'-'+v.substring(6);
+  else if(v.length>=4) v=v.substring(0,3)+'-'+v.substring(3);
+  el.value=v;
+}
+document.getElementById('cell').addEventListener('input',function(){formatPhone(this);});
+document.getElementById('home').addEventListener('input',function(){formatPhone(this);});
+
+// ── LICENSE FORMATTING ────────────────────────────────────
+function formatLicense(el) {
+  let v=el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,15);
+  if(v.length>9) v=v.substring(0,5)+'-'+v.substring(5,10)+'-'+v.substring(10);
+  else if(v.length>4) v=v.substring(0,5)+'-'+v.substring(5);
+  el.value=v;
+}
+document.getElementById('license').addEventListener('input',function(){formatLicense(this);});
+
+// ── HELPERS ───────────────────────────────────────────────
+function showErr(id,msg){const e=document.getElementById(id);if(e){if(msg)e.textContent=msg;e.classList.add('show');}}
+function hideErr(id){document.getElementById(id)?.classList.remove('show');}
+function markErr(id){document.getElementById(id)?.classList.add('error');}
+function clearErr(id){document.getElementById(id)?.classList.remove('error');}
+document.querySelectorAll('input,select').forEach(el=>{
+  el.addEventListener('input',()=>{clearErr(el.id);hideErr(`err-${el.id}`);});
+  el.addEventListener('change',()=>{clearErr(el.id);hideErr(`err-${el.id}`);});
 });
 
-// ── Submit ────────────────────────────────────────────────
+// ── SUBMIT ────────────────────────────────────────────────
 async function handleCardPayment() {
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Processing…';
-
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span>Processing…';
   const { token, error } = await stripe.createToken(cardNumber, {
-    name: document.getElementById('fullname').value.trim()
+    name: document.getElementById('cardName').value.trim() || document.getElementById('fullname').value.trim()
   });
-
-  if (error) {
-    document.getElementById('stripe-error').textContent = error.message;
-    document.getElementById('stripe-error').style.display = 'block';
-    btn.disabled = false;
-    btn.innerHTML = 'Complete Registration →';
+  if(error){
+    document.getElementById('stripe-error').textContent=error.message;
+    document.getElementById('stripe-error').style.display='block';
+    btn.disabled=false;
+    btn.innerHTML='Complete Registration →';
     return;
   }
-
-  // Uncomment when backend ready:
-  // await fetch('https://YOUR-BACKEND.com/charge', {
-  //   method:'POST', headers:{'Content-Type':'application/json'},
-  //   body: JSON.stringify({
-  //     stripeToken: token.id,
-  //     amount:   Math.round(amountToPay * 100),
-  //     currency: 'cad',
-  //     name:     document.getElementById('fullname').value,
-  //     email:    document.getElementById('email').value,
-  //     package:  COURSES[selectedCourse].label,
-  //     payType:  selectedAmount,
-  //   })
-  // });
-
-  console.log('Token:', token.id, '| $'+amountToPay.toFixed(2), '|', COURSES[selectedCourse].label);
+  console.log('Token:',token.id,'| $'+amountToPay.toFixed(2),'|',COURSES[selectedCourse].label);
   showSuccess();
 }
 
 function showSuccess() {
+  closeModal();
   document.getElementById('successOverlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 }
 
-document.getElementById('regForm').addEventListener('submit', async function(e) {
+document.getElementById('regForm').addEventListener('submit',async function(e){
   e.preventDefault();
-  if (currentMethod==='card') { await handleCardPayment(); }
-  else { showSuccess(); }
+  if(currentMethod==='card'){ await handleCardPayment(); } else { showSuccess(); }
 });
-
-// ── Init on load ──────────────────────────────────────────
-initFromURL();
 </script>
 </body>
 </html>
