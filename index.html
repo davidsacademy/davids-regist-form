@@ -631,7 +631,7 @@ function openModal(pkg) {
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   // Mount Stripe elements after modal is visible
-  setTimeout(mountStripe, 100);
+  setTimeout(() => { try { mountStripe(); } catch(e){ console.warn('Stripe not ready:', e); } }, 100);
 }
 
 function closeModal() {
@@ -676,7 +676,7 @@ function mountStripe() {
     try { cardCvc.mount('#stripe-card-cvc'); } catch(e){}
     return;
   }
-  const STRIPE_KEY = 'pk_test_REPLACE_WITH_YOUR_KEY';
+  const STRIPE_KEY = 'pk_live_51TUfKuBTqY0cQUwB2LMEkRAzHzOl5GywmbpmRwOUp86Hn1pqdzPs04vhjdkiIyueE3juDG9oARFk3vhcDIzqtLOS00KzVRljjB';
   stripe   = Stripe(STRIPE_KEY);
   elements = stripe.elements({ fonts:[{ cssSrc:'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }] });
   const stripeStyle = {
@@ -937,7 +937,7 @@ document.getElementById('regForm').addEventListener('submit',async function(e){
     const btn=document.getElementById('submitBtn');
     btn.disabled=true;
     btn.innerHTML='<span class="spinner"></span>Submitting…';
-    await sendEmails();
+    try { await sendEmails(); } catch(e){ console.error('Email error:', e); }
     showSuccess();
   }
 });
