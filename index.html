@@ -14,108 +14,10 @@
   --green:#1db954; --green-dark:#158a3e;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;background:#f2f2f2;color:var(--body);font-family:'DM Sans',sans-serif;min-height:100vh;}
+html,body{width:100%;background:#fff;color:var(--body);font-family:'DM Sans',sans-serif;min-height:100vh;}
 
-/* ── PRICING SECTION ── */
-.pricing-section{max-width:1100px;margin:0 auto;padding:60px 20px;}
-.pricing-header{text-align:center;margin-bottom:48px;}
-.pricing-header h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,7vw,72px);letter-spacing:0.03em;color:var(--black);margin-bottom:8px;}
-.pricing-header h2 span{color:var(--yellow-dark);}
-.pricing-header p{color:var(--muted);font-size:15px;}
+/* pricing cards removed — hosted on Carrd */
 
-.cards-grid{display:grid;grid-template-columns:1fr;gap:24px;}
-@media(min-width:680px){.cards-grid{grid-template-columns:repeat(3,1fr);}}
-
-/* Dark card base — matches website exactly */
-.pkg-card{
-  background:#0d0d0d;
-  border-radius:22px;
-  overflow:hidden;
-  position:relative;
-  transition:transform 0.22s,box-shadow 0.22s;
-  /* subtle silver outline like the website */
-  box-shadow:0 0 0 2px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.45);
-}
-.pkg-card:hover{transform:translateY(-5px);}
-/* Gold card: golden border glow */
-.pkg-card.gold-card{
-  box-shadow:0 0 0 2px #c9a100, 0 0 28px rgba(201,161,0,0.25), 0 8px 32px rgba(0,0,0,0.5);
-}
-.pkg-card.gold-card:hover{
-  box-shadow:0 0 0 2.5px #e8c000, 0 0 40px rgba(232,192,0,0.35), 0 12px 40px rgba(0,0,0,0.55);
-}
-
-/* Entire card is dark — no split header/body */
-.pkg-card-body{padding:28px 26px 24px;display:flex;flex-direction:column;gap:0;}
-
-/* Badges */
-.pkg-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;justify-content:center;}
-.pkg-badge{
-  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:800;
-  letter-spacing:0.06em;text-transform:uppercase;
-  padding:5px 14px;border-radius:999px;
-}
-.badge-pop{background:#e8000d;color:#fff;}
-.badge-ltd{background:#e8000d;color:#fff;}
-.badge-save{background:#1db954;color:#fff;}
-
-/* Package name */
-.pkg-name{
-  font-family:'DM Sans',sans-serif;font-size:28px;font-weight:300;
-  color:rgba(255,255,255,0.75);letter-spacing:0.01em;
-  text-align:center;margin-bottom:10px;
-}
-
-/* Price */
-.pkg-price-block{text-align:center;margin-bottom:6px;}
-.pkg-price{
-  font-family:'DM Sans',sans-serif;font-size:46px;font-weight:800;
-  color:#ffffff;letter-spacing:-0.02em;line-height:1;
-}
-.pkg-price-hst{
-  font-family:'DM Sans',sans-serif;font-size:46px;font-weight:800;
-  color:#ffffff;letter-spacing:-0.02em;
-}
-.pkg-desc{font-size:13px;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:10px;}
-
-/* Strikethrough + save row */
-.pkg-save-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;}
-.pkg-orig{font-size:16px;color:rgba(255,255,255,0.35);text-decoration:line-through;font-weight:500;}
-.pkg-save-badge{background:#1db954;color:#fff;font-size:13px;font-weight:700;padding:4px 12px;border-radius:999px;}
-
-/* Features */
-.pkg-features{display:flex;flex-direction:column;gap:11px;margin-bottom:26px;}
-.pkg-feature{
-  display:flex;align-items:center;gap:10px;
-  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
-  color:rgba(255,255,255,0.88);
-}
-.feat-check{
-  font-size:18px;color:#fff;flex-shrink:0;line-height:1;
-}
-
-/* Register button */
-.btn-register{
-  width:100%;padding:16px;border:none;border-radius:999px;
-  font-family:'DM Sans',sans-serif;font-size:17px;font-weight:800;
-  letter-spacing:0.01em;cursor:pointer;transition:all 0.18s;
-}
-.gold-card .btn-register{
-  background:linear-gradient(135deg,#f5c400,#c9a100);
-  color:#111;
-  box-shadow:0 2px 16px rgba(245,196,0,0.3);
-}
-.gold-card .btn-register:hover{
-  background:linear-gradient(135deg,#ffe033,#e8b800);
-  transform:translateY(-1px);box-shadow:0 4px 22px rgba(245,196,0,0.45);
-}
-.platinum-card .btn-register,.silver-card .btn-register{
-  background:rgba(255,255,255,0.12);
-  color:#fff;border:1.5px solid rgba(255,255,255,0.25);
-}
-.platinum-card .btn-register:hover,.silver-card .btn-register:hover{
-  background:rgba(255,255,255,0.2);transform:translateY(-1px);
-}
 
 /* ── MODAL OVERLAY ── */
 .modal-overlay{
@@ -195,7 +97,7 @@ label{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:upperc
 input,select{
   background:#fff;border:2px solid var(--black);border-radius:8px;
   color:var(--black);font-family:'DM Mono',monospace;font-size:14px;
-  padding:0 13px;height:46px;line-height:46px;
+  padding:0 12px;height:40px;line-height:40px;
   transition:border-color 0.15s,box-shadow 0.15s,background 0.15s;
   outline:none;width:100%;-webkit-appearance:none;font-weight:500;
   box-sizing:border-box;display:block;
@@ -205,35 +107,30 @@ input:focus,select:focus{border-color:var(--black);background:var(--accent-bg);b
 select{cursor:pointer;}
 select option{background:#fff;color:var(--black);}
 
-/* DATE — flex wrapper centres content reliably cross-browser */
-.date-input-wrap{
-  position:relative;display:flex;align-items:stretch;
-}
+/* DATE — bulletproof vertical alignment */
+.date-input-wrap{display:block;width:100%;}
 .date-input-wrap input[type="date"]{
-  flex:1;
   background:#fff;border:2px solid var(--black);border-radius:8px;
-  color:var(--black);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
-  height:46px;padding:0 12px;
-  cursor:pointer;width:100%;box-sizing:border-box;outline:none;
+  color:var(--black);font-size:14px;font-weight:500;
+  height:40px;width:100%;box-sizing:border-box;outline:none;
   -webkit-appearance:none;appearance:none;
-  /* flex inner content vertically */
-  display:flex;align-items:center;
+  padding:0 12px;
+  /* force vertical centre via line-height */
+  line-height:40px;
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;display:block;
 }
 .date-input-wrap input[type="date"]::-webkit-calendar-picker-indicator{
-  cursor:pointer;width:20px;height:20px;opacity:0.65;flex-shrink:0;
+  cursor:pointer;opacity:0.6;margin-left:4px;
 }
-.date-input-wrap input[type="date"]::-webkit-datetime-edit-fields-wrapper{
-  display:flex;align-items:center;padding:0;height:44px;
-}
-.date-input-wrap input[type="date"]::-webkit-datetime-edit{
-  display:flex;align-items:center;padding:0;line-height:1;
-}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-fields-wrapper{padding:0;}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit{padding:0;}
 .date-input-wrap input[type="date"]::-webkit-datetime-edit-month-field,
 .date-input-wrap input[type="date"]::-webkit-datetime-edit-day-field,
-.date-input-wrap input[type="date"]::-webkit-datetime-edit-year-field{color:var(--black);font-weight:700;}
-.date-input-wrap input[type="date"]::-webkit-datetime-edit-text{color:var(--muted);padding:0 1px;}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-year-field{color:var(--black);font-weight:600;}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-text{color:var(--muted);}
 .date-input-wrap input[type="date"]::-webkit-inner-spin-button{display:none;}
-.date-input-wrap input[type="date"]:focus{border-color:var(--black);background:var(--accent-bg);box-shadow:3px 3px 0px var(--black);}
+.date-input-wrap input[type="date"]:focus{border-color:var(--black);background:var(--accent-bg);box-shadow:3px 3px 0px var(--black);outline:none;}
 
 .select-wrap{position:relative;}
 .select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--black);pointer-events:none;font-size:14px;font-weight:700;}
@@ -242,7 +139,7 @@ select option{background:#fff;color:var(--black);}
 .course-locked-field{
   flex:1;background:var(--accent-bg);border:2px solid var(--black);border-radius:8px;
   color:var(--black);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;
-  padding:0 13px;height:46px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;height:40px;display:flex;align-items:center;justify-content:space-between;
   box-sizing:border-box;
 }
 .course-locked-price{font-size:12px;color:var(--yellow-dark);font-weight:600;}
@@ -314,7 +211,7 @@ select option{background:#fff;color:var(--black);}
 @media(max-width:400px){.stripe-row-2{grid-template-columns:1fr;}}
 .stripe-element-box{
   background:#fff;border:2px solid var(--black);border-radius:8px;
-  height:46px;padding:0 13px;box-sizing:border-box;
+  height:40px;padding:0 12px;box-sizing:border-box;
   display:flex;align-items:center;
   transition:box-shadow 0.15s,background 0.15s;
   position:relative;z-index:1;
@@ -384,92 +281,6 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
 </style>
 </head>
 <body>
-
-<!-- ═══ PRICING CARDS ═══ -->
-<div class="pricing-section">
-  <div class="pricing-header">
-    <div class="logo-badge" style="margin-bottom:16px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 17h2l1-3h12l1 3h2M5 17l-1-5h16l-1 5M9 10V7a3 3 0 016 0v3"/></svg>
-      David's Academy of Defensive Driving
-    </div>
-    <h2>Choose Your <span>Package</span></h2>
-    <p>All packages include in-car training, flexible scheduling, and free pick &amp; drop off</p>
-  </div>
-
-  <div class="cards-grid">
-
-    <!-- SILVER -->
-    <div class="pkg-card silver-card">
-      <div class="pkg-card-body">
-        <div class="pkg-name">Silver Package</div>
-        <div class="pkg-price-block">
-          <span class="pkg-price">$549.99</span><span class="pkg-price-hst"> + HST</span>
-        </div>
-        <div class="pkg-desc">Starter package for new drivers</div>
-        <div style="height:16px;"></div>
-        <div class="pkg-features">
-          <div class="pkg-feature"><span class="feat-check">✔</span>20 Hours Online Course</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>10 Hours Homelink</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>10 Hours In-Car Training</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Free Pick Up &amp; Drop Off</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Free Road Test Booking</div>
-        </div>
-        <button class="btn-register" onclick="openModal('silver')">Book Silver Package</button>
-      </div>
-    </div>
-
-    <!-- GOLD (featured) -->
-    <div class="pkg-card gold-card">
-      <div class="pkg-card-body">
-        <div class="pkg-badges">
-          <span class="pkg-badge badge-pop">MOST POPULAR</span>
-          <span class="pkg-badge badge-ltd">LIMITED TIME OFFER</span>
-        </div>
-        <div class="pkg-name">Gold Package</div>
-        <div class="pkg-price-block">
-          <span class="pkg-price">$699.99</span><span class="pkg-price-hst"> + HST</span>
-        </div>
-        <div class="pkg-desc">Best value for G2 success</div>
-        <div class="pkg-save-row">
-          <span class="pkg-orig">$799.99</span>
-          <span class="pkg-save-badge">Save $100</span>
-        </div>
-        <div class="pkg-features">
-          <div class="pkg-feature"><span class="feat-check">✔</span>20 Hours Online Course</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>10 Hours Homelink</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>10 Hours In-Car Training</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Car for Road Test Included</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Flexible Scheduling</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Free Road Test Booking</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Free Pick &amp; Drop Off</div>
-        </div>
-        <button class="btn-register" onclick="openModal('gold')">Book Gold Package</button>
-      </div>
-    </div>
-
-    <!-- PLATINUM -->
-    <div class="pkg-card platinum-card">
-      <div class="pkg-card-body">
-        <div class="pkg-name">Platinum Package</div>
-        <div class="pkg-price-block">
-          <span class="pkg-price">$779.99</span><span class="pkg-price-hst"> + HST</span>
-        </div>
-        <div class="pkg-desc">Premium upgrade for faster success</div>
-        <div style="height:16px;"></div>
-        <div class="pkg-features">
-          <div class="pkg-feature"><span class="feat-check">✔</span>Everything in Gold</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>12 Hours In-Car Training</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Car for Road Test Included</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Priority Scheduling</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Flexible Rescheduling</div>
-          <div class="pkg-feature"><span class="feat-check">✔</span>Free Pick &amp; Drop Off</div>
-        </div>
-        <button class="btn-register" onclick="openModal('platinum')">Book Platinum Package</button>
-      </div>
-    </div>
-
-  </div>
-</div>
 
 <!-- ═══ REGISTRATION MODAL ═══ -->
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
@@ -773,6 +584,15 @@ let currentStep    = 1;
 let selectedCourse = null;
 let selectedAmount = null;
 let amountToPay    = 0;
+
+// ── AUTO-OPEN from URL param ────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  const params = new URLSearchParams(window.location.search);
+  const pkg = params.get('package');
+  if (pkg && ['gold','silver','platinum'].includes(pkg)) {
+    openModal(pkg);
+  }
+});
 
 // ── MODAL ─────────────────────────────────────────────────
 function openModal(pkg) {
