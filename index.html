@@ -676,7 +676,7 @@ function mountStripe() {
     try { cardCvc.mount('#stripe-card-cvc'); } catch(e){}
     return;
   }
-  const STRIPE_KEY = 'pk_live_REPLACE_WITH_YOUR_LIVE_KEY';
+  const STRIPE_KEY = 'pk_live_51TUfKuBTqY0cQUwB2LMEkRAzHzOl5GywmbpmRwOUp86Hn1pqdzPs04vhjdkiIyueE3juDG9oARFk3vhcDIzqtLOS00KzVRljjB';
   stripe   = Stripe(STRIPE_KEY);
   elements = stripe.elements({ fonts:[{ cssSrc:'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }] });
   const stripeStyle = {
