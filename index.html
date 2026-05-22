@@ -6,6 +6,7 @@
 <title>David's Academy of Defensive Driving</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root {
   --bg:#ffffff; --surface:#f8f9fa; --card:#ffffff; --border:#222222;
@@ -193,19 +194,22 @@ select option{background:#fff;color:var(--black);}
 .amount-options:hover .amount-option{background:#fff;border-color:var(--black);box-shadow:none;transform:none;}
 .amount-options:hover .amount-option .amount-opt-title{color:var(--muted);}
 .amount-options:hover .amount-option .amount-opt-value{color:var(--black);}
+.amount-options:hover .amount-option.selected.full-opt .amount-opt-value{color:#f5c400;}
+.amount-options:hover .amount-option.selected.full-opt .amount-opt-title{color:rgba(255,255,255,0.8);}
+.amount-options:hover .amount-option.selected.full-opt .amount-opt-note{color:rgba(255,255,255,0.65);}
 .amount-options:hover .amount-option .amount-opt-note{color:var(--muted);}
 .amount-option:hover{background:#f5f5f5 !important;border-color:var(--black) !important;box-shadow:3px 3px 0px var(--black) !important;transform:translateY(-1px) !important;}
 /* selected state — only applies when NOT hovering the options container */
 .amount-option.selected.deposit-opt{background:#fff8e1;border-color:var(--yellow-dark);box-shadow:3px 3px 0px var(--yellow-dark);}
 .amount-option.selected.half-opt{background:#e8f5e9;border-color:var(--green-dark);box-shadow:3px 3px 0px var(--green-dark);}
-.amount-option.selected.full-opt{background:var(--black);box-shadow:3px 3px 0px var(--yellow-dark);}
+.amount-option.selected.full-opt{background:#1a1a1a;box-shadow:3px 3px 0px var(--yellow-dark);}
 .amount-opt-title{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
 .amount-option.selected .amount-opt-title{color:var(--black);}
-.amount-option.selected.full-opt .amount-opt-title{color:rgba(255,255,255,0.7);}
+.amount-option.selected.full-opt .amount-opt-title{color:rgba(255,255,255,0.8);}
 .amount-opt-value{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.05em;color:var(--black);}
-.amount-option.selected.full-opt .amount-opt-value{color:var(--yellow);}
+.amount-option.selected.full-opt .amount-opt-value{color:#f5c400;}
 .amount-opt-note{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
-.amount-option.selected.full-opt .amount-opt-note{color:rgba(255,255,255,0.5);}
+.amount-option.selected.full-opt .amount-opt-note{color:rgba(255,255,255,0.65);}
 
 .pay-tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
 .pay-tab{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:8px;border:2px solid var(--black);background:#fff;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;user-select:none;flex:1 1 auto;justify-content:center;}
@@ -850,14 +854,60 @@ document.querySelectorAll('input,select').forEach(el=>{
   el.addEventListener('change',()=>{clearErr(el.id);hideErr(`err-${el.id}`);});
 });
 
+// ── EMAILJS INIT ─────────────────────────────────────────
+emailjs.init('8rL8f6C4Cj_5wuKJM');
+
+const EMAILJS_SERVICE  = 'service_65ljmf8';
+const EMAILJS_ADMIN    = 'template_4bnu94p';
+const EMAILJS_STUDENT  = 'template_4ucn2y9';
+
+function getEmailParams() {
+  return {
+    student_name:    document.getElementById('fullname').value.trim(),
+    student_email:   document.getElementById('email').value.trim(),
+    student_cell:    document.getElementById('cell').value.trim(),
+    student_home:    document.getElementById('home').value.trim() || 'N/A',
+    student_address: document.getElementById('address').value.trim(),
+    student_city:    document.getElementById('city').value.trim(),
+    student_postal:  document.getElementById('postal').value.trim(),
+    student_license: document.getElementById('license').value.trim(),
+    student_expiry:  document.getElementById('expiry').value,
+    student_heard:   document.getElementById('heard').value,
+    student_package: COURSES[selectedCourse].label,
+    student_paytype: document.getElementById('rv-paytype').textContent,
+    student_amount:  '$' + amountToPay.toFixed(2),
+  };
+}
+
+async function sendEmails() {
+  const params = getEmailParams();
+  try {
+    await emailjs.send(EMAILJS_SERVICE, EMAILJS_ADMIN,  params);
+    await emailjs.send(EMAILJS_SERVICE, EMAILJS_STUDENT, params);
+    console.log('Emails sent OK');
+  } catch(err) {
+    console.error('Email error:', err);
+    // Don't block success — email failure shouldn't stop registration
+  }
+}
+
 // ── SUBMIT ────────────────────────────────────────────────
 async function handleCardPayment() {
   const btn=document.getElementById('submitBtn');
   btn.disabled=true;
   btn.innerHTML='<span class="spinner"></span>Processing…';
-  const { token, error } = await stripe.createToken(cardNumber, {
-    name: document.getElementById('cardName').value.trim() || document.getElementById('fullname').value.trim()
-  });
+
+  // Validate card name
+  const cardName = document.getElementById('cardName').value.trim();
+  if (!cardName) {
+    document.getElementById('stripe-error').textContent = 'Please enter the name on your card.';
+    document.getElementById('stripe-error').style.display = 'block';
+    btn.disabled=false;
+    btn.innerHTML='Complete Registration →';
+    return;
+  }
+
+  const { token, error } = await stripe.createToken(cardNumber, { name: cardName });
   if(error){
     document.getElementById('stripe-error').textContent=error.message;
     document.getElementById('stripe-error').style.display='block';
@@ -865,7 +915,10 @@ async function handleCardPayment() {
     btn.innerHTML='Complete Registration →';
     return;
   }
-  console.log('Token:',token.id,'| $'+amountToPay.toFixed(2),'|',COURSES[selectedCourse].label);
+  // Token created — send emails and confirm
+  // TODO: charge card via backend using token.id
+  console.log('Stripe token:', token.id, '| Amount: $'+amountToPay.toFixed(2));
+  await sendEmails();
   showSuccess();
 }
 
@@ -877,7 +930,16 @@ function showSuccess() {
 
 document.getElementById('regForm').addEventListener('submit',async function(e){
   e.preventDefault();
-  if(currentMethod==='card'){ await handleCardPayment(); } else { showSuccess(); }
+  if(currentMethod==='card'){
+    await handleCardPayment();
+  } else {
+    // E-Transfer or Pay In Person — no card needed
+    const btn=document.getElementById('submitBtn');
+    btn.disabled=true;
+    btn.innerHTML='<span class="spinner"></span>Submitting…';
+    await sendEmails();
+    showSuccess();
+  }
 });
 </script>
 </body>
