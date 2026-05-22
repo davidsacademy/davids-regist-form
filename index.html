@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>David's Academy of Defensive Driving</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://js.stripe.com/v3/"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root {
@@ -630,8 +629,7 @@ function openModal(pkg) {
   renderTooltip(selectedCourse);
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
-  // Mount Stripe elements after modal is visible
-  setTimeout(() => { try { mountStripe(); } catch(e){ console.warn('Stripe not ready:', e); } }, 100);
+  // Stripe disabled until live key is configured
 }
 
 function closeModal() {
@@ -666,40 +664,9 @@ function resetForm() {
   switchPayment('card');
 }
 
-// ── STRIPE ───────────────────────────────────────────────
-let stripe, elements, cardNumber, cardExpiry, cardCvc, stripeMounted = false;
-
-function mountStripe() {
-  if (stripeMounted) {
-    try { cardNumber.mount('#stripe-card-number'); } catch(e){}
-    try { cardExpiry.mount('#stripe-card-expiry'); } catch(e){}
-    try { cardCvc.mount('#stripe-card-cvc'); } catch(e){}
-    return;
-  }
-  const STRIPE_KEY = 'pk_live_51TUfKuBTqY0cQUwB2LMEkRAzHzOl5GywmbpmRwOUp86Hn1pqdzPs04vhjdkiIyueE3juDG9oARFk3vhcDIzqtLOS00KzVRljjB';
-  stripe   = Stripe(STRIPE_KEY);
-  elements = stripe.elements({ fonts:[{ cssSrc:'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }] });
-  const stripeStyle = {
-    base: { color:'#111111', fontFamily:'"DM Mono",monospace', fontSize:'16px', fontSmoothing:'antialiased', '::placeholder':{color:'#aaaaaa'} },
-    invalid: { color:'#cc0000', iconColor:'#cc0000' }
-  };
-  cardNumber = elements.create('cardNumber', { style:stripeStyle, showIcon:true });
-  cardExpiry = elements.create('cardExpiry', { style:stripeStyle });
-  cardCvc    = elements.create('cardCvc',    { style:stripeStyle });
-  cardNumber.mount('#stripe-card-number');
-  cardExpiry.mount('#stripe-card-expiry');
-  cardCvc.mount('#stripe-card-cvc');
-  [{el:cardNumber,id:'stripe-card-number'},{el:cardExpiry,id:'stripe-card-expiry'},{el:cardCvc,id:'stripe-card-cvc'}]
-    .forEach(({el,id}) => {
-      el.on('focus', () => document.getElementById(id).classList.add('focused'));
-      el.on('blur',  () => document.getElementById(id).classList.remove('focused'));
-    });
-  cardNumber.on('change', e => {
-    const err = document.getElementById('stripe-error');
-    if(e.error){ err.textContent=e.error.message; err.style.display='block'; } else err.style.display='none';
-  });
-  stripeMounted = true;
-}
+// ── STRIPE (disabled — add live key to enable) ──────────
+let stripe = null, elements = null, cardNumber = null, cardExpiry = null, cardCvc = null, stripeMounted = false;
+function mountStripe() { console.log('Stripe disabled — add live key to enable'); }
 
 // ── COURSE RENDERING ──────────────────────────────────────
 function renderLockedCourse(key) {
@@ -916,32 +883,11 @@ async function sendEmails() {
 
 // ── SUBMIT ────────────────────────────────────────────────
 async function handleCardPayment() {
+  // Stripe disabled — treating card same as other methods until live key added
   const btn=document.getElementById('submitBtn');
   btn.disabled=true;
   btn.innerHTML='<span class="spinner"></span>Processing…';
-
-  // Validate card name
-  const cardName = document.getElementById('cardName').value.trim();
-  if (!cardName) {
-    document.getElementById('stripe-error').textContent = 'Please enter the name on your card.';
-    document.getElementById('stripe-error').style.display = 'block';
-    btn.disabled=false;
-    btn.innerHTML='Complete Registration →';
-    return;
-  }
-
-  const { token, error } = await stripe.createToken(cardNumber, { name: cardName });
-  if(error){
-    document.getElementById('stripe-error').textContent=error.message;
-    document.getElementById('stripe-error').style.display='block';
-    btn.disabled=false;
-    btn.innerHTML='Complete Registration →';
-    return;
-  }
-  // Token created — send emails and confirm
-  // TODO: charge card via backend using token.id
-  console.log('Stripe token:', token.id, '| Amount: $'+amountToPay.toFixed(2));
-  await sendEmails();
+  try { await sendEmails(); } catch(e){ console.error('Email error:', e); }
   showSuccess();
 }
 
