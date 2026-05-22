@@ -676,7 +676,7 @@ function mountStripe() {
     try { cardCvc.mount('#stripe-card-cvc'); } catch(e){}
     return;
   }
-  const STRIPE_KEY = 'pk_live_51TUfKuBTqY0cQUwB2LMEkRAzHzOl5GywmbpmRwOUp86Hn1pqdzPs04vhjdkiIyueE3juDG9oARFk3vhcDIzqtLOS00KzVRljjB';
+  const STRIPE_KEY = 'pk_live_REPLACE_WITH_YOUR_LIVE_KEY';
   stripe   = Stripe(STRIPE_KEY);
   elements = stripe.elements({ fonts:[{ cssSrc:'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&display=swap' }] });
   const stripeStyle = {
@@ -879,6 +879,7 @@ function getEmailParams() {
   };
 }
 
+/* ── ORIGINAL sendEmails (inactive) ──
 async function sendEmails() {
   const params = getEmailParams();
   try {
@@ -887,7 +888,29 @@ async function sendEmails() {
     console.log('Emails sent OK');
   } catch(err) {
     console.error('Email error:', err);
-    // Don't block success — email failure shouldn't stop registration
+  }
+}
+── END ORIGINAL ── */
+
+// ── DEBUG sendEmails ──────────────────────────────────────
+async function sendEmails() {
+  const params = getEmailParams();
+  console.log('=== EmailJS Debug ===');
+  console.log('Service:', EMAILJS_SERVICE);
+  console.log('Admin Template:', EMAILJS_ADMIN);
+  console.log('Student Template:', EMAILJS_STUDENT);
+  console.log('Params:', JSON.stringify(params));
+  try {
+    const r1 = await emailjs.send(EMAILJS_SERVICE, EMAILJS_ADMIN, params);
+    console.log('Admin email sent:', r1.status, r1.text);
+  } catch(err) {
+    console.error('Admin email FAILED:', JSON.stringify(err));
+  }
+  try {
+    const r2 = await emailjs.send(EMAILJS_SERVICE, EMAILJS_STUDENT, params);
+    console.log('Student email sent:', r2.status, r2.text);
+  } catch(err) {
+    console.error('Student email FAILED:', JSON.stringify(err));
   }
 }
 
