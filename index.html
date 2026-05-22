@@ -107,23 +107,24 @@ input:focus,select:focus{border-color:var(--black);background:var(--accent-bg);b
 select{cursor:pointer;}
 select option{background:#fff;color:var(--black);}
 
-/* DATE — bulletproof vertical alignment */
+/* DATE — works on mobile + desktop */
 .date-input-wrap{display:block;width:100%;}
 .date-input-wrap input[type="date"]{
   background:#fff;border:2px solid var(--black);border-radius:8px;
   color:var(--black);font-size:14px;font-weight:500;
   height:40px;width:100%;box-sizing:border-box;outline:none;
   -webkit-appearance:none;appearance:none;
-  padding:0 12px;
-  /* force vertical centre via line-height */
-  line-height:40px;
+  /* padding-top nudges text to centre on mobile where line-height is ignored */
+  padding:10px 12px 0 12px;
   font-family:'DM Sans',sans-serif;
   cursor:pointer;display:block;
 }
 .date-input-wrap input[type="date"]::-webkit-calendar-picker-indicator{
-  cursor:pointer;opacity:0.6;margin-left:4px;
+  cursor:pointer;opacity:0.6;position:relative;top:-4px;
 }
-.date-input-wrap input[type="date"]::-webkit-datetime-edit-fields-wrapper{padding:0;}
+.date-input-wrap input[type="date"]::-webkit-datetime-edit-fields-wrapper{
+  padding:0;position:relative;top:-2px;
+}
 .date-input-wrap input[type="date"]::-webkit-datetime-edit{padding:0;}
 .date-input-wrap input[type="date"]::-webkit-datetime-edit-month-field,
 .date-input-wrap input[type="date"]::-webkit-datetime-edit-day-field,
@@ -285,7 +286,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
 <!-- ═══ REGISTRATION MODAL ═══ -->
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal-box" id="modalBox">
-    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <button class="modal-close" onclick="closeAndReturn()" aria-label="Close">✕</button>
     <div class="modal-inner">
       <div class="page-wrap">
 
@@ -316,13 +317,11 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 </div>
                 <div class="field">
                   <label for="cell">Cell Phone</label>
-                  <div class="field-hint">Format: 416-555-0000</div>
                   <input type="tel" id="cell" placeholder="416-555-0000" maxlength="12" required>
                   <span class="error-msg" id="err-cell">Please enter a valid 10-digit number</span>
                 </div>
                 <div class="field">
                   <label for="home">Home Phone</label>
-                  <div class="field-hint">Format: 416-555-0000</div>
                   <input type="tel" id="home" placeholder="416-555-0000" maxlength="12">
                 </div>
                 <div class="field col-span-2">
@@ -374,7 +373,6 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
               <div class="grid grid-2">
                 <div class="field">
                   <label for="license">Driver License Number</label>
-                  <div class="field-hint">Format: A1234-12345-12345</div>
                   <input type="text" id="license" placeholder="A1234-12345-12345" maxlength="17" required>
                   <span class="error-msg" id="err-license">Format must be A1234-12345-12345</span>
                 </div>
@@ -610,6 +608,10 @@ function openModal(pkg) {
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   document.body.style.overflow = '';
+}
+
+function closeAndReturn() {
+  window.location.href = 'https://www.davidsacademy.ca';
 }
 
 function handleOverlayClick(e) {
