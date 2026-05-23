@@ -177,7 +177,7 @@ select option{background:#fff;color:var(--black);}
   animation:fadeUp 0.2s ease both;
   font-family:Inter,Arial,sans-serif;
 }
-.info-icon-wrap:hover .pkg-tooltip,.info-icon-wrap.open .pkg-tooltip{display:block;}
+.info-icon-wrap:hover .pkg-tooltip,.info-icon-wrap.open .pkg-tooltip{display:none;}
 
 /* Gold inner border */
 .pkg-tooltip.gold-tip{position:relative;}
@@ -777,23 +777,33 @@ function renderTooltip(key) {
 function toggleTooltip() {
   const wrap = document.getElementById('infoWrap');
   const tooltip = document.getElementById('pkgTooltip');
-  wrap.classList.toggle('open');
-  if (wrap.classList.contains('open')) {
-    // Position tooltip using fixed coords so it doesn't overlap form fields
+  const isOpen = tooltip.style.display === 'block';
+
+  if (isOpen) {
+    tooltip.style.display = 'none';
+    wrap.classList.remove('open');
+  } else {
+    // Position first, then show
     const rect = wrap.getBoundingClientRect();
     const tWidth = 260;
     let left = rect.right - tWidth;
     if (left < 8) left = 8;
+    if (left + tWidth > window.innerWidth - 8) left = window.innerWidth - tWidth - 8;
     let top = rect.bottom + 8;
-    // If too close to bottom, show above
-    if (top + 400 > window.innerHeight) top = rect.top - 420;
+    if (top + 420 > window.innerHeight) top = rect.top - 428;
     tooltip.style.left = left + 'px';
     tooltip.style.top = top + 'px';
+    tooltip.style.display = 'block';
+    wrap.classList.add('open');
   }
 }
 document.addEventListener('click', function(e) {
   const w = document.getElementById('infoWrap');
-  if (w && !w.contains(e.target)) w.classList.remove('open');
+  const t = document.getElementById('pkgTooltip');
+  if (w && !w.contains(e.target) && t && !t.contains(e.target)) {
+    t.style.display = 'none';
+    w.classList.remove('open');
+  }
 });
 
 // ── STEP NAVIGATION ───────────────────────────────────────
