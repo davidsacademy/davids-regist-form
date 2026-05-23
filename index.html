@@ -166,20 +166,18 @@ select option{background:#fff;color:var(--black);}
 .info-icon:hover{background:var(--yellow);box-shadow:2px 2px 0 var(--black);}
 /* ── TOOLTIP — matches website card design exactly ── */
 .pkg-tooltip{
-  display:none;position:absolute;right:0;top:44px;z-index:999;
+  display:none;
+  position:fixed;
+  z-index:9999;
   width:260px;
   background:#000;
   border-radius:20px;
   overflow:hidden;
-  box-shadow:0 18px 40px rgba(0,0,0,0.6);
+  box-shadow:0 18px 40px rgba(0,0,0,0.7);
   animation:fadeUp 0.2s ease both;
   font-family:Inter,Arial,sans-serif;
-  right:0;
 }
-@media(max-width:480px){.pkg-tooltip{right:-60px;width:240px;}}
 .info-icon-wrap:hover .pkg-tooltip,.info-icon-wrap.open .pkg-tooltip{display:block;}
-/* Position left instead of right to avoid going off screen */
-.pkg-tooltip{right:auto;left:auto;}
 
 /* Gold inner border */
 .pkg-tooltip.gold-tip{position:relative;}
@@ -756,7 +754,8 @@ function renderTooltip(key) {
   // Build save row
   let saveRow = '';
   if (c.original) {
-    saveRow = `<div class="tooltip-save-row"><span class="tooltip-orig">Was $${Number(c.original).toFixed(2)}</span></div>`;
+    const origStr = c.original === 799.99 ? '799.99' : c.original.toFixed(2);
+    saveRow = `<div class="tooltip-save-row"><span class="tooltip-orig">Was $${origStr}</span></div>`;
   }
 
   tip.innerHTML = `
@@ -773,7 +772,23 @@ function renderTooltip(key) {
     </div>`;
 }
 
-function toggleTooltip() { document.getElementById('infoWrap').classList.toggle('open'); }
+function toggleTooltip() {
+  const wrap = document.getElementById('infoWrap');
+  const tooltip = document.getElementById('pkgTooltip');
+  wrap.classList.toggle('open');
+  if (wrap.classList.contains('open')) {
+    // Position tooltip using fixed coords so it doesn't overlap form fields
+    const rect = wrap.getBoundingClientRect();
+    const tWidth = 260;
+    let left = rect.right - tWidth;
+    if (left < 8) left = 8;
+    let top = rect.bottom + 8;
+    // If too close to bottom, show above
+    if (top + 400 > window.innerHeight) top = rect.top - 420;
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+  }
+}
 document.addEventListener('click', function(e) {
   const w = document.getElementById('infoWrap');
   if (w && !w.contains(e.target)) w.classList.remove('open');
