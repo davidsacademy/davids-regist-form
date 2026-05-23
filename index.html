@@ -484,7 +484,6 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                     </div>
                     <div class="info-icon-wrap" id="infoWrap" onclick="toggleTooltip()">
                       <div class="info-icon">ⓘ</div>
-                      <div class="pkg-tooltip" id="pkgTooltip"></div>
                     </div>
                   </div>
                 </div>
@@ -629,6 +628,9 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
     </div><!-- end modal-inner -->
   </div><!-- end modal-box -->
 </div><!-- end modal-overlay -->
+
+<!-- PACKAGE TOOLTIP — body level so it never disrupts form layout -->
+<div class="pkg-tooltip" id="pkgTooltip"></div>
 
 <!-- SUCCESS -->
 <div class="success-overlay" id="successOverlay">
