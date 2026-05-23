@@ -829,6 +829,7 @@ const EMAILJS_ADMIN    = 'template_nmonvw9';
 const EMAILJS_STUDENT  = 'template_nu3qm0v';
 
 function getEmailParams() {
+  const isPaid = currentMethod === 'card';
   return {
     student_name:    document.getElementById('fullname').value.trim(),
     student_email:   document.getElementById('email').value.trim(),
@@ -843,6 +844,9 @@ function getEmailParams() {
     student_package: COURSES[selectedCourse].label,
     student_paytype: document.getElementById('rv-paytype').textContent,
     student_amount:  '$' + amountToPay.toFixed(2),
+    student_package_total: '$' + COURSES[selectedCourse].total.toFixed(2) + ' incl. HST',
+    student_amount_label: isPaid ? 'AMOUNT PAID TODAY' : 'AMOUNT DUE',
+    student_payment_note: isPaid ? 'Payment received' : (currentMethod === 'etransfer' ? 'Please send e-Transfer to payments@davidsacademy.ca' : 'Please pay your instructor at pickup'),
   };
 }
 
