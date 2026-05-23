@@ -661,7 +661,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
 
 <script>
 const COURSES = {
-  gold:     { label:'Gold Package',     pretax:699.99, total:790.98, original:799.99, save:100,  badge:'Most Popular', badge2:'Limited Time Offer', desc:'Best value for G2 success',           features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Car for Road Test Included','Flexible Scheduling','Free Road Test Booking','Free Pick & Drop Off'] },
+  gold:     { label:'Gold Package',     pretax:699.99, total:790.98, original:'799.99', save:100,  badge:'Most Popular', badge2:'Limited Time Offer', desc:'Best value for G2 success',           features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Car for Road Test Included','Flexible Scheduling','Free Road Test Booking','Free Pick & Drop Off'] },
   platinum: { label:'Platinum Package', pretax:779.99, total:881.39, original:null,   save:null, badge:null,           badge2:null,                  desc:'Premium upgrade for faster success',  features:['Everything in Gold','12 Hours In-Car Training','Car for Road Test Included','Priority Scheduling','Flexible Rescheduling','Free Pick & Drop Off'] },
   silver:   { label:'Silver Package',   pretax:549.99, total:621.49, original:null,   save:null, badge:null,           badge2:null,                  desc:'Starter package for new drivers',     features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Free Pick Up & Drop Off','Free Road Test Booking'] },
 };
@@ -756,8 +756,7 @@ function renderTooltip(key) {
   // Build save row
   let saveRow = '';
   if (c.original) {
-    const origStr = c.original === 799.99 ? '799.99' : c.original.toFixed(2);
-    saveRow = `<div class="tooltip-save-row"><span class="tooltip-orig">Was $${origStr}</span></div>`;
+    saveRow = `<div class="tooltip-save-row"><span class="tooltip-orig">Was $${c.original}</span></div>`;
   }
 
   tip.innerHTML = `
@@ -774,35 +773,47 @@ function renderTooltip(key) {
     </div>`;
 }
 
-function toggleTooltip() {
+function showTooltip() {
   const wrap = document.getElementById('infoWrap');
   const tooltip = document.getElementById('pkgTooltip');
-  const isOpen = tooltip.style.display === 'block';
-
-  if (isOpen) {
-    tooltip.style.display = 'none';
-    wrap.classList.remove('open');
-  } else {
-    // Position first, then show
-    const rect = wrap.getBoundingClientRect();
-    const tWidth = 260;
-    let left = rect.right - tWidth;
-    if (left < 8) left = 8;
-    if (left + tWidth > window.innerWidth - 8) left = window.innerWidth - tWidth - 8;
-    let top = rect.bottom + 8;
-    if (top + 420 > window.innerHeight) top = rect.top - 428;
-    tooltip.style.left = left + 'px';
-    tooltip.style.top = top + 'px';
-    tooltip.style.display = 'block';
-    wrap.classList.add('open');
-  }
+  const rect = wrap.getBoundingClientRect();
+  const tWidth = 260;
+  let left = rect.right - tWidth;
+  if (left < 8) left = 8;
+  if (left + tWidth > window.innerWidth - 8) left = window.innerWidth - tWidth - 8;
+  let top = rect.bottom + 8;
+  if (top + 420 > window.innerHeight) top = rect.top - 428;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+  tooltip.style.display = 'block';
+  wrap.classList.add('open');
 }
+
+function hideTooltip() {
+  const tooltip = document.getElementById('pkgTooltip');
+  const wrap = document.getElementById('infoWrap');
+  tooltip.style.display = 'none';
+  wrap.classList.remove('open');
+}
+
+function toggleTooltip() {
+  const tooltip = document.getElementById('pkgTooltip');
+  if (tooltip.style.display === 'block') { hideTooltip(); } else { showTooltip(); }
+}
+
+// Hover on desktop, click on mobile
+const infoWrap = document.getElementById('infoWrap');
+if (window.matchMedia('(hover: hover)').matches) {
+  // Desktop — hover
+  infoWrap.addEventListener('mouseenter', showTooltip);
+  infoWrap.addEventListener('mouseleave', hideTooltip);
+}
+
 document.addEventListener('click', function(e) {
   const w = document.getElementById('infoWrap');
   const t = document.getElementById('pkgTooltip');
   if (w && !w.contains(e.target) && t && !t.contains(e.target)) {
-    t.style.display = 'none';
-    w.classList.remove('open');
+    hideTooltip();
   }
 });
 
