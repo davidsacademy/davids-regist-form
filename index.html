@@ -616,7 +616,25 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
   <h2>You're Enrolled!</h2>
-  <p id="successMsg">Check your email for next steps.</p>
+  <p id="successMsg" style="margin-bottom:24px;"></p>
+  <div style="background:#fff;border:2px solid #111;border-radius:14px;padding:20px 24px;max-width:360px;width:100%;box-shadow:4px 4px 0 #111;text-align:left;">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:12px;">What Happens Next</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#111;">
+        <span style="font-size:18px;flex-shrink:0;">📧</span>
+        <span><strong>Check your email</strong> — a confirmation has been sent with your registration details</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#111;">
+        <span style="font-size:18px;flex-shrink:0;">📞</span>
+        <span><strong>We'll contact you</strong> within 24 hours to schedule your first lesson</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#111;">
+        <span style="font-size:18px;flex-shrink:0;">💬</span>
+        <span><strong>Questions?</strong> WhatsApp or call us at <strong>647-657-7913</strong></span>
+      </div>
+    </div>
+  </div>
+  <button onclick="window.location.href='https://www.davidsacademy.ca'" style="margin-top:20px;padding:12px 32px;background:#111;color:#fff;border:2px solid #111;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;cursor:pointer;box-shadow:3px 3px 0 #b38a00;">Back to Website</button>
 </div>
 
 <script>
@@ -658,6 +676,11 @@ function closeModal() {
 }
 
 function closeAndReturn() {
+  // Only warn if student has started filling the form
+  const name = document.getElementById('fullname').value.trim();
+  if (name && currentStep > 1) {
+    if (!confirm('Are you sure you want to leave? Your progress will be lost.')) return;
+  }
   window.location.href = 'https://www.davidsacademy.ca';
 }
 
