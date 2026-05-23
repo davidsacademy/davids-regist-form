@@ -167,16 +167,19 @@ select option{background:#fff;color:var(--black);}
 /* ── TOOLTIP — matches website card design exactly ── */
 .pkg-tooltip{
   display:none;position:absolute;right:0;top:44px;z-index:999;
-  width:300px;
+  width:260px;
   background:#000;
   border-radius:20px;
   overflow:hidden;
   box-shadow:0 18px 40px rgba(0,0,0,0.6);
   animation:fadeUp 0.2s ease both;
   font-family:Inter,Arial,sans-serif;
+  right:0;
 }
-@media(max-width:480px){.pkg-tooltip{right:-80px;width:280px;}}
+@media(max-width:480px){.pkg-tooltip{right:-60px;width:240px;}}
 .info-icon-wrap:hover .pkg-tooltip,.info-icon-wrap.open .pkg-tooltip{display:block;}
+/* Position left instead of right to avoid going off screen */
+.pkg-tooltip{right:auto;left:auto;}
 
 /* Gold inner border */
 .pkg-tooltip.gold-tip{position:relative;}
@@ -753,7 +756,7 @@ function renderTooltip(key) {
   // Build save row
   let saveRow = '';
   if (c.original) {
-    saveRow = `<div class="tooltip-save-row"><span class="tooltip-orig">$${c.original.toFixed(2)}</span></div>`;
+    saveRow = `<div class="tooltip-save-row"><span class="tooltip-orig">Was $${Number(c.original).toFixed(2)}</span></div>`;
   }
 
   tip.innerHTML = `
