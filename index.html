@@ -596,7 +596,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
   <h2>You're Enrolled!</h2>
-  <p>Payment confirmed. Check your email for your receipt and next steps.</p>
+  <p id="successMsg">Check your email for next steps.</p>
 </div>
 
 <script>
@@ -896,6 +896,13 @@ async function handleCardPayment() {
 }
 
 function showSuccess() {
+  // Set message based on payment method
+  const messages = {
+    card:      'Payment confirmed! Check your email for your receipt and next steps.',
+    etransfer: 'Registration received! Please send your e-Transfer to payments@davidsacademy.ca to confirm your spot. Check your email for full details.',
+    cash:      'Registration received! Your instructor will collect payment at your first lesson. Check your email for full details.'
+  };
+  document.getElementById('successMsg').textContent = messages[currentMethod] || messages.etransfer;
   closeModal();
   document.getElementById('successOverlay').classList.add('show');
   document.body.style.overflow='hidden';
