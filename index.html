@@ -164,35 +164,67 @@ select option{background:#fff;color:var(--black);}
   color:var(--black);transition:all 0.15s;user-select:none;flex-shrink:0;
 }
 .info-icon:hover{background:var(--yellow);box-shadow:2px 2px 0 var(--black);}
+/* ── TOOLTIP — matches website card design exactly ── */
 .pkg-tooltip{
   display:none;position:absolute;right:0;top:44px;z-index:999;
-  width:300px;background:var(--black);border:2px solid var(--black);
-  border-radius:14px;overflow:hidden;box-shadow:6px 6px 0px rgba(0,0,0,0.3);
+  width:300px;
+  background:#000;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 18px 40px rgba(0,0,0,0.6);
   animation:fadeUp 0.2s ease both;
+  font-family:Inter,Arial,sans-serif;
 }
 @media(max-width:480px){.pkg-tooltip{right:-80px;width:280px;}}
 .info-icon-wrap:hover .pkg-tooltip,.info-icon-wrap.open .pkg-tooltip{display:block;}
-.tooltip-header{padding:14px 16px;background:linear-gradient(135deg,#1a1200,#3d2e00);border-bottom:2px solid #c9a100;}
-.pkg-tooltip.platinum-tip .tooltip-header{background:linear-gradient(135deg,#1a1a1a,#3a3a3a);border-bottom-color:#888;}
-.pkg-tooltip.silver-tip .tooltip-header{background:linear-gradient(135deg,#1c1c1c,#2e2e2e);border-bottom-color:#666;}
-.tooltip-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
-.tooltip-badge{font-family:'DM Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:#e8000d;color:#fff;}
-.tooltip-badge.save{background:var(--green);}
-.tooltip-name{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);letter-spacing:0.04em;}
-.pkg-tooltip.platinum-tip .tooltip-name,.pkg-tooltip.silver-tip .tooltip-name{color:#fff;}
-.tooltip-price-row{display:flex;align-items:baseline;gap:8px;margin-top:4px;}
-.tooltip-price{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--yellow);letter-spacing:0.03em;}
-.pkg-tooltip.platinum-tip .tooltip-price,.pkg-tooltip.silver-tip .tooltip-price{color:#fff;}
-.tooltip-hst{font-size:11px;color:rgba(255,255,255,0.6);font-family:'DM Mono',monospace;}
-.tooltip-orig{font-size:11px;color:rgba(255,255,255,0.4);font-family:'DM Mono',monospace;text-decoration:line-through;}
-.tooltip-total{font-size:10px;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;margin-top:2px;}
-.tooltip-desc{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;}
-.tooltip-features{padding:12px 16px;display:flex;flex-direction:column;gap:6px;background:#111;}
-.tooltip-feature{display:flex;align-items:center;gap:7px;font-size:12px;color:#eee;}
-.tooltip-check{width:16px;height:16px;border-radius:50%;background:var(--yellow-dark);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.pkg-tooltip.platinum-tip .tooltip-check{background:#666;}
-.pkg-tooltip.silver-tip .tooltip-check{background:#777;}
-.tooltip-check svg{width:9px;height:9px;color:#fff;}
+
+/* Gold inner border */
+.pkg-tooltip.gold-tip{position:relative;}
+.pkg-tooltip.gold-tip::before{content:"";position:absolute;inset:8px;border:1.5px solid #d4af37;border-radius:14px;pointer-events:none;box-shadow:0 0 12px rgba(212,175,55,0.2);z-index:0;}
+
+/* Silver inner border */
+.pkg-tooltip.silver-tip::before{content:"";position:absolute;inset:8px;border:1.5px solid #9e9e9e;border-radius:14px;pointer-events:none;box-shadow:0 0 10px rgba(200,200,200,0.12);z-index:0;}
+
+/* Platinum inner border */
+.pkg-tooltip.platinum-tip::before{content:"";position:absolute;inset:8px;border:1.5px solid #dcdcdc;border-radius:14px;pointer-events:none;box-shadow:0 0 10px rgba(255,255,255,0.15);z-index:0;}
+
+.tooltip-inner{padding:16px;position:relative;z-index:1;}
+
+/* Badges */
+.tooltip-badges{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px;}
+.tooltip-badge{
+  display:block;width:max-content;
+  padding:4px 12px;border-radius:999px;
+  font-size:9px;font-weight:900;letter-spacing:0.06em;text-transform:uppercase;
+  background:#ff2b2b;color:#fff;
+  box-shadow:0 0 12px rgba(255,43,43,0.6);
+}
+.tooltip-badge.offer{animation:pulse 1.6s infinite;}
+.tooltip-badge.save{
+  background:linear-gradient(135deg,#00ff88,#00cc6a);
+  color:#003322;box-shadow:0 0 8px rgba(0,255,136,0.5);
+  animation:savePulse 1.6s infinite;
+}
+
+/* Name */
+.tooltip-name{text-align:center;font-size:1.4rem;font-weight:700;margin:0 0 4px;}
+.gold-tip .tooltip-name{color:#d4af37;}
+.silver-tip .tooltip-name{color:#cfcfcf;}
+.platinum-tip .tooltip-name{color:#e5e5e5;}
+
+/* Price */
+.tooltip-price-row{text-align:center;margin:6px 0 4px;}
+.tooltip-price{font-size:1.6rem;font-weight:900;color:#fff;}
+
+/* Desc + old price */
+.tooltip-desc{text-align:center;font-size:11px;color:#cfcfcf;margin-bottom:4px;}
+.tooltip-save-row{text-align:center;margin-bottom:10px;}
+.tooltip-orig{font-size:12px;color:#888;text-decoration:line-through;margin-right:6px;}
+.tooltip-total{font-size:10px;color:rgba(255,255,255,0.4);text-align:center;margin-bottom:8px;}
+
+/* Features */
+.tooltip-features{border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;display:flex;flex-direction:column;gap:7px;}
+.tooltip-feature{font-size:12px;color:#eee;text-align:left;}
 
 .amount-section{margin-top:20px;padding-top:20px;border-top:1px dashed #ddd;}
 .amount-label{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--black);display:block;margin-bottom:4px;}
@@ -451,20 +483,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                     </div>
                     <div class="info-icon-wrap" id="infoWrap" onclick="toggleTooltip()">
                       <div class="info-icon">ⓘ</div>
-                      <div class="pkg-tooltip" id="pkgTooltip">
-                        <div class="tooltip-header">
-                          <div class="tooltip-badges" id="ttBadges"></div>
-                          <div class="tooltip-name"  id="ttName"></div>
-                          <div class="tooltip-price-row">
-                            <div class="tooltip-price" id="ttPrice"></div>
-                            <div class="tooltip-hst">+ HST</div>
-                            <div class="tooltip-orig" id="ttOrig"></div>
-                          </div>
-                          <div class="tooltip-total" id="ttTotal"></div>
-                          <div class="tooltip-desc"  id="ttDesc"></div>
-                        </div>
-                        <div class="tooltip-features" id="ttFeatures"></div>
-                      </div>
+                      <div class="pkg-tooltip" id="pkgTooltip"></div>
                     </div>
                   </div>
                 </div>
@@ -724,21 +743,31 @@ function renderTooltip(key) {
   const c   = COURSES[key];
   const tip = document.getElementById('pkgTooltip');
   tip.className = `pkg-tooltip ${key}-tip`;
+
+  // Build badges
   let badges = '';
   if (c.badge)  badges += `<span class="tooltip-badge">${c.badge}</span>`;
-  if (c.badge2) badges += `<span class="tooltip-badge">${c.badge2}</span>`;
+  if (c.badge2) badges += `<span class="tooltip-badge offer">${c.badge2}</span>`;
   if (c.save)   badges += `<span class="tooltip-badge save">Save $${c.save}</span>`;
-  document.getElementById('ttBadges').innerHTML = badges;
-  document.getElementById('ttName').textContent  = c.label;
-  document.getElementById('ttPrice').textContent = '$' + c.pretax.toFixed(2);
-  document.getElementById('ttDesc').textContent  = c.desc;
-  document.getElementById('ttTotal').textContent = 'Total incl. HST: $' + c.total.toFixed(2);
-  const orig = document.getElementById('ttOrig');
-  if (c.original){ orig.textContent='Was $'+c.original.toFixed(2); orig.style.display='block'; } else orig.style.display='none';
-  document.getElementById('ttFeatures').innerHTML = c.features.map(f=>`
-    <div class="tooltip-feature">
-      <div class="tooltip-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>${f}
-    </div>`).join('');
+
+  // Build save row
+  let saveRow = '';
+  if (c.original) {
+    saveRow = `<div class="tooltip-save-row"><span class="tooltip-orig">$${c.original.toFixed(2)}</span></div>`;
+  }
+
+  tip.innerHTML = `
+    <div class="tooltip-inner">
+      ${badges ? `<div class="tooltip-badges">${badges}</div>` : ''}
+      <div class="tooltip-name">${c.label}</div>
+      <div class="tooltip-price-row"><span class="tooltip-price">$${c.pretax.toFixed(2)} + HST</span></div>
+      <div class="tooltip-desc">${c.desc}</div>
+      ${saveRow}
+      <div class="tooltip-total">Total incl. HST: $${c.total.toFixed(2)}</div>
+      <div class="tooltip-features">
+        ${c.features.map(f => `<div class="tooltip-feature">✔ ${f}</div>`).join('')}
+      </div>
+    </div>`;
 }
 
 function toggleTooltip() { document.getElementById('infoWrap').classList.toggle('open'); }
