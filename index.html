@@ -674,7 +674,15 @@ let amountToPay    = 0;
 // ── AUTO-OPEN from URL param ────────────────────────────
 window.addEventListener('DOMContentLoaded', function() {
   const params = new URLSearchParams(window.location.search);
-  const pkg = params.get('package');
+const pkg = params.get('package');
+if (pkg && ['gold','silver','platinum'].includes(pkg)) {
+  openModal(pkg);
+}
+
+
+  
+  
+//  const pkg = params.get('package');
   if (pkg && ['gold','silver','platinum'].includes(pkg)) {
     openModal(pkg);
   }
