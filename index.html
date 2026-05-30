@@ -673,14 +673,15 @@ let amountToPay    = 0;
 
 // ── AUTO-OPEN from URL param ────────────────────────────
 window.addEventListener('DOMContentLoaded', function() {
+  const hash = window.location.hash.replace('#','').toLowerCase().trim();
   const params = new URLSearchParams(window.location.search);
-const pkg = params.get('package');
-if (pkg && ['gold','silver','platinum'].includes(pkg)) {
-  openModal(pkg);
-}
-  
+  const qpkg = params.get('package');
+  const pkgKey = hash || (qpkg ? qpkg.toLowerCase().replace(' package','').trim() : '');
+  if (pkgKey && ['gold','silver','platinum'].includes(pkgKey)) {
+    openModal(pkgKey);
+  }
 });
-
+  
 // ── MODAL ─────────────────────────────────────────────────
 function openModal(pkg) {
   selectedCourse = COURSES[pkg] ? pkg : 'gold';
