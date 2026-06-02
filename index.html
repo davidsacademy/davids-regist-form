@@ -1026,7 +1026,7 @@ function showSuccess() {
   // Set message based on payment method
   const messages = {
     card:      'Payment confirmed! Check your email for your receipt and next steps.',
-    etransfer: 'Registration received! Please send your e-Transfer to payments@davidsacademy.ca to confirm your spot. Check your email for full details.',
+    etransfer: 'Registration received! Please send your e-Transfer to the email address below to confirm your spot. Check your email for full details.',
     cash:      'Registration received! Your instructor will collect payment at your first lesson. Check your email for full details.'
   };
   document.getElementById('successMsg').textContent = messages[currentMethod] || messages.etransfer;
