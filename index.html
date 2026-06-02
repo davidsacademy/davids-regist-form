@@ -634,15 +634,17 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
 
 <!-- SUCCESS -->
 <div class="success-overlay" id="successOverlay">
-  <div class="success-icon">
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;">
+  <h2 style="margin:0;">You're Enrolled!</h2>
+  <div class="success-icon" style="margin-bottom:0;flex-shrink:0;">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
-  <h2>You're Enrolled!</h2>
+</div>
   <p id="successMsg" style="margin-bottom:16px;font-size:14px;max-width:340px;line-height:1.6;color:var(--muted);"></p>  
  <div style="display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;background:#f5f5f5;border:2px solid #111;border-radius:10px;padding:8px 12px;">
   <strong style="font-size:14px;color:#111;">payments@davidsacademy.ca</strong>
-  <button onclick="navigator.clipboard.writeText('payments@davidsacademy.ca').then(()=>{this.innerHTML='✅';setTimeout(()=>this.innerHTML='<svg width=16 height=16 viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=2><rect x=9 y=9 width=13 height=13 rx=2/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg>',2000)})" style="background:none;border:none;cursor:pointer;padding:2px;display:flex;align-items:center;color:#555;flex-shrink:0;" title="Copy email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
-</div>    
+  <button onclick="var t=document.createElement('textarea');t.value='payments@davidsacademy.ca';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);document.execCommand('copy');document.body.removeChild(t);this.innerHTML='✅';setTimeout(()=>{this.innerHTML='<svg width=16 height=16 viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=2><rect x=9 y=9 width=13 height=13 rx=2/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg>'},2000)" style="background:none;border:none;cursor:pointer;padding:2px;display:flex;align-items:center;color:#555;flex-shrink:0;" title="Copy email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+ </div>    
 <div style="background:#fff;border:2px solid #111;border-radius:14px;padding:14px 18px;max-width:360px;width:100%;box-shadow:4px 4px 0 #111;text-align:left;"> 
     <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:12px;">What Happens Next</div>
     <div style="display:flex;flex-direction:column;gap:12px;">
@@ -660,7 +662,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
       </div>
     </div>
   </div>
-  <button onclick="window.location.href='https://www.davidsacademy.ca'" style="margin-top:20px;padding:14px 40px;background:#f5c400;color:#111;border:3px solid #111;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.1em;cursor:pointer;box-shadow:4px 4px 0 #111;display:inline-block;">🏠 Home</button>
+  <button onclick="window.location.href='https://www.davidsacademy.ca'"style="margin-top:10px;padding:10px 40px;background:#f5c400;color:#111;border:3px solid #111;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;cursor:pointer;box-shadow:4px 4px 0 #111;display:inline-block;"
 </div>
 
 <script>
