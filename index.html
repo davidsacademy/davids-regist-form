@@ -395,8 +395,8 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                   <span class="error-msg" id="err-cell">Please enter a valid 10-digit number</span>
                 </div>
                 <div class="field">
-                  <label for="home">Home Phone</label>
-                  <input type="tel" id="home" placeholder="416-555-0000" maxlength="12">
+                  <label for=""> Phone</label>
+                  <input type="tel" id="" placeholder="416-555-0000" maxlength="12">
                 </div>
                 <div class="field col-span-2">
                   <label for="email">Email Address</label>
@@ -591,23 +591,24 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 </div>
               </div>
 
-              <div id="panel-etransfer" style="display:none;">
-                <div class="info-box">
-                  Send your e-Transfer to:<br>
-                  <strong>payments@davidsacademy.ca</strong><br><br>
-                  Use your <strong>full name</strong> as the message/note.<br>
-                  Registration confirmed within 1 business day of payment received.
-                </div>
-              </div>
-
-              <div id="panel-cash" style="display:none;">
+             <div id="panel-etransfer" style="display:none;">
+  <div class="info-box">
+    Send your e-Transfer to:
+    <div style="display:flex;align-items:center;gap:8px;margin:8px 0;background:#fff;border:2px solid #111;border-radius:8px;padding:8px 12px;">
+      <strong style="font-size:13px;word-break:break-all;flex:1;">payments@davidsacademy.ca</strong>
+      <button onclick="var t=document.createElement('textarea');t.value='payments@davidsacademy.ca';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);document.execCommand('copy');document.body.removeChild(t);this.innerHTML='✅';setTimeout(()=>{this.innerHTML='<svg width=16 height=16 viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=2><rect x=9 y=9 width=13 height=13 rx=2/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg>'},2000)" style="background:none;border:none;cursor:pointer;padding:2px;display:flex;align-items:center;color:#555;flex-shrink:0;" title="Copy email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+    </div>
+    Use your <strong>full name</strong> as the message/note.<br>
+    Registration confirmed within 1 business day of payment received.
+  </div>
+</div>
+             <div id="panel-cash" style="display:none;">
                 <div class="info-box">
                   <strong>David's Academy of Defensive Driving</strong><br><br>
                   Payment is made directly to your instructor when they pick you up for your in-vehicle lesson.<br><br>
                   Cash and debit accepted.
                 </div>
               </div>
-
               <div class="price-row">
                 <div>
                   <div class="price-label">Amount Due Today</div>
