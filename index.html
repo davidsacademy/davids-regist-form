@@ -638,8 +638,12 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
   <h2>You're Enrolled!</h2>
-  <p id="successMsg" style="margin-bottom:24px;"></p>
-  <div style="background:#fff;border:2px solid #111;border-radius:14px;padding:20px 24px;max-width:360px;width:100%;box-shadow:4px 4px 0 #111;text-align:left;">
+  <p id="successMsg" style="margin-bottom:16px;font-size:14px;max-width:340px;line-height:1.6;color:var(--muted);"></p>
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+  <strong style="font-size:15px;color:#111;word-break:break-all;">payments@davidsacademy.ca</strong>
+  <button onclick="navigator.clipboard.writeText('payments@davidsacademy.ca').then(()=>{this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy',2000)})" style="padding:6px 14px;background:#111;color:#fff;border:2px solid #111;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Mono',monospace;">📋 Copy</button>
+</div>  
+ <div style="background:#fff;border:2px solid #111;border-radius:14px;padding:20px 24px;max-width:360px;width:100%;box-shadow:4px 4px 0 #111;text-align:left;">
     <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:12px;">What Happens Next</div>
     <div style="display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#111;">
