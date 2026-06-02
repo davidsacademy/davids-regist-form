@@ -301,7 +301,7 @@ select option{background:#fff;color:var(--black);}
 .review-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #e5e5e5;}
 .review-row:last-child{border-bottom:none;}
 .review-key{color:var(--muted);font-weight:500;}
-.review-val{color:var(--black);font-weight:600;text-align:right;max-width:60%;}
+.review-val{color:var(--black);font-weight:600;text-align:right;max-width:60%;word-break:break-all;overflow-wrap:anywhere;font-size:clamp(11px,3vw,13px);}
 
 .price-row{display:flex;justify-content:space-between;align-items:center;border-top:2px solid var(--black);padding-top:20px;margin-top:20px;}
 .price-label{font-size:13px;font-weight:700;color:var(--black);text-transform:uppercase;letter-spacing:0.06em;}
@@ -656,7 +656,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
       </div>
     </div>
   </div>
-  <button onclick="window.location.href='https://www.davidsacademy.ca'" style="margin-top:20px;padding:12px 32px;background:#111;color:#fff;border:2px solid #111;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;cursor:pointer;box-shadow:3px 3px 0 #b38a00;">Back to Website</button>
+  <button onclick="window.location.href='https://www.davidsacademy.ca'" style="margin-top:20px;padding:14px 40px;background:#f5c400;color:#111;border:3px solid #111;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.1em;cursor:pointer;box-shadow:4px 4px 0 #111;display:inline-block;">🏠 Home</button>
 </div>
 
 <script>
