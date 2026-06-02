@@ -499,7 +499,10 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
               <div class="review-box">
                 <h4>Registration Summary</h4>
                 <div class="review-row"><span class="review-key">Name</span><span class="review-val" id="rv-name">&#x2014;</span></div>
-                <div class="review-row"><span class="review-key">Email</span><span class="review-val" id="rv-email">&#x2014;</span></div>
+                <div class="review-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                  <span class="review-key">Email</span>
+                  <span class="review-val" id="rv-email" style="max-width:100%;text-align:left;font-size:13px;">&#x2014;</span>
+                </div>
                 <div class="review-row"><span class="review-key">City</span><span class="review-val" id="rv-city">&#x2014;</span></div>
                 <div class="review-row"><span class="review-key">Package</span><span class="review-val" id="rv-package">&#x2014;</span></div>
                 <div class="review-row"><span class="review-key">Payment Type</span><span class="review-val" id="rv-paytype">&#x2014;</span></div>
@@ -555,14 +558,17 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
               </div>
 
               <div id="panel-etransfer" style="display:none;">
-                <div class="info-box">
-                  Send your e-Transfer to:
-                  <div style="display:flex;align-items:center;gap:8px;margin:8px 0;background:#fff;border:2px solid #111;border-radius:8px;padding:8px 12px;">
-                    <strong style="font-size:13px;word-break:break-all;flex:1;">payments@davidsacademy.ca</strong>
-                    <button onclick="var t=document.createElement('textarea');t.value='payments@davidsacademy.ca';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);document.execCommand('copy');document.body.removeChild(t);this.innerHTML='&#x2705;';setTimeout(()=>{this.innerHTML='<svg width=16 height=16 viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=2><rect x=9 y=9 width=13 height=13 rx=2/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg>'},2000)" style="background:none;border:none;cursor:pointer;padding:2px;display:flex;align-items:center;color:#555;flex-shrink:0;" title="Copy email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
+                <div class="info-box" style="display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:flex;align-items:flex-start;gap:10px;">
+                    <span style="font-size:22px;flex-shrink:0;">&#x1F4E7;</span>
+                    <div>
+                      <strong>Please complete your registration</strong> by clicking the button below.<br>
+                      <span style="font-size:13px;color:#555;">You will receive e-Transfer payment instructions by email on the next page.</span>
+                    </div>
                   </div>
-                  Use your <strong>full name</strong> as the message/note.<br>
-                  Registration confirmed within 1 business day of payment received.
+                  <div style="background:#fff8e1;border:2px solid var(--yellow-dark);border-radius:8px;padding:10px 14px;font-size:13px;color:#555;font-family:'DM Mono',monospace;">
+                    &#x1F4A1; Payment details including our e-Transfer email address will be shown after you submit your registration.
+                  </div>
                 </div>
               </div>
 
