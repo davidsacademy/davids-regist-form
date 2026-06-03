@@ -557,6 +557,11 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                   <div class="field-hint">Enter the cardholder's name exactly as shown on the card</div>
                 </div>
                 <div id="stripe-error"></div>
+                <!-- Amount due box for card payment -->
+                <div style="display:flex;justify-content:space-between;align-items:center;background:#fffbe6;border:2px solid #b38a00;border-radius:10px;padding:10px 16px;margin-bottom:14px;">
+                  <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#111;">Amount Due Today</span>
+                  <span id="card-amount-display" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;color:#b38a00;">&#x2014;</span>
+                </div>
                 <div class="secure-note">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                   Secured by Stripe — card details encrypted, never stored on our servers.
@@ -586,14 +591,6 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 </div>
               </div>
 
-              <div class="price-row">
-                <div>
-                  <div class="price-label">Amount Due Today</div>
-                  <div class="price-sub" id="price-sub-note">&#x2014;</div>
-                </div>
-                <div class="price-value" id="total-display">&#x2014;</div>
-              </div>
-
               <div class="btn-row">
                 <button type="button" class="btn-back" onclick="prevStep(4)">&#x2190; Back</button>
                 <!-- FIX 4: Changed from type="submit" to type="button" with explicit onclick handler
@@ -613,43 +610,49 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
 
 <!-- SUCCESS -->
 <div class="success-overlay" id="successOverlay">
-  <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;margin-top:0;">
-    <h2 style="margin:0;line-height:1;">You're Enrolled!</h2>
-    <div class="success-icon" style="margin-bottom:0;flex-shrink:0;width:48px;height:48px;align-self:center;">
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;margin-top:4px;">
+    <h2 style="margin:0;line-height:1;font-size:clamp(24px,7vw,38px);">You're Enrolled!</h2>
+    <div class="success-icon" style="margin-bottom:0;flex-shrink:0;width:42px;height:42px;align-self:center;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
   </div>
-  <p id="successMsg" style="margin-bottom:10px;font-size:14px;max-width:340px;line-height:1.6;color:var(--muted);"></p>
-  <!-- Amount due prominently shown -->
-  <div id="successAmountBox" style="display:none;margin-bottom:12px;background:#fffbe6;border:2px solid #b38a00;border-radius:12px;padding:10px 20px;text-align:center;max-width:340px;width:100%;">
-    <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:2px;">Amount Due</div>
-    <div id="successAmountVal" style="font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:0.04em;color:#b38a00;line-height:1.1;"></div>
+  <p id="successMsg" style="margin-bottom:8px;font-size:13px;max-width:340px;line-height:1.5;color:var(--muted);"></p>
+
+  <!-- Single-line: Amount Due   $999.99 — only for etransfer -->
+  <div id="successAmountBox" style="display:none;margin-bottom:8px;background:#fffbe6;border:2px solid #b38a00;border-radius:10px;padding:10px 16px;max-width:360px;width:100%;display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#111;">Amount Due</span>
+      <span id="successAmountVal" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;color:#b38a00;"></span>
+    </div>
   </div>
-  <!-- Email with copy top-right -->
-  <div id="successEmailBox" style="display:none;position:relative;margin-bottom:12px;background:#f5f5f5;border:2px solid #111;border-radius:10px;padding:12px 44px 12px 14px;max-width:340px;width:100%;">
-    <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:3px;">Send e-Transfer to</div>
-    <strong style="font-size:15px;color:#111;word-break:keep-all;white-space:nowrap;">payments@davidsacademy.ca</strong>
+
+  <!-- Email box — only for etransfer -->
+  <div id="successEmailBox" style="display:none;position:relative;margin-bottom:8px;background:#f5f5f5;border:2px solid #111;border-radius:10px;padding:10px 50px 10px 14px;max-width:360px;width:100%;">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:2px;">Send e-Transfer to</div>
+    <strong style="font-size:14px;color:#111;white-space:nowrap;">payments@davidsacademy.ca</strong>
     <button id="copyEmailBtn" onclick="var t=document.createElement('textarea');t.value='payments@davidsacademy.ca';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);document.execCommand('copy');document.body.removeChild(t);this.innerHTML='&#x2705;';setTimeout(()=>{this.innerHTML='<svg width=16 height=16 viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=2><rect x=9 y=9 width=13 height=13 rx=2/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg>'},2000)" style="position:absolute;top:8px;right:8px;background:#fff;border:2px solid #111;border-radius:6px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;color:#555;" title="Copy email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
   </div>
-  <div style="background:#fff;border:2px solid #111;border-radius:14px;padding:14px 18px;max-width:360px;width:100%;box-shadow:4px 4px 0 #111;text-align:left;">
-    <div style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:12px;">What Happens Next</div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#111;">
-        <span style="font-size:18px;flex-shrink:0;">&#x1F4E7;</span>
+
+  <!-- What Happens Next — compact -->
+  <div style="background:#fff;border:2px solid #111;border-radius:12px;padding:12px 16px;max-width:360px;width:100%;box-shadow:3px 3px 0 #111;text-align:left;margin-bottom:8px;">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:8px;">What Happens Next</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#111;">
+        <span style="font-size:16px;flex-shrink:0;">&#x1F4E7;</span>
         <span><strong>Check your email</strong> — a confirmation has been sent with your registration details</span>
       </div>
-      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#111;">
-        <span style="font-size:18px;flex-shrink:0;">&#x1F4DE;</span>
+      <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#111;">
+        <span style="font-size:16px;flex-shrink:0;">&#x1F4DE;</span>
         <span><strong>We'll contact you</strong> within 24 hours to schedule your first lesson</span>
       </div>
-      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#111;">
-        <span style="font-size:18px;flex-shrink:0;">&#x1F4AC;</span>
+      <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#111;">
+        <span style="font-size:16px;flex-shrink:0;">&#x1F4AC;</span>
         <span><strong>Questions?</strong> WhatsApp or call us at <strong>647-657-7913</strong></span>
       </div>
     </div>
   </div>
   <button onclick="window.location.href='https://www.davidsacademy.ca'"
-    style="margin-top:10px;padding:10px 40px;background:#f5c400;color:#111;border:2px solid #111;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;cursor:pointer;box-shadow:2px 2px 0 #111;display:flex;align-items:center;justify-content:center;gap:8px;margin-left:auto;margin-right:auto;">&#x1F3E0; HOME</button>
+    style="margin-top:4px;padding:9px 36px;background:#f5c400;color:#111;border:2px solid #111;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.1em;cursor:pointer;box-shadow:2px 2px 0 #111;display:flex;align-items:center;justify-content:center;gap:8px;margin-left:auto;margin-right:auto;">&#x1F3E0; HOME</button>
 </div>
 
 <script>
@@ -865,9 +868,8 @@ function populateReview() {
   document.getElementById('rv-package').textContent = COURSES[selectedCourse].label;
   document.getElementById('rv-paytype').textContent = payLabels[selectedAmount];
   document.getElementById('rv-amount').textContent  = '$'+amountToPay.toFixed(2);
-  document.getElementById('total-display').textContent = '$'+amountToPay.toFixed(2);
-  const notes={deposit:'Deposit — balance due before course start',half:'50% — balance due before course start',full:'Full payment incl. HST'};
-  document.getElementById('price-sub-note').textContent = notes[selectedAmount];
+  // Update card panel amount display
+  document.getElementById('card-amount-display').textContent = '$'+amountToPay.toFixed(2);
 }
 
 function selectAmount(type) {
@@ -970,7 +972,6 @@ async function sendEmails() {
 // FIX 1: Updated success messages — e-transfer message now prompts student to complete registration
 // and sends payment transfer instructions clearly
 function showSuccess() {
-  // Show amount due for etransfer; hide for card/cash (amount already collected or collected in person)
   const amountStr = '$' + amountToPay.toFixed(2);
   const amountBox = document.getElementById('successAmountBox');
   const emailBox  = document.getElementById('successEmailBox');
@@ -992,7 +993,7 @@ function showSuccess() {
   document.getElementById('successMsg').textContent = messages[currentMethod] || messages.etransfer;
   closeModal();
   document.getElementById('successOverlay').classList.add('show');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
 
 // FIX 4: handleSubmit is called directly by the button (type="button")
