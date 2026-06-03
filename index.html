@@ -391,7 +391,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 </div>
                 <div class="field">
                   <label for="postal">Postal Code</label>
-                  <input type="text" id="postal" placeholder="A1B 2C3" required maxlength="7">
+                  <input type="text" id="postal" placeholder="A1A-1A1" required maxlength="7" style="text-transform:uppercase;">
                   <span class="error-msg" id="err-postal">Please enter your postal code</span>
                 </div>
               </div>
@@ -507,7 +507,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 <div class="review-row"><span class="review-key">Package</span><span class="review-val" id="rv-package">&#x2014;</span></div>
                 <div class="review-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
                   <span class="review-key">Payment Type</span>
-                  <span class="review-val" id="rv-paytype" style="max-width:100%;text-align:left;">&#x2014;</span>
+                  <span id="rv-paytype" style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.04em;color:#b38a00;font-weight:900;">&#x2014;</span>
                 </div>
                 <div class="review-row" style="flex-direction:column;align-items:flex-start;gap:2px;border-bottom:none;">
                   <span class="review-key">Amount Due Today</span>
@@ -902,6 +902,14 @@ function formatPhone(el) {
 document.getElementById('cell').addEventListener('input',function(){formatPhone(this);});
 document.getElementById('home').addEventListener('input',function(){formatPhone(this);});
 
+// Postal code: uppercase + format A1A-1A1
+function formatPostal(el) {
+  let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,6);
+  if (v.length > 3) v = v.substring(0,3) + '-' + v.substring(3);
+  el.value = v;
+}
+document.getElementById('postal').addEventListener('input',function(){formatPostal(this);});
+
 // FIX 3: License format — Ontario: 1 letter + 4 digits + dash + 5 digits + dash + 5 digits
 function formatLicense(el) {
   let v=el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,15);
@@ -931,6 +939,7 @@ const EMAILJS_STUDENT  = 'template_nu3qm0v';
 
 function getEmailParams() {
   const isPaid = currentMethod === 'card';
+  const amountStr = '$' + amountToPay.toFixed(2);
   return {
     student_name:    document.getElementById('fullname').value.trim(),
     student_email:   document.getElementById('email').value.trim(),
@@ -944,10 +953,12 @@ function getEmailParams() {
     student_heard:   document.getElementById('heard').value,
     student_package: COURSES[selectedCourse].label,
     student_paytype: document.getElementById('rv-paytype').textContent,
-    student_amount:  '$' + amountToPay.toFixed(2),
+    student_amount:  amountStr,
     student_package_total: '$' + COURSES[selectedCourse].total.toFixed(2) + ' incl. HST',
     student_amount_label: isPaid ? 'AMOUNT PAID TODAY' : 'AMOUNT DUE',
-    student_payment_note: isPaid ? 'Payment received' : (currentMethod === 'etransfer' ? 'Please send $' + amountToPay.toFixed(2) + ' via e-Transfer to payments@davidsacademy.ca — use your full name as the message/note' : 'Please pay your instructor at pickup'),
+    // student_etransfer_amount: use this in EmailJS template to replace hardcoded "minimum $50.00"
+    student_etransfer_amount: amountStr,
+    student_payment_note: isPaid ? 'Payment received' : (currentMethod === 'etransfer' ? 'Please send ' + amountStr + ' via e-Transfer to payments@davidsacademy.ca — use your full name as the message/note' : 'Please pay your instructor at pickup'),
   };
 }
 
