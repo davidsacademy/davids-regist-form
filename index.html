@@ -207,6 +207,7 @@ select option{background:#fff;color:var(--black);}
 .amount-options{display:flex;flex-direction:column;gap:10px;}
 @media(min-width:480px){.amount-options{flex-direction:row;}}
 .amount-option{flex:1;border:2px solid var(--black);border-radius:10px;padding:14px 16px;cursor:pointer;background:#fff;transition:all 0.15s;user-select:none;display:flex;flex-direction:column;gap:3px;}
+.amount-option.disabled{opacity:0.35;pointer-events:none;}
 .amount-options:hover .amount-option{background:#fff;border-color:var(--black);box-shadow:none;transform:none;}
 .amount-options:hover .amount-option .amount-opt-title{color:var(--muted);}
 .amount-options:hover .amount-option .amount-opt-value{color:var(--black);}
@@ -308,6 +309,18 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
 
 .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:8px;}
 
+/* BNPL styles */
+.bnpl-btn{
+  width:100%;padding:14px;background:#000;color:#fff;
+  border:2px solid #000;border-radius:10px;
+  font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;
+  cursor:pointer;box-shadow:3px 3px 0 var(--yellow-dark);
+  transition:all 0.15s;margin-top:4px;
+}
+.bnpl-btn:hover{background:#222;transform:translateY(-2px);box-shadow:6px 6px 0 var(--yellow-dark);}
+.klarna-badge{background:#ffb3c7;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.klarna-k{font-family:'DM Mono',monospace;font-size:18px;font-weight:900;color:#000;background:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -354,11 +367,9 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 </div>
                 <div class="field">
                   <label for="cell">Cell Phone</label>
-                  <!-- FIX: phone format placeholder updated to match auto-format output -->
                   <input type="tel" id="cell" placeholder="416-555-0000" maxlength="12" required>
                   <span class="error-msg" id="err-cell">Please enter a valid 10-digit number</span>
                 </div>
-                <!-- FIX 2: Added id="home" and for="home" so JS can find the field -->
                 <div class="field">
                   <label for="home">Home Phone</label>
                   <input type="tel" id="home" placeholder="416-555-0000" maxlength="12">
@@ -412,7 +423,6 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
               <div class="grid grid-2">
                 <div class="field">
                   <label for="license">Driver License Number</label>
-                  <!-- FIX 3: placeholder shows correct Ontario format -->
                   <input type="text" id="license" placeholder="A1234-12345-12345" maxlength="17" required>
                   <span class="field-hint">Ontario format: Letter + 4 digits – 5 digits – 5 digits</span>
                   <span class="error-msg" id="err-license">Format must be A1234-12345-12345</span>
@@ -456,9 +466,9 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
               </div>
 
               <div class="amount-section" id="amountSection">
-                <span class="amount-label">How Much Would You Like to Pay Today?</span>
-                <p class="amount-hint">Minimum $50.00 deposit required to complete registration</p>
-                <div class="amount-options">
+                <span class="amount-label" id="amountLabel">How Much Would You Like to Pay Today?</span>
+                <p class="amount-hint" id="amountHint">Minimum $50.00 deposit required to complete registration</p>
+                <div class="amount-options" id="amountOptions">
                   <div class="amount-option deposit-opt" onclick="selectAmount('deposit')" id="opt-deposit">
                     <div class="amount-opt-title">Deposit</div>
                     <div class="amount-opt-value">$50.00</div>
@@ -520,7 +530,11 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
               <div class="pay-tabs">
                 <div class="pay-tab active" data-method="card" onclick="switchPayment('card')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                  Credit / Debit Card
+                  Credit / Debit
+                </div>
+                <div class="pay-tab" data-method="bnpl" onclick="switchPayment('bnpl')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  Buy Now Pay Later
                 </div>
                 <div class="pay-tab" data-method="etransfer" onclick="switchPayment('etransfer')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM9 9h6M9 12h6M9 15h4"/></svg>
@@ -559,7 +573,6 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                   <div class="field-hint">Enter the cardholder's name exactly as shown on the card</div>
                 </div>
                 <div id="stripe-error"></div>
-                <!-- Amount due box for card payment -->
                 <div style="display:flex;justify-content:space-between;align-items:center;background:#fffbe6;border:2px solid #b38a00;border-radius:10px;padding:10px 16px;margin-bottom:14px;">
                   <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#111;">Amount Due Today</span>
                   <span id="card-amount-display" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;color:#b38a00;">&#x2014;</span>
@@ -570,6 +583,32 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 </div>
               </div>
 
+              <!-- BNPL PANEL -->
+              <div id="panel-bnpl" style="display:none;">
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div class="klarna-badge">
+                    <div class="klarna-k">K</div>
+                    <div>
+                      <div style="font-weight:700;font-size:14px;color:#000;">Klarna — Pay in 4 installments</div>
+                      <div style="font-size:12px;color:#333;">Interest-free, no hidden fees</div>
+                    </div>
+                  </div>
+                  <div style="background:#fffbe6;border:2px solid var(--yellow-dark);border-radius:8px;padding:10px 14px;font-size:13px;color:#555;font-family:'DM Mono',monospace;">
+                    &#x1F4A1; Full course amount is required for Buy Now Pay Later. You will be taken to our secure Stripe payment page to complete your purchase with Klarna.
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;background:#fffbe6;border:2px solid #b38a00;border-radius:10px;padding:10px 16px;">
+                    <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#111;">Full Amount</span>
+                    <span id="bnpl-amount-display" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;color:#b38a00;">&#x2014;</span>
+                  </div>
+                  <button class="bnpl-btn" onclick="openBnplLink()">PAY WITH KLARNA &#x2192;</button>
+                  <div class="secure-note">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Secured by Stripe — you will be redirected to complete payment safely.
+                  </div>
+                </div>
+              </div>
+
+              <!-- ETRANSFER PANEL -->
               <div id="panel-etransfer" style="display:none;">
                 <div class="info-box" style="display:flex;flex-direction:column;gap:12px;">
                   <div style="display:flex;align-items:flex-start;gap:10px;">
@@ -585,6 +624,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 </div>
               </div>
 
+              <!-- CASH PANEL -->
               <div id="panel-cash" style="display:none;">
                 <div class="info-box">
                   <strong>David's Academy of Defensive Driving</strong><br><br>
@@ -595,8 +635,6 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
 
               <div class="btn-row">
                 <button type="button" class="btn-back" onclick="prevStep(4)">&#x2190; Back</button>
-                <!-- FIX 4: Changed from type="submit" to type="button" with explicit onclick handler
-                     This prevents the form from submitting and jumping back to step 1 -->
                 <button type="button" class="btn-submit" id="submitBtn" onclick="handleSubmit()">Complete Registration &#x2192;</button>
               </div>
             </div>
@@ -620,22 +658,19 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
   </div>
   <p id="successMsg" style="margin-bottom:8px;font-size:13px;max-width:340px;line-height:1.5;color:var(--muted);"></p>
 
-  <!-- Single-line: Amount Due   $999.99 — only for etransfer -->
-  <div id="successAmountBox" style="display:none;margin-bottom:8px;background:#fffbe6;border:2px solid #b38a00;border-radius:10px;padding:10px 16px;max-width:360px;width:100%;display:none;">
+  <div id="successAmountBox" style="display:none;margin-bottom:8px;background:#fffbe6;border:2px solid #b38a00;border-radius:10px;padding:10px 16px;max-width:360px;width:100%;">
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#111;">Amount Due</span>
       <span id="successAmountVal" style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;color:#b38a00;"></span>
     </div>
   </div>
 
-  <!-- Email box — only for etransfer -->
   <div id="successEmailBox" style="display:none;position:relative;margin-bottom:8px;background:#f5f5f5;border:2px solid #111;border-radius:10px;padding:10px 50px 10px 14px;max-width:360px;width:100%;">
     <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:2px;">Send e-Transfer to</div>
     <strong style="font-size:14px;color:#111;white-space:nowrap;">payments@davidsacademy.ca</strong>
     <button id="copyEmailBtn" onclick="var t=document.createElement('textarea');t.value='payments@davidsacademy.ca';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);document.execCommand('copy');document.body.removeChild(t);this.innerHTML='&#x2705;';setTimeout(()=>{this.innerHTML='<svg width=16 height=16 viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=2><rect x=9 y=9 width=13 height=13 rx=2/><path d=\'M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1\'/></svg>'},2000)" style="position:absolute;top:8px;right:8px;background:#fff;border:2px solid #111;border-radius:6px;cursor:pointer;padding:4px 6px;display:flex;align-items:center;color:#555;" title="Copy email"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
   </div>
 
-  <!-- What Happens Next — compact -->
   <div style="background:#fff;border:2px solid #111;border-radius:12px;padding:12px 16px;max-width:360px;width:100%;box-shadow:3px 3px 0 #111;text-align:left;margin-bottom:8px;">
     <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:8px;">What Happens Next</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
@@ -662,6 +697,12 @@ const COURSES = {
   gold:     { label:'Gold Package',     pretax:699.99, total:790.98, original:'799.99', save:100,  badge:'Most Popular', badge2:'Limited Time Offer', desc:'Best value for G2 success',           features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Insurance Discount Certificate','Car for Road Test Included','Flexible Scheduling','Free Road Test Booking','Free Pick & Drop Off'] },
   platinum: { label:'Platinum Package', pretax:779.99, total:881.39, original:null,   save:null, badge:null,           badge2:null,                  desc:'Premium upgrade for faster success',  features:['Everything in Gold','12 Hours In-Car Training','Car for Road Test Included','Priority Scheduling','Flexible Rescheduling','Free Pick & Drop Off'] },
   silver:   { label:'Silver Package',   pretax:549.99, total:621.49, original:null,   save:null, badge:null,           badge2:null,                  desc:'Starter package for new drivers',     features:['20 Hours Online Course','10 Hours Homelink','10 Hours In-Car Training','Insurance Discount Certificate','Free Pick Up & Drop Off','Free Road Test Booking'] },
+};
+
+const BNPL_LINKS = {
+  gold:     'https://buy.stripe.com/eVq6oG8h5bFhb9YgBEffy00',
+  platinum: 'https://buy.stripe.com/5kQdR868XfVx2Dsadgffy01',
+  silver:   'https://buy.stripe.com/3cIdR8cxl5gT91Q858ffy02'
 };
 
 let currentStep    = 1;
@@ -718,12 +759,33 @@ function resetForm() {
   }
   ['opt-deposit','opt-half','opt-full'].forEach(id => document.getElementById(id).classList.remove('selected'));
   document.getElementById('err-amount').classList.remove('show');
+  restoreAmountOptions();
   switchPayment('card');
+}
+
+function restoreAmountOptions() {
+  ['opt-deposit','opt-half','opt-full'].forEach(function(id) {
+    document.getElementById(id).classList.remove('disabled');
+  });
+  document.getElementById('amountLabel').textContent = 'How Much Would You Like to Pay Today?';
+  document.getElementById('amountHint').textContent = 'Minimum $50.00 deposit required to complete registration';
+}
+
+function lockAmountToFull() {
+  // For BNPL — only full payment allowed
+  ['opt-deposit','opt-half'].forEach(function(id) {
+    document.getElementById(id).classList.add('disabled');
+    document.getElementById(id).classList.remove('selected');
+  });
+  document.getElementById('amountLabel').textContent = 'Payment Amount (Buy Now Pay Later)';
+  document.getElementById('amountHint').textContent = 'Full payment required for Klarna installments';
+  // Auto-select full
+  selectAmount('full');
 }
 
 let stripe = null, elements = null, cardNumber = null, cardExpiry = null, cardCvc = null, stripeMounted = false;
 
-  function mountStripe() {
+function mountStripe() {
   stripe = Stripe('pk_live_51TUfKuBTqY0cQUwB2LMEkRAzHzOl5GywmbpmRwOUp86Hn1pqdzPs04vhjdkiIyueE3juDG9oARFk3vhcDIzqtLOS00KzVRljjB');
   elements = stripe.elements();
   cardNumber = elements.create('cardNumber');
@@ -735,6 +797,13 @@ let stripe = null, elements = null, cardNumber = null, cardExpiry = null, cardCv
   stripeMounted = true;
 }
 
+function openBnplLink() {
+  const link = BNPL_LINKS[selectedCourse] || BNPL_LINKS.gold;
+  // Send emails first then open link
+  sendEmails().catch(function(e){ console.error('Email error:',e); });
+  window.open(link, '_blank');
+  showSuccess();
+}
 
 function renderLockedCourse(key) {
   const c = COURSES[key];
@@ -833,7 +902,6 @@ function nextStep(from) {
   goToStep(from+1);
 }
 
-// ── VALIDATION ────────────────────────────────────────────
 function validateStep(step) {
   let ok = true;
   if (step===1) {
@@ -860,8 +928,6 @@ function validateStep(step) {
         if(!document.getElementById(f.id).value.trim()){markErr(f.id);showErr('err-'+f.id,f.msg);ok=false;}
         else{clearErr(f.id);hideErr('err-'+f.id);}
       });
-    // FIX 3: Ontario license is Letter + 14 digits = 15 alphanumeric chars
-    // Formatted with dashes: A1234-12345-12345 = 17 chars total, 15 alphanumeric
     const lic = document.getElementById('license').value;
     const licAlpha = lic.replace(/[^A-Z0-9]/gi,'');
     if(lic && licAlpha.length !== 15){
@@ -882,8 +948,8 @@ function populateReview() {
   document.getElementById('rv-package').textContent = COURSES[selectedCourse].label;
   document.getElementById('rv-paytype').textContent = payLabels[selectedAmount];
   document.getElementById('rv-amount').textContent  = '$'+amountToPay.toFixed(2);
-  // Update card panel amount display
   document.getElementById('card-amount-display').textContent = '$'+amountToPay.toFixed(2);
+  document.getElementById('bnpl-amount-display').textContent = '$'+COURSES[selectedCourse].total.toFixed(2);
 }
 
 function selectAmount(type) {
@@ -899,12 +965,21 @@ function selectAmount(type) {
 
 let currentMethod = 'card';
 function switchPayment(m) {
-  currentMethod=m;
+  currentMethod = m;
   document.querySelectorAll('.pay-tab').forEach(function(t){t.classList.remove('active');});
   document.querySelector('[data-method="'+m+'"]').classList.add('active');
-  ['card','etransfer','cash'].forEach(function(p){
-    document.getElementById('panel-'+p).style.display=p===m?'block':'none';
+  ['card','bnpl','etransfer','cash'].forEach(function(p){
+    document.getElementById('panel-'+p).style.display = p===m ? 'block' : 'none';
   });
+  // Lock/unlock amount options based on payment method
+  if (m === 'bnpl') {
+    lockAmountToFull();
+  } else {
+    restoreAmountOptions();
+    // Re-deselect amount so user picks again (unless already selected something valid)
+  }
+  // Show/hide submit button for BNPL (has its own Pay button)
+  document.getElementById('submitBtn').style.display = m === 'bnpl' ? 'none' : '';
 }
 
 function formatPhone(el) {
@@ -916,7 +991,6 @@ function formatPhone(el) {
 document.getElementById('cell').addEventListener('input',function(){formatPhone(this);});
 document.getElementById('home').addEventListener('input',function(){formatPhone(this);});
 
-// Postal code: uppercase + format A1A-1A1
 function formatPostal(el) {
   let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,6);
   if (v.length > 3) v = v.substring(0,3) + '-' + v.substring(3);
@@ -924,7 +998,6 @@ function formatPostal(el) {
 }
 document.getElementById('postal').addEventListener('input',function(){formatPostal(this);});
 
-// FIX 3: License format — Ontario: 1 letter + 4 digits + dash + 5 digits + dash + 5 digits
 function formatLicense(el) {
   let v=el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,15);
   if(v.length>9) v=v.substring(0,5)+'-'+v.substring(5,10)+'-'+v.substring(10);
@@ -970,16 +1043,13 @@ function getEmailParams() {
     student_amount:  amountStr,
     student_package_total: '$' + COURSES[selectedCourse].total.toFixed(2) + ' incl. HST',
     student_amount_label: isPaid ? 'AMOUNT PAID TODAY' : 'AMOUNT DUE',
-    // student_etransfer_amount: use this in EmailJS template to replace hardcoded "minimum $50.00"
     student_etransfer_amount: amountStr,
-    student_payment_note: isPaid ? 'Payment received' : (currentMethod === 'etransfer' ? 'Please send ' + amountStr + ' via e-Transfer to payments@davidsacademy.ca — use your full name as the message/note' : 'Please pay your instructor at pickup'),
+    student_payment_note: isPaid ? 'Payment received' : (currentMethod === 'etransfer' ? 'Please send ' + amountStr + ' via e-Transfer to payments@davidsacademy.ca — use your full name as the message/note' : currentMethod === 'bnpl' ? 'Student selected Buy Now Pay Later (Klarna) — full amount ' + '$' + COURSES[selectedCourse].total.toFixed(2) : 'Please pay your instructor at pickup'),
   };
 }
 
 async function sendEmails() {
   const params = getEmailParams();
-  console.log('=== EmailJS Debug ===');
-  console.log('Params:', JSON.stringify(params));
   try {
     const r1 = await emailjs.send(EMAILJS_SERVICE, EMAILJS_ADMIN, params);
     console.log('Admin email sent:', r1.status, r1.text);
@@ -994,8 +1064,6 @@ async function sendEmails() {
   }
 }
 
-// FIX 1: Updated success messages — e-transfer message now prompts student to complete registration
-// and sends payment transfer instructions clearly
 function showSuccess() {
   const amountStr = '$' + amountToPay.toFixed(2);
   const amountBox = document.getElementById('successAmountBox');
@@ -1012,6 +1080,7 @@ function showSuccess() {
 
   const messages = {
     card:      'Payment confirmed! Check your email for your receipt and next steps.',
+    bnpl:      'Registration complete! You have been redirected to complete your Klarna payment. Check your email for your registration details.',
     etransfer: 'Registration complete! Please send ' + amountStr + ' via e-Transfer to the address below to confirm your spot. Instructions have also been sent to your email.',
     cash:      'Registration received! Your instructor will collect payment at your first lesson. Check your email for full details.'
   };
@@ -1021,11 +1090,6 @@ function showSuccess() {
   document.body.style.overflow = 'hidden';
 }
 
-// FIX 4: handleSubmit is called directly by the button (type="button")
-// This prevents the browser from doing a form submit which was causing
-// the page to scroll/reset back to step 1
-
-  
 async function handleSubmit() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -1052,7 +1116,6 @@ async function handleSubmit() {
     showSuccess();
   }
 }
- 
 </script>
 </body>
 </html>
