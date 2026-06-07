@@ -827,7 +827,7 @@ function prevStep(from) {
 
 function nextStep(from) {
   if (!validateStep(from)) return;
-  if (from===3) populateReview();
+  if (from===3) { populateReview(); if(!stripeMounted) mountStripe(); }
   goToStep(from+1);
 }
 
