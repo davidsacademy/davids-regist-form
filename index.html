@@ -720,7 +720,19 @@ function resetForm() {
 }
 
 let stripe = null, elements = null, cardNumber = null, cardExpiry = null, cardCvc = null, stripeMounted = false;
-function mountStripe() { console.log('Stripe disabled — add live key to enable'); }
+
+  function mountStripe() {
+  stripe = Stripe('pk_live_51TUfKuBTqY0cQUwB2LMEkRAzHzOl5GywmbpmRwOUp86Hn1pqdzPs04vhjdkiIyueE3juDG9oARFk3vhcDIzqtLOS00KzVRljjB');
+  elements = stripe.elements();
+  cardNumber = elements.create('cardNumber');
+  cardExpiry = elements.create('cardExpiry');
+  cardCvc = elements.create('cardCvc');
+  cardNumber.mount('#card-number');
+  cardExpiry.mount('#card-expiry');
+  cardCvc.mount('#card-cvc');
+  stripeMounted = true;
+}
+
 
 function renderLockedCourse(key) {
   const c = COURSES[key];
