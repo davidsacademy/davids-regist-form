@@ -1024,13 +1024,35 @@ function showSuccess() {
 // FIX 4: handleSubmit is called directly by the button (type="button")
 // This prevents the browser from doing a form submit which was causing
 // the page to scroll/reset back to step 1
+
+  
 async function handleSubmit() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Processing&hellip;';
-  try { await sendEmails(); } catch(e){ console.error('Email error:', e); }
-  showSuccess();
+  try {
+    if (currentMethod === 'card') {
+      const result = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardNumber,
+        billing_details: { name: document.getElementById('cardName').value }
+      });
+      if (result.error) {
+        document.getElementById('stripe-error').textContent = result.error.message;
+        document.getElementById('stripe-error').style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = 'Complete Registration &#x2192;';
+        return;
+      }
+    }
+    await sendEmails();
+    showSuccess();
+  } catch(e) {
+    console.error('Submit error:', e);
+    showSuccess();
+  }
 }
+ 
 </script>
 </body>
 </html>
