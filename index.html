@@ -1003,16 +1003,17 @@ let currentMethod = 'card';
 function switchPayment(m) {
   currentMethod = m;
   document.querySelectorAll('.pay-tab').forEach(function(t){t.classList.remove('active');});
-  document.querySelector('[data-method="'+m+'"]').classList.add('active');
+  var activeTab = document.querySelector('[data-method="'+m+'"]');
+  if (activeTab) activeTab.classList.add('active');
   ['card','bnpl','etransfer','cash'].forEach(function(p){
-    document.getElementById('panel-'+p).style.display = p===m ? 'block' : 'none';
+    var panel = document.getElementById('panel-'+p);
+    if (panel) panel.style.display = p===m ? 'block' : 'none';
   });
   // Lock/unlock amount options based on payment method
   if (m === 'bnpl') {
     lockAmountToFull();
   } else {
     restoreAmountOptions();
-    // Re-deselect amount so user picks again (unless already selected something valid)
   }
   // Show/hide submit button for BNPL (has its own Pay button)
   document.getElementById('submitBtn').style.display = m === 'bnpl' ? 'none' : '';
