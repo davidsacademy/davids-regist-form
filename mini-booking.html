@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>David's Academy — Mini Package Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+:root {
+  --bg:#ffffff; --surface:#f8f9fa; --card:#ffffff; --border:#222222;
+  --yellow:#f5c400; --yellow-dark:#b38a00; --black:#111111; --body:#111111;
+  --muted:#555555; --danger:#cc0000; --success:#1a7a4a; --accent-bg:#fffbe6;
+  --green:#1db954; --green-dark:#158a3e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;background:#f0f4f8;color:var(--body);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  z-index:1000;align-items:flex-start;justify-content:center;
+  padding:20px 12px 40px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.modal-overlay.open{display:flex;animation:fadeIn 0.25s ease both;}
+.modal-box{
+  background:#fff;border:2px solid var(--black);border-radius:18px;
+  width:100%;max-width:600px;box-shadow:8px 8px 0 var(--black);
+  position:relative;margin:auto;overflow:visible;
+}
+.modal-close{
+  position:absolute;top:16px;right:16px;width:36px;height:36px;
+  border-radius:50%;border:2px solid var(--black);background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:18px;font-weight:700;color:var(--black);z-index:10;
+  transition:all 0.15s;line-height:1;
+}
+.modal-close:hover{background:var(--yellow);box-shadow:2px 2px 0 var(--black);}
+.modal-inner{padding:32px 24px 28px;background:#fff;border-radius:18px;}
+@media(min-width:600px){.modal-inner{padding:40px 36px 32px;}}
+
+.step-card{background:var(--card);border:2px solid var(--black);border-radius:14px;padding:24px 20px;box-shadow:4px 4px 0px var(--black);width:100%;}
+@media(min-width:600px){.step-card{padding:32px 28px;}}
+.step-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:0.05em;color:var(--black);margin-bottom:4px;}
+.step-subtitle{font-size:13px;color:var(--muted);margin-bottom:20px;font-family:'DM Mono',monospace;}
+
+.grid{display:grid;gap:14px;}
+.grid-2{grid-template-columns:1fr;}
+@media(min-width:480px){.grid-2{grid-template-columns:1fr 1fr;}}
+.field{display:flex;flex-direction:column;gap:6px;}
+label{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--black);}
+
+input,select,textarea{
+  background:#fff;border:2px solid var(--black);border-radius:8px;
+  color:var(--black);font-family:'DM Mono',monospace;font-size:14px;
+  padding:0 12px;height:40px;line-height:40px;
+  transition:border-color 0.15s,box-shadow 0.15s,background 0.15s;
+  outline:none;width:100%;-webkit-appearance:none;font-weight:500;
+  box-sizing:border-box;display:block;
+}
+textarea{height:90px;padding:10px 12px;line-height:1.5;resize:vertical;}
+input::placeholder,textarea::placeholder{color:#aaa;font-weight:400;}
+input:focus,select:focus,textarea:focus{border-color:var(--black);background:var(--accent-bg);box-shadow:3px 3px 0px var(--black);}
+select{cursor:pointer;}
+
+.date-input-wrap{display:block;width:100%;position:relative;}
+.date-input-wrap input[type="date"]{
+  background:#fff;border:2px solid var(--black);border-radius:8px;
+  color:var(--black);font-size:14px;font-weight:500;
+  height:40px;width:100%;box-sizing:border-box;outline:none;
+  -webkit-appearance:none;appearance:none;padding:0 12px;
+  font-family:'DM Sans',sans-serif;cursor:pointer;
+}
+.date-input-wrap input[type="date"]:focus{border-color:var(--black);background:var(--accent-bg);box-shadow:3px 3px 0px var(--black);outline:none;}
+
+.pkg-display{
+  background:var(--accent-bg);border:2px solid var(--black);border-radius:8px;
+  padding:10px 14px;display:flex;justify-content:space-between;align-items:center;
+}
+.pkg-display-name{font-weight:700;font-size:14px;color:var(--black);}
+.pkg-display-price{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow-dark);}
+
+.pay-tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
+.pay-tab{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:8px;
+  font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;
+  user-select:none;flex:1 1 auto;justify-content:center;border:2px solid transparent;}
+.pay-tab svg{width:17px;height:17px;flex-shrink:0;}
+.pay-tab[data-method="card"]{background:#f5c400;color:#111;border-color:#b38a00;box-shadow:3px 3px 0px #b38a00;}
+.pay-tab[data-method="card"].active{background:#111;color:#fff;border-color:#111;box-shadow:3px 3px 0px #444;}
+.pay-tab[data-method="bnpl"]{background:#7c3aed;color:#fff;border-color:#4c1d95;box-shadow:3px 3px 0px #4c1d95;font-weight:800;}
+.pay-tab[data-method="bnpl"].active{background:#111;color:#fff;border-color:#111;box-shadow:3px 3px 0px #444;}
+.pay-tab[data-method="etransfer"]{background:#0ea5e9;color:#fff;border-color:#0369a1;box-shadow:3px 3px 0px #0369a1;}
+.pay-tab[data-method="etransfer"].active{background:#111;color:#fff;border-color:#111;box-shadow:3px 3px 0px #444;}
+
+.stripe-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.stripe-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+@media(max-width:400px){.stripe-row-2{grid-template-columns:1fr;}}
+.stripe-element-box{
+  background:#fff;border:2px solid var(--black);border-radius:8px;
+  height:40px;padding:0 12px;box-sizing:border-box;display:flex;align-items:center;
+  transition:box-shadow 0.15s,background 0.15s;position:relative;z-index:1;
+}
+.stripe-element-box>div{width:100%;pointer-events:auto;}
+.stripe-element-box iframe{pointer-events:auto!important;}
+.card-icons{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.card-badge{border:2px solid var(--black);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:800;letter-spacing:0.08em;font-family:'DM Mono',monospace;}
+.card-badge.visa{background:#1a1f71;color:#fff;}
+.card-badge.mc{background:#eb6b2c;color:#fff;}
+.card-badge.amex{background:#2e77bc;color:#fff;}
+.secure-note{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--black);margin-top:14px;padding:12px 14px;background:#f0fff4;border-radius:8px;border:2px solid var(--black);line-height:1.5;font-weight:500;}
+.secure-note svg{width:14px;height:14px;color:var(--success);flex-shrink:0;margin-top:1px;}
+#stripe-error-mini{display:none;color:var(--danger);font-size:12px;margin-top:10px;padding:10px 14px;background:#fff0f0;border-radius:8px;border:2px solid var(--danger);font-weight:600;}
+
+.info-box{background:var(--accent-bg);border:2px solid var(--black);border-radius:10px;padding:18px 20px;font-size:14px;color:var(--body);line-height:1.8;box-shadow:3px 3px 0px var(--black);}
+.info-box strong{color:var(--black);font-weight:700;}
+
+.bnpl-btn{width:100%;padding:14px;background:#000;color:#fff;border:2px solid #000;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;cursor:pointer;box-shadow:3px 3px 0 var(--yellow-dark);transition:all 0.15s;margin-top:4px;}
+.bnpl-btn:hover{background:#222;transform:translateY(-2px);box-shadow:6px 6px 0 var(--yellow-dark);}
+.klarna-badge{background:#ffb3c7;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.klarna-k{font-family:'DM Mono',monospace;font-size:18px;font-weight:900;color:#000;background:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+.amount-box{display:flex;justify-content:space-between;align-items:center;background:#fffbe6;border:2px solid #b38a00;border-radius:10px;padding:10px 16px;margin-bottom:14px;}
+.amount-box-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#111;}
+.amount-box-val{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;color:#b38a00;}
+
+.review-box{background:var(--surface);border:2px solid var(--black);border-radius:10px;padding:16px 20px;margin-bottom:20px;}
+.review-box h4{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.review-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid #e5e5e5;}
+.review-row:last-child{border-bottom:none;}
+.review-key{color:var(--muted);font-weight:500;}
+.review-val{color:var(--black);font-weight:600;text-align:right;max-width:60%;word-break:break-all;}
+
+.btn-row{display:flex;gap:12px;margin-top:24px;}
+.btn-back{padding:9px 18px;background:#fff;color:var(--black);border:2px solid var(--black);border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.08em;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.btn-back:hover{background:var(--surface);box-shadow:3px 3px 0px var(--black);}
+.btn-next,.btn-submit{flex:1;padding:10px;background:var(--black);color:#fff;border:2px solid var(--black);border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.1em;cursor:pointer;transition:all 0.15s;box-shadow:3px 3px 0px var(--yellow-dark);}
+.btn-next:hover,.btn-submit:hover{background:#222;transform:translateY(-2px);box-shadow:6px 6px 0px var(--yellow-dark);}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+input.error{border-color:var(--danger)!important;background:#fff0f0!important;}
+.error-msg{font-size:11px;color:var(--danger);margin-top:3px;display:none;font-weight:600;font-family:'DM Mono',monospace;}
+.error-msg.show{display:block;}
+
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:8px;}
+
+.success-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,0.97);z-index:2000;align-items:center;justify-content:flex-start;flex-direction:column;text-align:center;padding:4px 16px 16px;overflow-y:auto;}
+.success-overlay.show{display:flex;animation:fadeIn 0.4s ease both;}
+.success-icon{width:52px;height:52px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:8px;animation:popIn 0.4s 0.2s ease both;opacity:0;border:2px solid var(--black);box-shadow:3px 3px 0px var(--black);}
+.success-icon svg{width:26px;height:26px;color:var(--black);}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="miniModalOverlay">
+  <div class="modal-box" id="miniModalBox">
+    <button class="modal-close" onclick="closeMiniModal()" aria-label="Close">&#x2715;</button>
+    <div class="modal-inner">
+
+      <div style="background:var(--black);border-radius:10px;padding:12px 20px;text-align:center;margin-bottom:16px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--yellow);letter-spacing:0.05em;">David's Academy</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.7);letter-spacing:0.08em;text-transform:uppercase;font-family:'DM Mono',monospace;">of Defensive Driving</div>
+      </div>
+
+      <!-- STEP 1: DETAILS -->
+      <div id="mini-step-1">
+        <div class="step-card">
+          <div class="step-title">Booking Details</div>
+          <div class="step-subtitle" id="mini-pkg-subtitle">10 Lessons + Road Test</div>
+
+          <div class="field" style="margin-bottom:14px;">
+            <label>Selected Package</label>
+            <div class="pkg-display">
+              <span class="pkg-display-name" id="mini-pkg-name">—</span>
+              <span class="pkg-display-price" id="mini-pkg-price">—</span>
+            </div>
+          </div>
+
+          <div class="grid grid-2" style="margin-bottom:14px;">
+            <div class="field">
+              <label for="mini-fullname">Full Name</label>
+              <input type="text" id="mini-fullname" placeholder="Jane Smith" required>
+              <span class="error-msg" id="err-mini-fullname">Please enter your full name</span>
+            </div>
+            <div class="field">
+              <label for="mini-cell">Phone</label>
+              <input type="tel" id="mini-cell" placeholder="416-555-0000" maxlength="12" required>
+              <span class="error-msg" id="err-mini-cell">Please enter a valid number</span>
+            </div>
+            <div class="field" style="grid-column:1/-1;">
+              <label for="mini-email">Email</label>
+              <input type="email" id="mini-email" placeholder="jane@example.com" required>
+              <span class="error-msg" id="err-mini-email">Please enter a valid email</span>
+            </div>
+            <div class="field">
+              <label for="mini-license">Driver License Number</label>
+              <input type="text" id="mini-license" placeholder="A1234-12345-12345" maxlength="17" required>
+              <span class="error-msg" id="err-mini-license">Please enter your license number</span>
+            </div>
+            <div class="field">
+              <label for="mini-expiry">License Expiry Date</label>
+              <div class="date-input-wrap">
+                <input type="date" id="mini-expiry" required>
+              </div>
+              <span class="error-msg" id="err-mini-expiry">Please enter expiry date</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="mini-roadtest">Road Test Details (Optional)</label>
+            <textarea id="mini-roadtest" placeholder="Already booked your road test? Please provide date, time and location (e.g. June 20, 2:00 PM — Scarborough DriveTest)"></textarea>
+          </div>
+
+          <div class="btn-row" style="margin-top:20px;">
+            <button type="button" class="btn-next" onclick="miniNextStep()">Continue &#x2192;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: PAYMENT -->
+      <div id="mini-step-2" style="display:none;">
+        <div class="step-card">
+          <div class="step-title">Payment</div>
+          <div class="step-subtitle">Review and complete your booking</div>
+
+          <div class="review-box">
+            <h4>Booking Summary</h4>
+            <div class="review-row"><span class="review-key">Name</span><span class="review-val" id="mini-rv-name">—</span></div>
+            <div class="review-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+              <span class="review-key">Email</span>
+              <span class="review-val" id="mini-rv-email" style="max-width:100%;text-align:left;">—</span>
+            </div>
+            <div class="review-row"><span class="review-key">Package</span><span class="review-val" id="mini-rv-package">—</span></div>
+            <div class="review-row" style="border-bottom:none;flex-direction:column;align-items:flex-start;gap:2px;">
+              <span class="review-key">Amount</span>
+              <span id="mini-rv-amount" style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.04em;color:#b38a00;font-weight:900;">—</span>
+            </div>
+          </div>
+
+          <div class="pay-tabs">
+            <div class="pay-tab active" data-method="card" onclick="miniSwitchPayment('card')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              Credit / Debit
+            </div>
+            <div class="pay-tab" data-method="bnpl" onclick="miniSwitchPayment('bnpl')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              Buy Now Pay Later
+            </div>
+            <div class="pay-tab" data-method="etransfer" onclick="miniSwitchPayment('etransfer')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM9 9h6M9 12h6M9 15h4"/></svg>
+              E-Transfer
+            </div>
+          </div>
+
+          <!-- CARD PANEL -->
+          <div id="mini-panel-card">
+            <div class="card-icons">
+              <span class="card-badge visa">VISA</span>
+              <span class="card-badge mc">MASTERCARD</span>
+              <span class="card-badge amex">AMEX</span>
+            </div>
+            <div class="stripe-field">
+              <label>Card Number</label>
+              <div class="stripe-element-box" id="mini-card-number"></div>
+            </div>
+            <div class="stripe-row-2">
+              <div class="stripe-field" style="margin-bottom:0;">
+                <label>Expiry Date</label>
+                <div class="stripe-element-box" id="mini-card-expiry"></div>
+              </div>
+              <div class="stripe-field" style="margin-bottom:0;">
+                <label>CVV</label>
+                <div class="stripe-element-box" id="mini-card-cvc"></div>
+              </div>
+            </div>
+            <div class="stripe-field">
+              <label for="mini-cardName">Name on Card</label>
+              <input type="text" id="mini-cardName" placeholder="Name as it appears on card" autocomplete="cc-name">
+            </div>
+            <div id="stripe-error-mini"></div>
+            <div class="amount-box">
+              <span class="amount-box-label">Amount Due Today</span>
+              <span class="amount-box-val" id="mini-card-amount">—</span>
+            </div>
+            <div class="secure-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Secured by Stripe — card details encrypted, never stored on our servers.
+            </div>
+          </div>
+
+          <!-- BNPL PANEL -->
+          <div id="mini-panel-bnpl" style="display:none;">
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="klarna-badge">
+                <div class="klarna-k">K</div>
+                <div>
+                  <div style="font-weight:700;font-size:14px;color:#000;">Klarna — Pay in 4 installments</div>
+                  <div style="font-size:12px;color:#333;">Interest-free, no hidden fees</div>
+                </div>
+              </div>
+              <div style="background:#fffbe6;border:2px solid var(--yellow-dark);border-radius:8px;padding:10px 14px;font-size:13px;color:#555;font-family:'DM Mono',monospace;">
+                💡 Full amount required for Buy Now Pay Later. You will be taken to our secure Stripe payment page.
+              </div>
+              <div class="amount-box">
+                <span class="amount-box-label">Full Amount</span>
+                <span class="amount-box-val" id="mini-bnpl-amount">—</span>
+              </div>
+              <button class="bnpl-btn" onclick="miniOpenBnpl()">PAY WITH KLARNA &#x2192;</button>
+              <div class="secure-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Secured by Stripe — you will be redirected to complete payment safely.
+              </div>
+            </div>
+          </div>
+
+          <!-- ETRANSFER PANEL -->
+          <div id="mini-panel-etransfer" style="display:none;">
+            <div class="info-box" style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <span style="font-size:22px;flex-shrink:0;">&#x1F4E7;</span>
+                <div><strong>Please complete your booking</strong> by clicking the button below.</div>
+              </div>
+              <div style="background:#fff8e1;border:2px solid var(--yellow-dark);border-radius:8px;padding:10px 14px;font-size:13px;color:#555;font-family:'DM Mono',monospace;">
+                💡 e-Transfer payment details will be shown after you submit your booking.
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button type="button" class="btn-back" onclick="miniPrevStep()">&#x2190; Back</button>
+            <button type="button" class="btn-submit" id="mini-submitBtn" onclick="miniHandleSubmit()">Complete Booking &#x2192;</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="miniSuccessOverlay">
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;margin-top:20px;">
+    <h2 style="margin:0;line-height:1;font-size:clamp(24px,7vw,38px);font-family:'Bebas Neue',sans-serif;">Booking Confirmed!</h2>
+    <div class="success-icon" style="margin-bottom:0;flex-shrink:0;width:42px;height:42px;align-self:center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+  </div>
+  <p id="miniSuccessMsg" style="margin-bottom:16px;font-size:13px;max-width:340px;line-height:1.5;color:var(--muted);text-align:center;"></p>
+
+  <div id="miniSuccessEtransfer" style="display:none;position:relative;margin-bottom:12px;background:#f5f5f5;border:2px solid #111;border-radius:10px;padding:10px 50px 10px 14px;max-width:360px;width:100%;">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:2px;">Send e-Transfer to</div>
+    <strong style="font-size:14px;color:#111;white-space:nowrap;">payments@davidsacademy.ca</strong>
+    <button onclick="var t=document.createElement('textarea');t.value='payments@davidsacademy.ca';document.body.appendChild(t);t.select();t.setSelectionRange(0,99999);document.execCommand('copy');document.body.removeChild(t);this.innerHTML='✅';setTimeout(()=>{this.innerHTML='📋'},2000)" style="position:absolute;top:8px;right:8px;background:#fff;border:2px solid #111;border-radius:6px;cursor:pointer;padding:4px 8px;font-size:14px;">📋</button>
+  </div>
+
+  <div style="background:#fff;border:2px solid #111;border-radius:12px;padding:12px 16px;max-width:360px;width:100%;box-shadow:3px 3px 0 #111;text-align:left;margin-bottom:12px;">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#888;margin-bottom:8px;">What Happens Next</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#111;">
+        <span style="font-size:16px;flex-shrink:0;">📧</span>
+        <span><strong>Check your email</strong> — a confirmation has been sent with your booking details</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#111;">
+        <span style="font-size:16px;flex-shrink:0;">📞</span>
+        <span><strong>We'll contact you</strong> within 24 hours to confirm your schedule</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:#111;">
+        <span style="font-size:16px;flex-shrink:0;">💬</span>
+        <span><strong>Questions?</strong> WhatsApp or call us at <strong>647-657-7913</strong></span>
+      </div>
+    </div>
+  </div>
+  <button onclick="window.location.href='https://www.davidsacademy.ca'" style="margin-top:4px;padding:9px 36px;background:#f5c400;color:#111;border:2px solid #111;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.1em;cursor:pointer;box-shadow:2px 2px 0 #111;">🏠 HOME</button>
+</div>
+
+<script>
+const MINI_PACKAGES = {
+  g2: { name: 'G2 Mini — 10 Lessons + Road Test', price: 525.45, stripeLink: 'https://buy.stripe.com/eVq5kC54TcJl6TI714ffy06' },
+  g:  { name: 'G Mini — 10 Lessons + Road Test',  price: 536.75, stripeLink: 'https://buy.stripe.com/28EdR82WL4cP4LA2KOffy07' }
+};
+
+let miniCurrentPkg = null;
+let miniCurrentMethod = 'card';
+let miniStripe = null, miniElements = null, miniCardNumber = null, miniCardExpiry = null, miniCardCvc = null, miniStripeMounted = false;
+
+function openMiniModal(pkg) {
+  miniCurrentPkg = pkg;
+  const p = MINI_PACKAGES[pkg];
+  document.getElementById('mini-pkg-name').textContent = p.name;
+  document.getElementById('mini-pkg-price').textContent = '$' + p.price.toFixed(2) + ' incl. HST';
+  document.getElementById('mini-step-1').style.display = 'block';
+  document.getElementById('mini-step-2').style.display = 'none';
+  document.getElementById('miniSuccessOverlay').classList.remove('show');
+  miniCurrentMethod = 'card';
+  document.getElementById('miniModalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMiniModal() {
+  document.getElementById('miniModalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function miniNextStep() {
+  if (!miniValidate()) return;
+  const p = MINI_PACKAGES[miniCurrentPkg];
+  document.getElementById('mini-rv-name').textContent = document.getElementById('mini-fullname').value;
+  document.getElementById('mini-rv-email').textContent = document.getElementById('mini-email').value;
+  document.getElementById('mini-rv-package').textContent = p.name;
+  document.getElementById('mini-rv-amount').textContent = '$' + p.price.toFixed(2);
+  document.getElementById('mini-card-amount').textContent = '$' + p.price.toFixed(2);
+  document.getElementById('mini-bnpl-amount').textContent = '$' + p.price.toFixed(2);
+  document.getElementById('mini-step-1').style.display = 'none';
+  document.getElementById('mini-step-2').style.display = 'block';
+  miniSwitchPayment('card');
+  if (!miniStripeMounted) miniMountStripe();
+  document.getElementById('miniModalOverlay').scrollTop = 0;
+}
+
+function miniPrevStep() {
+  document.getElementById('mini-step-2').style.display = 'none';
+  document.getElementById('mini-step-1').style.display = 'block';
+  document.getElementById('miniModalOverlay').scrollTop = 0;
+}
+
+function miniValidate() {
+  let ok = true;
+  const fields = [
+    {id:'mini-fullname', err:'err-mini-fullname', msg:'Please enter your full name'},
+    {id:'mini-cell',     err:'err-mini-cell',     msg:'Please enter your phone number'},
+    {id:'mini-email',    err:'err-mini-email',     msg:'Please enter a valid email'},
+    {id:'mini-license',  err:'err-mini-license',   msg:'Please enter your license number'},
+    {id:'mini-expiry',   err:'err-mini-expiry',    msg:'Please enter expiry date'},
+  ];
+  fields.forEach(function(f) {
+    var el = document.getElementById(f.id);
+    var err = document.getElementById(f.err);
+    if (!el.value.trim()) {
+      el.classList.add('error');
+      err.classList.add('show');
+      ok = false;
+    } else {
+      el.classList.remove('error');
+      err.classList.remove('show');
+    }
+  });
+  const email = document.getElementById('mini-email').value;
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('mini-email').classList.add('error');
+    document.getElementById('err-mini-email').classList.add('show');
+    ok = false;
+  }
+  return ok;
+}
+
+function miniMountStripe() {
+  miniStripe = Stripe('pk_live_51TUfKuBTqY0cQUwB2LMEkRAzHzOl5GywmbpmRwOUp86Hn1pqdzPs04vhjdkiIyueE3juDG9oARFk3vhcDIzqtLOS00KzVRljjB');
+  miniElements = miniStripe.elements();
+  miniCardNumber = miniElements.create('cardNumber');
+  miniCardExpiry = miniElements.create('cardExpiry');
+  miniCardCvc = miniElements.create('cardCvc');
+  miniCardNumber.mount('#mini-card-number');
+  miniCardExpiry.mount('#mini-card-expiry');
+  miniCardCvc.mount('#mini-card-cvc');
+  miniStripeMounted = true;
+}
+
+function miniSwitchPayment(m) {
+  miniCurrentMethod = m;
+  document.querySelectorAll('.pay-tab').forEach(function(t){t.classList.remove('active');});
+  var tab = document.querySelector('[data-method="'+m+'"]');
+  if (tab) tab.classList.add('active');
+  ['card','bnpl','etransfer'].forEach(function(p){
+    var panel = document.getElementById('mini-panel-'+p);
+    if (panel) panel.style.display = p===m ? 'block' : 'none';
+  });
+  var btn = document.getElementById('mini-submitBtn');
+  if (btn) btn.style.display = m === 'bnpl' ? 'none' : '';
+}
+
+function miniOpenBnpl() {
+  const p = MINI_PACKAGES[miniCurrentPkg];
+  miniSendEmails().catch(function(e){ console.error(e); });
+  window.open(p.stripeLink, '_blank');
+  miniShowSuccess();
+}
+
+function miniGetEmailParams() {
+  const p = MINI_PACKAGES[miniCurrentPkg];
+  const roadTest = document.getElementById('mini-roadtest').value.trim();
+  return {
+    student_name:    document.getElementById('mini-fullname').value.trim(),
+    student_email:   document.getElementById('mini-email').value.trim(),
+    student_cell:    document.getElementById('mini-cell').value.trim(),
+    student_home:    'N/A',
+    student_address: roadTest || 'Not provided',
+    student_city:    'N/A',
+    student_postal:  'N/A',
+    student_license: document.getElementById('mini-license').value.trim(),
+    student_expiry:  document.getElementById('mini-expiry').value,
+    student_heard:   'Mini Package Booking',
+    student_package: p.name,
+    student_paytype: miniCurrentMethod === 'card' ? 'Credit/Debit Card' : miniCurrentMethod === 'bnpl' ? 'Buy Now Pay Later (Klarna)' : 'E-Transfer',
+    student_amount:  '$' + p.price.toFixed(2),
+    student_package_total: '$' + p.price.toFixed(2) + ' incl. HST',
+    student_amount_label: miniCurrentMethod === 'card' ? 'AMOUNT PAID TODAY' : 'AMOUNT DUE',
+    student_etransfer_amount: '$' + p.price.toFixed(2),
+    student_payment_note: miniCurrentMethod === 'etransfer' ? 'Please send $' + p.price.toFixed(2) + ' via e-Transfer to payments@davidsacademy.ca' : miniCurrentMethod === 'bnpl' ? 'Klarna installment plan selected' : 'Payment received',
+  };
+}
+
+async function miniSendEmails() {
+  const params = miniGetEmailParams();
+  try { await emailjs.send('service_65ljmf8', 'template_nmonvw9', params); } catch(e) { console.error('Admin email failed:', e); }
+  try { await emailjs.send('service_65ljmf8', 'template_nu3qm0v', params); } catch(e) { console.error('Student email failed:', e); }
+}
+
+function miniShowSuccess() {
+  const messages = {
+    card: 'Payment confirmed! Check your email for your booking details.',
+    bnpl: 'Booking complete! You have been redirected to complete your Klarna payment.',
+    etransfer: 'Booking received! Please send your e-Transfer to the address below to confirm your spot.'
+  };
+  document.getElementById('miniSuccessMsg').textContent = messages[miniCurrentMethod];
+  document.getElementById('miniSuccessEtransfer').style.display = miniCurrentMethod === 'etransfer' ? 'block' : 'none';
+  closeMiniModal();
+  document.getElementById('miniSuccessOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+async function miniHandleSubmit() {
+  const btn = document.getElementById('mini-submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Processing&hellip;';
+  try {
+    if (miniCurrentMethod === 'card') {
+      const result = await miniStripe.createPaymentMethod({
+        type: 'card',
+        card: miniCardNumber,
+        billing_details: { name: document.getElementById('mini-cardName').value }
+      });
+      if (result.error) {
+        document.getElementById('stripe-error-mini').textContent = result.error.message;
+        document.getElementById('stripe-error-mini').style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = 'Complete Booking &#x2192;';
+        return;
+      }
+    }
+    await miniSendEmails();
+    miniShowSuccess();
+  } catch(e) {
+    console.error(e);
+    miniShowSuccess();
+  }
+}
+
+document.getElementById('mini-cell').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'').substring(0,10);
+  if(v.length>=7) v=v.substring(0,3)+'-'+v.substring(3,6)+'-'+v.substring(6);
+  else if(v.length>=4) v=v.substring(0,3)+'-'+v.substring(3);
+  this.value = v;
+  if(v.replace(/\D/g,'').length===10) document.getElementById('mini-email').focus();
+});
+
+document.getElementById('mini-license').addEventListener('input', function() {
+  let v=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,15);
+  if(v.length>9) v=v.substring(0,5)+'-'+v.substring(5,10)+'-'+v.substring(10);
+  else if(v.length>4) v=v.substring(0,5)+'-'+v.substring(5);
+  this.value=v;
+  if(v.replace(/[^A-Z0-9]/g,'').length===15) document.getElementById('mini-expiry').focus();
+});
+
+document.getElementById('mini-expiry').addEventListener('click', function() {
+  try { this.showPicker(); } catch(e) {}
+});
+
+document.querySelectorAll('#mini-step-1 input').forEach(function(el) {
+  el.addEventListener('input', function() {
+    el.classList.remove('error');
+    var err = document.getElementById('err-' + el.id);
+    if (err) err.classList.remove('show');
+  });
+});
+
+emailjs.init('8rL8f6C4Cj_5wuKJM');
+</script>
+</body>
+</html>
