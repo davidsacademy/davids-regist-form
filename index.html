@@ -230,18 +230,36 @@ select option{background:#fff;color:var(--black);}
 .amount-option.selected.full-opt .amount-opt-note{color:rgba(255,255,255,0.65);}
 
 .pay-tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
-.pay-tab{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:8px;border:2px solid var(--black);background:#fff;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;user-select:none;flex:1 1 auto;justify-content:center;}
+.pay-tab{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:8px;border:2px solid transparent;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;user-select:none;flex:1 1 auto;justify-content:center;}
 @media(min-width:600px){.pay-tab{flex:0 1 auto;justify-content:flex-start;}}
 .pay-tab svg{width:17px;height:17px;flex-shrink:0;}
-/* Card tab — yellow */
-.pay-tab[data-method="card"].active{background:#f5c400;color:#111;box-shadow:3px 3px 0px #111;border-color:#111;}
-/* BNPL tab — purple, bold */
-.pay-tab[data-method="bnpl"]{font-weight:800;}
-.pay-tab[data-method="bnpl"].active{background:#7c3aed;color:#fff;box-shadow:3px 3px 0px #4c1d95;border-color:#4c1d95;}
-/* E-Transfer tab — blue */
-.pay-tab[data-method="etransfer"].active{background:#0ea5e9;color:#fff;box-shadow:3px 3px 0px #0369a1;border-color:#0369a1;}
-/* Cash tab — green */
-.pay-tab[data-method="cash"].active{background:#16a34a;color:#fff;box-shadow:3px 3px 0px #14532d;border-color:#14532d;}
+/* Card tab — yellow solid default */
+.pay-tab[data-method="card"]{background:#f5c400;color:#111;border-color:#b38a00;box-shadow:3px 3px 0px #b38a00;}
+.pay-tab[data-method="card"].active{background:#111;color:#fff;border-color:#111;box-shadow:3px 3px 0px #444;}
+/* BNPL tab — purple solid default */
+.pay-tab[data-method="bnpl"]{background:#7c3aed;color:#fff;border-color:#4c1d95;box-shadow:3px 3px 0px #4c1d95;font-weight:800;}
+.pay-tab[data-method="bnpl"].active{background:#111;color:#fff;border-color:#111;box-shadow:3px 3px 0px #444;}
+/* E-Transfer tab — blue solid default */
+.pay-tab[data-method="etransfer"]{background:#0ea5e9;color:#fff;border-color:#0369a1;box-shadow:3px 3px 0px #0369a1;}
+.pay-tab[data-method="etransfer"].active{background:#111;color:#fff;border-color:#111;box-shadow:3px 3px 0px #444;}
+/* Cash tab — green solid default */
+.pay-tab[data-method="cash"]{background:#16a34a;color:#fff;border-color:#14532d;box-shadow:3px 3px 0px #14532d;}
+.pay-tab[data-method="cash"].active{background:#111;color:#fff;border-color:#111;box-shadow:3px 3px 0px #444;}
+/* BNPL info icon */
+.bnpl-info-wrap{display:inline-flex;align-items:center;position:relative;}
+.bnpl-info-icon{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,0.3);border:1.5px solid rgba(255,255,255,0.8);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;cursor:pointer;margin-left:6px;flex-shrink:0;line-height:1;}
+.bnpl-tooltip{
+  display:none;position:fixed;z-index:9999;
+  width:280px;background:#1e1b4b;border-radius:14px;
+  padding:16px;box-shadow:0 12px 32px rgba(0,0,0,0.5);
+  font-family:'DM Sans',sans-serif;font-size:12px;color:#e0e7ff;
+  line-height:1.6;border:1.5px solid #7c3aed;
+}
+.bnpl-tooltip.show{display:block;animation:fadeUp 0.2s ease both;}
+.bnpl-tooltip-title{font-weight:800;font-size:13px;color:#c4b5fd;margin-bottom:10px;letter-spacing:0.04em;}
+.bnpl-tooltip-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.bnpl-tooltip-row:last-child{margin-bottom:0;}
+.bnpl-tooltip-icon{flex-shrink:0;font-size:14px;}
 
 .stripe-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
 .stripe-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
@@ -543,6 +561,7 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 <div class="pay-tab" data-method="bnpl" onclick="switchPayment('bnpl')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                   Buy Now Pay Later
+                  <span class="bnpl-info-icon" id="bnplInfoIcon" onclick="toggleBnplTooltip(event)">i</span>
                 </div>
                 <div class="pay-tab" data-method="etransfer" onclick="switchPayment('etransfer')">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4zM9 9h6M9 12h6M9 15h4"/></svg>
@@ -653,7 +672,15 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
   </div>
 </div>
 
-<div class="pkg-tooltip" id="pkgTooltip"></div>
+<div class="bnpl-tooltip" id="bnplTooltip">
+  <div class="bnpl-tooltip-title">&#x1F4B3; Buy Now Pay Later — Klarna</div>
+  <div class="bnpl-tooltip-row"><span class="bnpl-tooltip-icon">✅</span><span><strong>4 equal payments</strong> — split into 4 installments every 2 weeks</span></div>
+  <div class="bnpl-tooltip-row"><span class="bnpl-tooltip-icon">✅</span><span><strong>0% interest</strong> — completely free when you pay on time</span></div>
+  <div class="bnpl-tooltip-row"><span class="bnpl-tooltip-icon">✅</span><span><strong>No credit score impact</strong> — Klarna uses a soft check only</span></div>
+  <div class="bnpl-tooltip-row"><span class="bnpl-tooltip-icon">⚠️</span><span><strong>Missed payment?</strong> Klarna will retry automatically. If it fails again, the amount rolls into your next payment. NSF fees may apply from your bank.</span></div>
+  <div class="bnpl-tooltip-row"><span class="bnpl-tooltip-icon">⚠️</span><span><strong>Repeated missed payments</strong> may result in your Klarna account being paused and sent to collections.</span></div>
+  <div class="bnpl-tooltip-row"><span class="bnpl-tooltip-icon">💡</span><span>You can extend a payment once per order in the Klarna app before the due date.</span></div>
+</div>
 
 <!-- SUCCESS -->
 <div class="success-overlay" id="successOverlay">
@@ -988,6 +1015,27 @@ function switchPayment(m) {
   // Show/hide submit button for BNPL (has its own Pay button)
   document.getElementById('submitBtn').style.display = m === 'bnpl' ? 'none' : '';
 }
+
+function toggleBnplTooltip(e) {
+  e.stopPropagation();
+  const tooltip = document.getElementById('bnplTooltip');
+  const icon = document.getElementById('bnplInfoIcon');
+  const rect = icon.getBoundingClientRect();
+  const tWidth = 280;
+  let left = rect.right - tWidth;
+  if (left < 8) left = 8;
+  if (left + tWidth > window.innerWidth - 8) left = window.innerWidth - tWidth - 8;
+  let top = rect.bottom + 8;
+  if (top + 320 > window.innerHeight) top = rect.top - 328;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+  tooltip.classList.toggle('show');
+}
+document.addEventListener('click', function(e) {
+  const t = document.getElementById('bnplTooltip');
+  const i = document.getElementById('bnplInfoIcon');
+  if (t && i && !i.contains(e.target)) t.classList.remove('show');
+});
 
 function formatPhone(el) {
   let v=el.value.replace(/\D/g,'').substring(0,10);
