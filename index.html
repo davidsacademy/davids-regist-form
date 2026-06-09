@@ -450,7 +450,6 @@ input.error,select.error{border-color:var(--danger)!important;background:#fff0f0
                 <div class="field">
                   <label for="license">Driver License Number</label>
                   <input type="text" id="license" placeholder="A1234-12345-12345" maxlength="17" required>
-                  <span class="field-hint">Ontario format: Letter + 4 digits – 5 digits – 5 digits</span>
                   <span class="error-msg" id="err-license">Format must be A1234-12345-12345</span>
                 </div>
                 <div class="field">
@@ -1045,6 +1044,11 @@ function formatPhone(el) {
   if(v.length>=7) v=v.substring(0,3)+'-'+v.substring(3,6)+'-'+v.substring(6);
   else if(v.length>=4) v=v.substring(0,3)+'-'+v.substring(3);
   el.value=v;
+  // Auto-advance when 10 digits entered
+  if(v.replace(/\D/g,'').length===10){
+    var next = el.id==='cell' ? document.getElementById('home') : document.getElementById('email');
+    if(next) next.focus();
+  }
 }
 document.getElementById('cell').addEventListener('input',function(){formatPhone(this);});
 document.getElementById('home').addEventListener('input',function(){formatPhone(this);});
@@ -1053,6 +1057,11 @@ function formatPostal(el) {
   let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,6);
   if (v.length > 3) v = v.substring(0,3) + '-' + v.substring(3);
   el.value = v;
+  // Auto-advance when 6 chars entered
+  if(v.replace(/[^A-Z0-9]/g,'').length===6){
+    var next = document.getElementById('license');
+    if(next) next.focus();
+  }
 }
 document.getElementById('postal').addEventListener('input',function(){formatPostal(this);});
 
@@ -1061,6 +1070,11 @@ function formatLicense(el) {
   if(v.length>9) v=v.substring(0,5)+'-'+v.substring(5,10)+'-'+v.substring(10);
   else if(v.length>4) v=v.substring(0,5)+'-'+v.substring(5);
   el.value=v;
+  // Auto-advance when 15 alphanumeric chars entered
+  if(v.replace(/[^A-Z0-9]/g,'').length===15){
+    var next = document.getElementById('expiry');
+    if(next) next.focus();
+  }
 }
 document.getElementById('license').addEventListener('input',function(){formatLicense(this);});
 
