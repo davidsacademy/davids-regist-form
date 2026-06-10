@@ -589,6 +589,14 @@ document.querySelectorAll('#mini-step-1 input').forEach(function(el) {
 });
 
 emailjs.init('8rL8f6C4Cj_5wuKJM');
+
+// Auto-open based on URL hash (#g2 or #g)
+window.addEventListener('DOMContentLoaded', function() {
+  const hash = window.location.hash.replace('#','').toLowerCase().trim();
+  if (hash === 'g2' || hash === 'g') {
+    openMiniModal(hash);
+  }
+});
 </script>
 </body>
 </html>
