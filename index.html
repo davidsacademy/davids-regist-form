@@ -8,6 +8,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 
+<!-- Google tag (gtag.js) - added for conversion tracking -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S6Q8QL6MZ8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-S6Q8QL6MZ8');
+</script>
+
 <style>
 :root {
   --bg:#ffffff; --surface:#f8f9fa; --card:#ffffff; --border:#222222;
@@ -932,6 +941,12 @@ function prevStep(from) {
 
 function nextStep(from) {
   if (!validateStep(from)) return;
+  if (from===1 && typeof gtag === 'function') {
+    gtag('event', 'form_step1_complete', {
+      'event_category': 'registration_form',
+      'event_label': 'Step 1 - Personal Info Complete'
+    });
+  }
   if (from===3) { populateReview(); if(!stripeMounted) mountStripe(); }
   goToStep(from+1);
 }
@@ -1181,6 +1196,14 @@ async function handleSubmit() {
       }
     }
     await sendEmails();
+    if (typeof gtag === 'function') {
+      gtag('event', 'purchase_complete', {
+        'event_category': 'registration_form',
+        'event_label': COURSES[selectedCourse].label,
+        'value': COURSES[selectedCourse].total,
+        'currency': 'CAD'
+      });
+    }
     showSuccess();
   } catch(e) {
     console.error('Submit error:', e);
